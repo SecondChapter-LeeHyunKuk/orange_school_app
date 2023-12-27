@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "386517350377",
+    "project_id": "orange-school-39ee6",
+    "storage_bucket": "orange-school-39ee6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386517350377:android:6bcfe366fc5d5bbe89bd78",
+        "android_client_info": {
+          "package_name": "com.orangeschool.orange_school"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdmwL1nO7oG7LOHNs6qa7pRQK0YTjRA30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
