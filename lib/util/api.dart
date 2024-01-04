@@ -8,7 +8,17 @@ import 'package:http/http.dart' as http;
 
 
 
-
+Future<http.Response> openApiRequestGet(String url, Map<String, dynamic> param) async {
+  try {
+    http.Response response = await http.get(
+        Uri.parse(url + "?" + Uri(queryParameters: param).query),
+        headers: {
+        }).timeout(const Duration(seconds: 10));
+    return response;
+  }on TimeoutException {
+    return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크
+  }
+}
 Future<http.Response> apiRequestGet(String url, Map<String, dynamic> param) async {
   try {
     SharedPreferences pref = await SharedPreferences.getInstance(); //jwt 조회용
@@ -35,6 +45,7 @@ Future<http.Response> apiRequestDelete(String url, Map<String, dynamic> param) a
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
+    log(url + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
   return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크

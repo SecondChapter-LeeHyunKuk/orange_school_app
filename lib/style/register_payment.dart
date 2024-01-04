@@ -129,7 +129,7 @@ class _RegisterPayment extends State<RegisterPayment> {
   int profileIndex = 0;
   int colorIndex = 0;
   int? selectIndex;
-  String? alarmIndex;
+  bool alarmIndex = false;
   DateTime? payDate;
   String? payCycleValue;
   DateTime? payCycleEndDate;
@@ -155,6 +155,7 @@ class _RegisterPayment extends State<RegisterPayment> {
       te_amount.text ="${NumberFormat('###,###,###,###').format( widget.map!["amount"])}원";
       colorIndex = int.parse(widget.map!["color"]);
       te_note.text = widget.map!["memo"];
+      alarmIndex = widget.map!["usePaymentAlarm"]??false;
     }
 
 
@@ -222,6 +223,7 @@ class _RegisterPayment extends State<RegisterPayment> {
                                   child:
                                 TextField(
                                   controller: te_title,
+                                  autofocus: true,
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.only(left: 4),
                                     fillColor: MainTheme.backgroundGray,
@@ -620,7 +622,7 @@ class _RegisterPayment extends State<RegisterPayment> {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(12)
                                     ),
-                                    child: DropdownButton<String>(
+                                    child: DropdownButton<bool>(
                                         borderRadius: BorderRadius.circular(10),
                                         isExpanded: true,
                                         dropdownColor: Colors.white,
@@ -629,19 +631,25 @@ class _RegisterPayment extends State<RegisterPayment> {
                                         underline: SizedBox.shrink(),
                                         alignment: Alignment.centerLeft,
                                         value: alarmIndex,
-                                        onChanged: (String? value) {
+                                        onChanged: (bool? value) {
                                           // This is called when the user selects an item.
                                           setState(() {
-                                            alarmIndex = value == "" ? null :value;
+                                            alarmIndex = value!;
                                           });
                                         },
                                         items: [
-                                          ...List.generate(alarmType.length, (index) => DropdownMenuItem<String>(
+                                          DropdownMenuItem<bool>(
                                               child: Text(
-                                                alarmType[index]["label"]!,
+                                               "알림 없음",
                                                 style: MainTheme.body5(MainTheme.gray7),
                                               ),
-                                              value: alarmType[index]["value"]),)
+                                              value: false),
+                                          DropdownMenuItem<bool>(
+                                              child: Text(
+                                                "알림 있음",
+                                                style: MainTheme.body5(MainTheme.gray7),
+                                              ),
+                                              value: true),
                                         ]),
                                   )
                                   )
@@ -676,36 +684,22 @@ class _RegisterPayment extends State<RegisterPayment> {
               bottom: 20,
               child : GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: formComplete ? (){
-
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Alert(title: "저장하시겠어요?");
-                    },
-                  )
-                      .then((val) {
-                    if (val != null) {
-                      if(val){
-                        register();
-                      }
-                    }
-                  });
-
-                } : null,
+                onTap: (){
+                    tryRegister();
+                },
                 child: Container(
                   width: 105, height: 51,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25.5),
-                      color: formComplete ? MainTheme.mainColor : MainTheme.gray3
+                      color: MainTheme.mainColor
                   ),
                   alignment: Alignment.center,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset("assets/icons/check${formComplete ? "" : "_gray"}.svg",  width: 16, height: 16,),
+                      SvgPicture.asset("assets/icons/check.svg",  width: 16, height: 16,),
                       SizedBox(width: 5,),
-                      Text("저장",style: MainTheme.body4(formComplete ? Colors.white: MainTheme.gray4),)
+                      Text("저장",style: MainTheme.body4(Colors.white),)
                     ],
                   ),
                 ),
@@ -731,20 +725,20 @@ class _RegisterPayment extends State<RegisterPayment> {
 
     setState(() {
 
-      if(
-      te_title.text.isEmpty ||
-      payDate == null ||
-          payCycleValue == null ||
-          (((payCycleValue??"NONE") != "NONE") && payCycleEndDate == null) ||
-          te_amount.text.isEmpty ||
-        te_title.text.isEmpty ||
-      profileIndex == null
-
-      ){
-          formComplete = false;
-      }else{
-        formComplete = true;
-      }
+      // if(
+      // te_title.text.isEmpty ||
+      // payDate == null ||
+      //     payCycleValue == null ||
+      //     (((payCycleValue??"NONE") != "NONE") && payCycleEndDate == null) ||
+      //     te_amount.text.isEmpty ||
+      //   te_title.text.isEmpty ||
+      // profileIndex == null
+      //
+      // ){
+      //     formComplete = false;
+      // }else{
+      //   formComplete = true;
+      // }
 
     });
   }
@@ -756,7 +750,6 @@ class _RegisterPayment extends State<RegisterPayment> {
     if(response.statusCode == 200){
         academy = (body["data"]["content"]);
       _overlayEntry!.markNeedsBuild();
-
     }
   }
 
@@ -811,16 +804,73 @@ class _RegisterPayment extends State<RegisterPayment> {
 
 
   }
+  void tryRegister(){
+    // if(
+    // te_title.text.isEmpty ||
+    // payDate == null ||
+    //     payCycleValue == null ||
+    //     (((payCycleValue??"NONE") != "NONE") && payCycleEndDate == null) ||
+    //     te_amount.text.isEmpty ||
+    //   te_title.text.isEmpty ||
+    // profileIndex == null
+    //
+    // ){
+    //     formComplete = false;
+    // }else{
+    //   formComplete = true;
+    // }
 
 
-  Future<void> register() async {
+    if(te_title.text.isEmpty){
+      MainTheme.toast("제목을 입력해주세요.");
+      return;
+    }
 
+    if(payDate == null){
+      MainTheme.toast("결제일을 입력해주세요.");
+      return;
+    }
+    if(payCycleValue == null){
+      MainTheme.toast("결제주기를 설정해주세요.");
+      return;
+    }
+    if(((payCycleValue??"NONE") != "NONE") && payCycleEndDate == null){
+      MainTheme.toast("종료일자를 설정해주세요.");
+      return;
+    }
     if((payCycleValue??"NONE") != "NONE"){
       if(payDate!.isAfter(payCycleEndDate!)){
         MainTheme.toast("결제 주기 종료일을 결제일 이후로 설정해주세요.");
         return;
       }
     }
+
+    if(te_amount.text.isEmpty){
+      MainTheme.toast("결제금액을 입력해주세요.");
+      return;
+    }
+
+
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Alert(title: "저장하시겠어요?");
+      },
+    )
+        .then((val) {
+      if (val != null) {
+        if(val){
+          register();
+        }
+      }
+    });
+
+  }
+
+  Future<void> register() async {
+
+
 
 
     if(apiProcess){
@@ -843,7 +893,7 @@ class _RegisterPayment extends State<RegisterPayment> {
     request["payCycle"] = payCycleValue;
     request["payCycleEndDate"] = payCycleEndDate == null ? null : DateFormat('yyyy-MM-dd').format(payCycleEndDate!);
     request["amount"] = te_amount.text.isEmpty ? null : int.parse(te_amount.text.replaceAll(",", "").replaceAll("원", ""));
-    request["paymentAlarmType"] = (alarmIndex??"") == "" ? "NONE" : alarmIndex;
+    request["usePaymentAlarm"] = alarmIndex;
     var response ;
     var body;
     if(widget.map == null){

@@ -22,6 +22,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../style/month_picker.dart';
 import '../../util/api.dart';
 
+
+
+
+
 String urlPayment = "${dotenv.env['BASE_URL']}user/payment";
 String urlChart = "${dotenv.env['BASE_URL']}user/payment/graph";
 String urlChildren = "${dotenv.env['BASE_URL']}user/commonMembers";
@@ -469,15 +473,18 @@ class _ParentPayment extends State<ParentPayment> {
                                   GestureDetector(
                                       behavior: HitTestBehavior.translucent,
                                       onTap: (){
-                                        showModalBottomSheet<void>(
+                                        showModalBottomSheet<int>(
                                           context: context,
                                           isScrollControlled: true,
                                           builder: (BuildContext context) {
                                             return PaymentInfo(scheduleId: payments[index]["scheduleId"], calendarId : payments[index]["id"]);
                                           },
                                         ).then((value){
-                                          paymentFuture = getPayment();
-                                          getChart();
+                                          if(value != null){
+                                            paymentFuture = getPayment();
+                                            getChart();
+                                          }
+
 
                                         });
 
@@ -577,10 +584,9 @@ class _ParentPayment extends State<ParentPayment> {
                     return PaymentInfo(scheduleId: value, calendarId : 0);
                   },
                 ).then((value){
-                  paymentFuture = getPayment();
-                  getChart();
-
                 });
+                paymentFuture = getPayment();
+                getChart();
               }
             });
 
@@ -759,6 +765,7 @@ class _ParentPayment extends State<ParentPayment> {
   }
 
   Future<void> getChart() async {
+    money = [];
     int max = 0;
     var response = await apiRequestGet(urlChart,  {});
     var body = jsonDecode(utf8.decode(response.bodyBytes));

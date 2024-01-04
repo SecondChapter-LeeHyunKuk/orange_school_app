@@ -24,6 +24,7 @@ class SearchPassword extends StatefulWidget {
 }
 
 class _SearchPassword extends State<SearchPassword> {
+  String? phoneMessage = null;
   //타이머 클래스
   Timer? _timer = null;
   //남은 시간
@@ -125,6 +126,7 @@ class _SearchPassword extends State<SearchPassword> {
                                   checkFormComplete();
                                 }
                               }, child :TextField(
+                              enabled: authStatus != AuthStatus.auth,
                               onChanged: (String value){
                                 if(authStatus == AuthStatus.send || authStatus == AuthStatus.missMatch){
                                   _timer!.cancel();
@@ -138,7 +140,9 @@ class _SearchPassword extends State<SearchPassword> {
                                     checkFormComplete();
                                   });
                                 }
-
+                                setState(() {
+                                  phoneMessage = null;
+                                });
                               },
                               decoration: MainTheme.inputTextGray("번호만 입력가능합니다"),
                               style: MainTheme.body5(MainTheme.gray7),
@@ -182,6 +186,15 @@ class _SearchPassword extends State<SearchPassword> {
                         )
                       ]
                   ),
+                  phoneMessage != null ?Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(phoneMessage!, style: MainTheme.caption2(Color(0xfff24147)),),
+                    ],
+                  ): SizedBox(height: 0,),
                   authStatus == AuthStatus.auth ?Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -329,6 +342,7 @@ class _SearchPassword extends State<SearchPassword> {
       if(_seconds <= 0){
         setState(() {
           authStatus = AuthStatus.notAuth;
+          phoneMessage = "인증 시간이 지났어요. 인증을 다시 시도하세요.";
           _timer!.cancel();
         });
 
@@ -353,24 +367,28 @@ class _SearchPassword extends State<SearchPassword> {
   Future<void> checkPhone() async {
 
     if(te_phone.text == ""){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("전화번호를 입력해 주세요."));
+      setState(() {
+        phoneMessage = "휴대폰 번호를 입력해주세요.";
+      });
       return;
     }else if(te_phone.text.length < 13){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("올바르지 않은 전화번호입니다."));
+      setState(() {
+        phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
+      });
       return;
     }
+    phoneMessage = null;
 
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
     var response = await apiRequestPost(urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
       te_auth.clear();
       authNum = body["data"]["randomNumber"];
+      print(authNum);
       authFocusNode.unfocus();
       _startTimer();
     } else if(response.statusCode == 409){
@@ -409,7 +427,7 @@ class _SearchPassword extends State<SearchPassword> {
       Navigator.of(context).pushReplacementNamed("/changePassword", arguments : body["data"]["emailList"]);
     }else{
       ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("정보를 찾을 수 없습니다."));
+          .showSnackBar(MainTheme.snackBar("등록된 회원정보가 없습니다."));
     }
 
   }

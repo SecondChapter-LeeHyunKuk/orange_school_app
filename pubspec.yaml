@@ -68,7 +68,7 @@ dependencies:
   the_apple_sign_in: ^1.1.1
   firebase_auth: ^4.15.3
   flutter_html: ^3.0.0-beta.2
-
+  xml: ^6.5.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

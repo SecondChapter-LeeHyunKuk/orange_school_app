@@ -95,8 +95,15 @@ class _RegisterParent extends State<RegisterParent> {
     false
   ];
   bool agreeAll = false;
-  
-  
+
+  String? nameMessage;
+  String? birthMessage;
+  String? phoneMessage;
+  String? emailMessage;
+  String? passwordMessage;
+  String? passwordCheckMessage;
+  String? addressMessage;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -157,6 +164,11 @@ class _RegisterParent extends State<RegisterParent> {
                           checkFormComplete();
                         }
                       }, child :TextField(
+                      onChanged: (value){
+                        setState(() {
+                          nameMessage = null;
+                        });
+                      },
                       controller: te_name,
                       decoration: MainTheme.inputTextGray("이름을 입력하세요"),
                       style: MainTheme.body5(MainTheme.gray7),
@@ -166,6 +178,14 @@ class _RegisterParent extends State<RegisterParent> {
                       ],
                     ),)
                   ),
+                  nameMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(nameMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
                   Container(
                     height: 17,
                   ),
@@ -186,13 +206,16 @@ class _RegisterParent extends State<RegisterParent> {
                             }
                           },
                           child: TextFormField(
+                            onChanged: (value){
+                              setBirthMessage();
+                            },
                             controller: te_birth,
-                            decoration: MainTheme.inputTextGray("YYMMDD"),
+                            decoration: MainTheme.inputTextGray("YYYYMMDD"),
                             style: MainTheme.body5(MainTheme.gray7),
                             keyboardType:  TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly, //숫자만!
-                              LengthLimitingTextInputFormatter(6)
+                              LengthLimitingTextInputFormatter(8)
                             ],
                           ),
                         )
@@ -213,6 +236,9 @@ class _RegisterParent extends State<RegisterParent> {
                               checkFormComplete();
                             }
                           }, child :TextField(
+                          onChanged: (value){
+                            setBirthMessage();
+                          },
                           controller: te_sex,
                           onTap: (){
                             if(te_sex.text != ""){
@@ -234,8 +260,18 @@ class _RegisterParent extends State<RegisterParent> {
                     ]
 
                   ),
-                  Container(
+
+                 birthMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(birthMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
+                      Container(
                     height: 17,
+
                   ),
                   Text("휴대폰번호", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
@@ -266,6 +302,9 @@ class _RegisterParent extends State<RegisterParent> {
                                   checkFormComplete();
                                 });
                               }
+                              setState(() {
+                                phoneMessage = null;
+                              });
 
                             },
                             decoration: MainTheme.inputTextGray("번호만 입력가능합니다"),
@@ -290,8 +329,7 @@ class _RegisterParent extends State<RegisterParent> {
                             margin: EdgeInsets.only(right: 11),
                             child: ElevatedButton(
                               onPressed: (){
-
-
+                                phoneMessage = null;
                                 checkPhone();
                               },
                               style: MainTheme.hollowFollowButton(MainTheme.gray7),
@@ -304,7 +342,7 @@ class _RegisterParent extends State<RegisterParent> {
                           child: ElevatedButton(
 
                             onPressed: (){
-
+                              phoneMessage = null;
                               checkPhone();
                             },
                             style: MainTheme.followButton(),
@@ -313,6 +351,15 @@ class _RegisterParent extends State<RegisterParent> {
                         )
                       ]
                   ),
+                  phoneMessage != null ?Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(phoneMessage!, style: MainTheme.caption2(Color(0xfff24147)),),
+                    ],
+                  ): SizedBox(height: 0,),
                   authStatus == AuthStatus.auth ?Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -371,6 +418,7 @@ class _RegisterParent extends State<RegisterParent> {
                                 width: 86,
                                 child: ElevatedButton(
                                   onPressed: (){
+                                    phoneMessage = null;
 
                                     if(te_auth.text == authNum){
                                       _timer!.cancel();
@@ -432,6 +480,13 @@ class _RegisterParent extends State<RegisterParent> {
                             onChanged: (String value){
                               setState(() {
                                 emailChecked = false;
+                                if(value.isEmpty){
+                                  emailMessage = null;
+                                }else if(RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+                                  emailMessage = null;
+                                }else{
+                                emailMessage = "이메일 형식이 맞지 않아요.";
+                                }
                               });
                             },
                             controller: te_email,
@@ -450,13 +505,11 @@ class _RegisterParent extends State<RegisterParent> {
                             child: ElevatedButton(
                               onPressed: (){
                                 if(te_email.text == ""){
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(MainTheme.snackBar("이메일을 입력해 주세요."));
+                                  emailMessage = "이메일을 입력해주세요.";
                                 }else if(RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
                                   checkEmail();
                                 }else{
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(MainTheme.snackBar("이메일 형식이 아닙니다."));
+                                  emailMessage = "이메일 형식이 맞지 않아요.";
                                 }
                                 checkFormComplete();
                               },
@@ -477,6 +530,16 @@ class _RegisterParent extends State<RegisterParent> {
                     ],
                   ): SizedBox.shrink(),
 
+                  emailMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(emailMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
+                  SizedBox.shrink(),
+
                   (isSocialMember ?? true)?
                   SizedBox.shrink() :
                   Column(
@@ -496,6 +559,25 @@ class _RegisterParent extends State<RegisterParent> {
                                 checkFormComplete();
                               }
                             }, child :TextField(
+                            onChanged: (value){
+                              if(value.isEmpty){
+                                setState(() {
+                                  passwordMessage = null;
+                                });
+                              }else if(value.length < 8){
+                                setState(() {
+                                  passwordMessage = "비밀번호 8자리 이상을 입력해 주세요.";
+                                });
+                              }else if(!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)){
+                                setState(() {
+                                  passwordMessage = "비밀번호 조합이 맞지 않아요.";
+                                });
+                              }else{
+                                setState(() {
+                                  passwordMessage = null;
+                                });
+                              }
+                            },
                             controller: te_password,
                             decoration: MainTheme.inputTextGray("8-16자리 영문, 숫자, 특수문자 조합"),
                             obscureText : true,
@@ -506,7 +588,13 @@ class _RegisterParent extends State<RegisterParent> {
                           ),)
                       ),
 
-                      Container(
+                      passwordMessage != null ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 5,),
+                          Text(passwordMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                        ],
+                      ) :Container(
                         height: 17,
                       ),
                       Text("비밀번호 확인", style: MainTheme.caption1(MainTheme.gray5)),
@@ -520,6 +608,21 @@ class _RegisterParent extends State<RegisterParent> {
                                 checkFormComplete();
                               }
                             }, child :TextField(
+                            onChanged: (value){
+                              if(value.isEmpty){
+                                setState(() {
+                                  passwordCheckMessage = null;
+                                });
+                              }else if(te_password.text != te_password_check.text){
+                                setState(() {
+                                  passwordCheckMessage = "비밀번호가 일치하지 않아요.";
+                                });
+                              }else{
+                                setState(() {
+                                  passwordCheckMessage = null;
+                                });
+                              }
+                            },
                             controller: te_password_check,
                             decoration: MainTheme.inputTextGray("비밀번호를 다시 입력하세요"),
                             obscureText : true,
@@ -533,7 +636,13 @@ class _RegisterParent extends State<RegisterParent> {
                   ),
 
 
-                  Container(
+                  passwordCheckMessage != null ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(passwordCheckMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :Container(
                     height: 17,
                   ),
                   Text("주소", style: MainTheme.caption1(MainTheme.gray5)),
@@ -544,20 +653,34 @@ class _RegisterParent extends State<RegisterParent> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children:[
-                        Expanded(child:
-                        Container(height: 51,
-                          child: Focus(
-                            onFocusChange:(value) {
-                              if(!value){
-                                checkFormComplete();
+                        Expanded(child:GestureDetector(
+                            onTap: ()async {
+                              addressMessage = null;
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              KopoModel model = await Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) => RemediKopo(),
+                                ),
+                              );
+                              if(model != null){
+                                te_address.text = model.address!;
                               }
-                            }, child :TextField(
-                            controller: te_address,
-                            enabled: false,
-                            decoration: MainTheme.inputTextGray("주소를 검색하세요"),
-                            style: MainTheme.body5(MainTheme.gray7),
-                          ),)
-                        )
+
+                              checkFormComplete();
+                            },
+                            child:
+                            Container(height: 51,
+                                child: TextField(
+                                  controller: te_address,
+                                  enabled: false,
+                                  decoration: MainTheme.inputTextGray("주소를 검색하세요"),
+                                  style: MainTheme.body5(MainTheme.gray7),
+
+                                )
+                            )
+                  )
+
                         ),
                         Container(
                           width: 10,
@@ -566,6 +689,7 @@ class _RegisterParent extends State<RegisterParent> {
                             width: 86,
                             child: ElevatedButton(
                               onPressed: ()async {
+                                addressMessage = null;
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 KopoModel model = await Navigator.push(
                                   context,
@@ -599,6 +723,14 @@ class _RegisterParent extends State<RegisterParent> {
                       style: MainTheme.body5(MainTheme.gray7),
                     ),
                   ),),
+                  addressMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(addressMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
                   Container(
                     height: 17,
                   ),
@@ -793,10 +925,8 @@ class _RegisterParent extends State<RegisterParent> {
                       onTap: (){
                         setState(() {
                           agreeAll = !agreeAll;
-                          if(agreeAll){
-                            for(int i = 0; i<checkValues.length; i++){
-                              checkValues[i] = agreeAll;
-                            }
+                          for(int i = 0; i<checkValues.length; i++){
+                            checkValues[i] = agreeAll;
                           }
                         });
                         checkFormComplete();
@@ -846,8 +976,38 @@ class _RegisterParent extends State<RegisterParent> {
             child: ElevatedButton(
                 onPressed: formComplete ? (){
                   register();
-                  } : null,
-                style: MainTheme.primaryButton(MainTheme.mainColor),
+                  } : (){
+
+                  setState(() {
+                    if(te_name.text.isEmpty){
+                      nameMessage = "이름을 입력해주세요.";
+                    }
+                    if(te_birth.text.isEmpty && te_sex.text.isEmpty){
+                      birthMessage = "생년월일을 입력해주세요.";
+                    }
+                    if(authStatus != AuthStatus.auth){
+                      phoneMessage = "휴대폰 인증을 입력해주세요.";
+                    }
+                    if(te_email.text.isEmpty){
+                      emailMessage = "이메일을 입력해주세요.";
+                    }
+                    if(!emailChecked){
+                      emailMessage = "이메일 중복확인을 해주세요.";
+                    }
+                    if(te_password.text.isEmpty){
+                      passwordMessage = "비밀번호를 입력해주세요.";
+                    }
+                    if(te_password_check.text.isEmpty){
+                      passwordCheckMessage = "비밀번호를 다시 입력하세요.";
+                    }
+                    if(te_address.text.isEmpty){
+                      addressMessage = "주소를 입력해주세요.";
+                    }
+                  });
+
+
+                },
+                style: MainTheme.primaryButton(formComplete ? MainTheme.mainColor : MainTheme.gray4),
                 child: Text("회원가입", style: MainTheme.body4(Colors.white),)),
           )
 
@@ -868,6 +1028,7 @@ class _RegisterParent extends State<RegisterParent> {
       if(_seconds <= 0){
         setState(() {
           authStatus = AuthStatus.notAuth;
+          phoneMessage = "인증 시간이 지났어요. 인증을 다시 시도하세요.";
           _timer!.cancel();
         });
 
@@ -890,6 +1051,7 @@ class _RegisterParent extends State<RegisterParent> {
 
   Future<void> checkEmail() async {
 
+
     Map<String, dynamic> request = new Map<String, Object>();
     request["email"] = te_email.text;
     var response = await apiRequestPost(urlCheckEmail,request);
@@ -900,30 +1062,35 @@ class _RegisterParent extends State<RegisterParent> {
           checkFormComplete();
         });
       } else{
-        ScaffoldMessenger.of(context)
-            .showSnackBar(MainTheme.snackBar(body["message"]));
+        setState(() {
+          emailMessage = "이미 가입한 이메일이에요.";
+        });
+
       }
   }
 
   Future<void> checkPhone() async {
 
     if(te_phone.text == ""){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("전화번호를 입력해 주세요."));
+      setState(() {
+        phoneMessage = "휴대폰 번호를 입력해주세요.";
+      });
       return;
     }else if(te_phone.text.length < 13){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("올바르지 않은 전화번호입니다."));
+      setState(() {
+        phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
+      });
       return;
     }
+    phoneMessage = null;
 
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
     var response = await apiRequestPost(urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
       te_auth.clear();
       authNum = body["data"]["randomNumber"];
       authFocusNode.unfocus();
@@ -942,56 +1109,113 @@ class _RegisterParent extends State<RegisterParent> {
 
   void checkFormComplete(){
     if(
-
     te_name.text.isEmpty ||
-    te_birth.text.length < 6 ||
+    te_birth.text.length < 8 ||
     te_sex.text.isEmpty ||
     authStatus != AuthStatus.auth ||
     !emailChecked ||
     te_password.text.isEmpty ||
     te_password.text != te_password_check.text ||
     te_address.text.isEmpty ||
-    te_address_detail.text.isEmpty ||
     !checkValues[0] ||
     !checkValues[1] ||
     !checkValues[2] ||
-    !checkValues[3]
+    !checkValues[3] ||
+    (!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
+        int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)) ||
+    int.parse(te_sex.text.substring(0,1)) >= 5 ||
+    (te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20") ||
+    (te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3) ||
+    (te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3)||
+        !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)
     ){
       setState(() {
         formComplete = false;
       });
     }else{
-
       setState(() {
         formComplete = true;
       });
-
-
     }
   }
 
+  void setBirthMessage(){
+    if(te_birth.text.isEmpty && te_sex.text.isEmpty){
+      birthMessage = null;
+      setState(() {
+
+      });
+      return;
+    }
+
+
+    if(te_birth.text.length < 8 || te_sex.text.isEmpty){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
+        int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(int.parse(te_sex.text.substring(0,1)) >= 5){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+    birthMessage = null;
+    setState(() {
+
+    });
+  }
 
   Future<void> register() async {
 
-    if(!( int.parse(te_birth.text.substring(2,4)) >= 1 && int.parse(te_birth.text.substring(2,4)) <= 12 &&
-        int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
+    // if(!( int.parse(te_birth.text.substring(2,4)) >= 1 && int.parse(te_birth.text.substring(2,4)) <= 12 &&
+    //     int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
+    //
+    //   ScaffoldMessenger.of(context)
+    //       .showSnackBar(MainTheme.snackBar("올바르지 않은 생년월일입니다."));
+    //
+    //   return;
+    //
+    // }
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("올바르지 않은 생년월일입니다."));
 
-      return;
-
-    }
-
-    if(!( te_password.text.length >= 8 &&
-        RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text))){
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("비밀번호는 8-16자리 영문, 숫자, 특수문자를 포함해야 합니다."));
-
-      return;
-
-    }
 
     if(apiProcess){
       return;
@@ -1036,7 +1260,7 @@ class _RegisterParent extends State<RegisterParent> {
       formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
       formMap["address"] = te_address.text;
       formMap["addressDetail"] = te_address_detail.text;
-      formMap["birth"] = "${te_birth.text.substring(0,2)}/${te_birth.text.substring(2,4)}/${te_birth.text.substring(4)}";
+      formMap["birth"] = "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
       formMap["agreeToSms"] = checkValues[4];
       formMap["agreeToService"] = checkValues[5];
       formMap["agreeToAd"] = checkValues[6];

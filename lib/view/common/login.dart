@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,7 +27,8 @@ class _Login extends State<Login> {
   bool autoLogin = false;
   TextEditingController te_email = TextEditingController();
   TextEditingController te_password = TextEditingController();
-
+  String? emailMessage;
+  String? passwordMessage;
   @override
   void initState() {
     // TODO: implement initState
@@ -71,13 +73,38 @@ class _Login extends State<Login> {
                   ),
                   Container(height: 51,
                     child: TextField(
+                      onChanged: (String value){
+                        if(value.isEmpty){
+                          setState(() {
+                            emailMessage = null;
+                          });
+                        }else if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+                          setState(() {
+                            emailMessage = "이메일 형식이 맞지 않아요.";
+                          });
+                        }else{
+                          setState(() {
+                            emailMessage = null;
+                          });
+                        }
+
+
+                      },
                       decoration: MainTheme.inputTextGray("아이디를 입력해주세요"),
                       controller: te_email,
                       keyboardType:  TextInputType.emailAddress,
                       style: MainTheme.body5(MainTheme.gray7),
-                    ),
-                  ),
-                  Container(
+                    ),),
+                  emailMessage != null?
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 5,),
+                          Text(emailMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                        ],
+                      )
+                      
+                  :Container(
                     height: 17,
                   ),
                   Text("비밀번호", style: MainTheme.caption1(MainTheme.gray5)),
@@ -86,13 +113,27 @@ class _Login extends State<Login> {
                   ),
                   Container(height: 51,
                     child: TextField(
+                      onChanged: (String value){
+                          setState(() {
+                            passwordMessage = null;
+                          });
+                      },
                       decoration: MainTheme.inputTextGray("비밀번호를 입력해주세요"),
                       obscureText : true,
                       controller: te_password,
                       style: MainTheme.body5(MainTheme.gray7),
                     ),
                   ),
-                  Container(
+                  passwordMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(passwordMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  )
+
+                      :Container(
                     height: 13,
                   ),
                   GestureDetector(
@@ -175,40 +216,39 @@ class _Login extends State<Login> {
 
 
                         }, child:  SvgPicture.asset("assets/icons/kakao.svg",width: 64, height: 64,),),
-                        //foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS?
-                        Row(
-                          children: [
-                            Container(width: 11,),
-                            GestureDetector(onTap: () async {
-
-                              if(await TheAppleSignIn.isAvailable()) {
-                              // 2. 로그인 수행(FaceId 또는 Password 입력)
-                              final AuthorizationResult result = await TheAppleSignIn.performRequests([
-                              const AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
-                              ]);
-
-                              // 3. 로그인 권한 여부 체크
-                              switch(result.status) {
-                              // 3-1. 로그인 권한을 부여받은 경우
-                              case AuthorizationStatus.authorized:
-                              print('로그인 결과 : ${result.credential!.fullName}\n ${result.credential!.email} ');
-                              break;
-                              // 3-2. 오류가 발생한 경우
-                              case AuthorizationStatus.error:
-                              print('애플 로그인 오류 : ${result.error!.localizedDescription}');
-                              break;
-                              // 3-3. 유저가 직접 취소한 경우
-                              case AuthorizationStatus.cancelled:
-                              print("취소!!!");
-                              break;
-                              }
-                              } else {
-                              print('애플 로그인을 지원하지 않는 기기입니다.');
-                              }
-
-                            }, child:  SvgPicture.asset("assets/icons/apple.svg",width: 64, height: 64,),),
-                          ],
-                        )
+                        // Row(
+                        //   children: [
+                        //     Container(width: 11,),
+                        //     GestureDetector(onTap: () async {
+                        //
+                        //       if(await TheAppleSignIn.isAvailable()) {
+                        //       // 2. 로그인 수행(FaceId 또는 Password 입력)
+                        //       final AuthorizationResult result = await TheAppleSignIn.performRequests([
+                        //       const AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
+                        //       ]);
+                        //
+                        //       // 3. 로그인 권한 여부 체크
+                        //       switch(result.status) {
+                        //       // 3-1. 로그인 권한을 부여받은 경우
+                        //       case AuthorizationStatus.authorized:
+                        //       print('로그인 결과 : ${result.credential!.fullName}\n ${result.credential!.email} ');
+                        //       break;
+                        //       // 3-2. 오류가 발생한 경우
+                        //       case AuthorizationStatus.error:
+                        //       print('애플 로그인 오류 : ${result.error!.localizedDescription}');
+                        //       break;
+                        //       // 3-3. 유저가 직접 취소한 경우
+                        //       case AuthorizationStatus.cancelled:
+                        //       print("취소!!!");
+                        //       break;
+                        //       }
+                        //       } else {
+                        //       print('애플 로그인을 지원하지 않는 기기입니다.');
+                        //       }
+                        //
+                        //     }, child:  SvgPicture.asset("assets/icons/apple.svg",width: 64, height: 64,),),
+                        //   ],
+                        // ): SizedBox.shrink()
                       ],
                     ),
                   ),
@@ -231,23 +271,29 @@ class _Login extends State<Login> {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     if(te_email.text == ""){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("이메일을 입력해 주세요."));
+      setState(() {
+        emailMessage = "이메일을 입력해 주세요.";
+      });
       return;
     }
 
     if(te_password.text == ""){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("비밀번호를 입력해 주세요."));
+      setState(() {
+        passwordMessage = "비밀번호를 입력해 주세요.";
+      });
       return;
     }
 
     if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("올바르지 않은 이메일 형식입니다."));
+      setState(() {
+        emailMessage = "이메일 형식이 맞지 않아요.";
+      });
       return;
     }
-
+    setState(() {
+      passwordMessage = null;
+      emailMessage = null;
+    });
 
 
     Map<String, dynamic> request = new Map<String, Object>();
@@ -289,9 +335,20 @@ class _Login extends State<Login> {
           }
 
         }
-      }else{
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar(body["message"]));
+      }else if(response.statusCode == 404){
+        setState(() {
+          emailMessage = "등록되지 않은 이메일이에요.";
+        });
+      }else if(response.statusCode == 401){
+        if(body["message"].contains("비활성화")){
+          setState(() {
+            emailMessage = "활동하지 않는 계정이에요. 오렌지스쿨에 문의하세요.";
+          });
+        }else{
+          setState(() {
+            passwordMessage = "비밀번호가 맞지 않아요.";
+          });
+        }
       }
 
   }
@@ -365,14 +422,17 @@ class _Login extends State<Login> {
   }
 
   Future<bool> permission() async {
-    Map<Permission, PermissionStatus> status =
-    await [Permission.location, Permission.notification].request(); // [] 권한배열에 권한을 작성
-
-    if (await Permission.location.isGranted) {
-      return Future.value(true);
-    } else {
-      return Future.value(false);
-    }
+    // Map<Permission, PermissionStatus> status =
+    // await [Permission.location, Permission.notification].request(); // [] 권한배열에 권한을 작성
+    //
+    // if (await Permission.location.isGranted) {
+    //   return Future.value(true);
+    // } else {
+    //   return Future.value(false);
+    // }
+    LocationPermission permission;
+    permission = await Geolocator.requestPermission();
+    return true;
   }
 
   Future<bool> checkEmail(String? email) async {

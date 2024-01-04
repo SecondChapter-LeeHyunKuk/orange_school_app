@@ -80,9 +80,15 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
           Container(
             height: 45,
             child: TextField(
+              onEditingComplete: (){
+                focusNode.unfocus();
+                setState(() {
+                  getFuture = searchSchool();
+                });
+              },
               controller: textEditingController,
+              textInputAction: TextInputAction.done,
               focusNode: focusNode,
-              textInputAction: TextInputAction.next,
               textAlignVertical: TextAlignVertical.center,
               style: MainTheme.body5(MainTheme.gray7),
               decoration : InputDecoration(
@@ -121,7 +127,7 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
               builder: (BuildContext context, AsyncSnapshot snapshot){
                 if(getFuture == null){
                   return SizedBox.shrink();
-                }else if (!snapshot.hasData){
+                }else if (snapshot.connectionState != ConnectionState.done){
                   return MainTheme.LoadingPage(context);
                 }else if(snapshot.data.statusCode == 200){
                   
@@ -138,7 +144,7 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
                           itemBuilder: (context, index) => GestureDetector(
                             onTap: () {
                               Navigator.pop(context,
-                                  {"schoolNm": data[index]["SCHUL_NM"]}
+                                  {"schoolNm": data[index]["SCHUL_NM"], "schoolCode": data[index]["SCHUL_KND_SC_NM"] == "초등학교"? data[index]["ATPT_OFCDC_SC_CODE"] + ":" + data[index]["SD_SCHUL_CODE"] : null}
                               );
                             },
                             child: Container(

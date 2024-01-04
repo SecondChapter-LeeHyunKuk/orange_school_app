@@ -346,6 +346,11 @@ class MainTheme {
     return TextStyle(fontWeight: FontWeight.w600, fontFamily: "SUIT", fontSize: 10, height:1.4, color: color, letterSpacing: 0);
   }
 
+  static TextStyle helper(Color color){
+    return TextStyle(fontWeight: FontWeight.w500, fontFamily: "Pretendard", fontSize: 13, height:1.384, color: color, letterSpacing: 0);
+  }
+
+
   static BoxDecoration roundBox(Color color){
     return BoxDecoration(
       borderRadius: BorderRadius.circular(12),
@@ -392,4 +397,49 @@ class MainTheme {
     );
   }
 
+}
+
+
+class DashedLineVerticalPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    double dashHeight = 3, dashSpace = 3, startY = 0;
+    final paint = Paint()
+      ..color = Color(0xffDBE2E8)
+      ..strokeWidth = 0.5;
+    while (startY < size.height) {
+      if((startY + dashHeight) > size.height){
+        canvas.drawLine(Offset(0, startY), Offset(0, size.height), paint);
+        break;
+      }else{
+        canvas.drawLine(Offset(0, startY), Offset(0, startY + dashHeight), paint);
+        startY += dashHeight + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class DashedLineHorizontalPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    double dashHeight = 3, dashSpace = 3, startY = 0;
+    final paint = Paint()
+      ..color = Color(0xffDBE2E8)
+      ..strokeWidth = 0.5;
+    while (startY < size.width) {
+      if((startY + dashHeight) > size.width){
+        canvas.drawLine(Offset(startY, 0), Offset(startY + dashHeight, 0), paint);
+        break;
+      }else{
+        canvas.drawLine(Offset(startY, 0), Offset(startY + dashHeight, 0), paint);
+        startY += dashHeight + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

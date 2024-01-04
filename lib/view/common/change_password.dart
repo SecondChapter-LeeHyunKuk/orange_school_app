@@ -21,6 +21,8 @@ class _ChangePassword extends State<ChangePassword> {
   bool formComplete = false;
   TextEditingController te_password = TextEditingController();
   TextEditingController te_password_check = TextEditingController();
+  String? passwordMessage;
+  String? passwordCheckMessage;
   @override
   void initState() {
     // TODO: implement initState
@@ -70,6 +72,25 @@ class _ChangePassword extends State<ChangePassword> {
                             checkFormComplete();
                           }
                         }, child :TextField(
+                        onChanged: (value){
+                          if(value.isEmpty){
+                            setState(() {
+                              passwordMessage = null;
+                            });
+                          }else if(value.length < 8){
+                            setState(() {
+                              passwordMessage = "비밀번호 8자리 이상을 입력해 주세요.";
+                            });
+                          }else if(!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)){
+                            setState(() {
+                              passwordMessage = "비밀번호 조합이 맞지 않아요.";
+                            });
+                          }else{
+                            setState(() {
+                              passwordMessage = null;
+                            });
+                          }
+                        },
                         controller: te_password,
                         decoration: MainTheme.inputTextGray("비밀번호를 입력하세요"),
                         obscureText : true,
@@ -80,7 +101,13 @@ class _ChangePassword extends State<ChangePassword> {
                       ),)
                   ),
 
-                  Container(
+                  passwordMessage != null ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(passwordMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :Container(
                     height: 17,
                   ),
                   Text("비밀번호 재입력", style: MainTheme.caption1(MainTheme.gray5)),
@@ -94,6 +121,21 @@ class _ChangePassword extends State<ChangePassword> {
                             checkFormComplete();
                           }
                         }, child :TextField(
+                        onChanged: (value){
+                          if(value.isEmpty){
+                            setState(() {
+                              passwordCheckMessage = null;
+                            });
+                          }else if(te_password.text != te_password_check.text){
+                            setState(() {
+                              passwordCheckMessage = "비밀번호가 일치하지 않아요.";
+                            });
+                          }else{
+                            setState(() {
+                              passwordCheckMessage = null;
+                            });
+                          }
+                        },
                         controller: te_password_check,
                         decoration: MainTheme.inputTextGray("비밀번호를 다시 입력하세요"),
                         obscureText : true,
@@ -102,6 +144,15 @@ class _ChangePassword extends State<ChangePassword> {
                         ],
                         style: MainTheme.body5(MainTheme.gray7),
                       ),)
+                  ),
+                  passwordCheckMessage != null ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(passwordCheckMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :Container(
+                    height: 17,
                   ),
 
                 ],

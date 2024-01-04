@@ -122,8 +122,8 @@ class _SearchEmailResult extends State<SearchEmailResult> {
       String replacedString = input.replaceRange(atIndex - 3, atIndex, '●●●');
       return replacedString;
     } else {
-      // @가 없거나 @ 앞에 3문자가 없는 경우에는 그대로 반환
-      return input;
+      String replacedString = input.replaceRange(atIndex - 2, atIndex, '●●');
+      return replacedString;
     }
   }
 

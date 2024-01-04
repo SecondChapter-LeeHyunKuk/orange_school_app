@@ -154,7 +154,7 @@ class _ChildBoard extends State<ChildBoard> {
   }
 
   Future<Response> getFirst() async {
-    var response = await apiRequestGet(urlSearch,  {"size" : "20","sort" : ["id,ASC"],"pickType" : "CHILD"});
+    var response = await apiRequestGet(urlSearch,  {"size" : "20","sort" : ["number,ASC"],"pickType" : "CHILD"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -166,7 +166,7 @@ class _ChildBoard extends State<ChildBoard> {
   }
 
   Future<void> scroll() async {
-    var response = await apiRequestGet(urlSearch,  {"size" : "20", "sort" : ["id,ASC"],"pickType" : "CHILD", "page" : (index + 1).toString()});
+    var response = await apiRequestGet(urlSearch,  {"size" : "20", "sort" : ["number,ASC"],"pickType" : "CHILD", "page" : (index + 1).toString()});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

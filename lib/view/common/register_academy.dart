@@ -118,7 +118,7 @@ class _RegisterAcademy extends State<RegisterAcademy> {
                             width: 86,
                             child: ElevatedButton(
                               onPressed: ()async {
-
+                                FocusManager.instance.primaryFocus?.unfocus();
                                 KopoModel model = await Navigator.push(
                                   context,
                                   CupertinoPageRoute(
@@ -174,8 +174,7 @@ class _RegisterAcademy extends State<RegisterAcademy> {
   void checkFormComplete(){
     if(
         te_name.text.isEmpty ||
-        te_address.text.isEmpty ||
-        te_address_detail.text.isEmpty
+        te_address.text.isEmpty
     ){
       setState(() {
         formComplete = false;

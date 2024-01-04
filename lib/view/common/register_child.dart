@@ -48,6 +48,16 @@ class _RegisterChild extends State<RegisterChild> {
   TextEditingController te_nickname = TextEditingController();
   TextEditingController te_intro = TextEditingController();
 
+  String? nameMessage;
+  String? birthMessage;
+  String? phoneMessage;
+  String? emailMessage;
+  String? passwordMessage;
+  String? passwordCheckMessage;
+  String? addressMessage;
+  String? nickNameMessage;
+  String? introMessage;
+
   @override
   void initState(){
     // TODO: implement initState
@@ -59,14 +69,14 @@ class _RegisterChild extends State<RegisterChild> {
   Widget build(BuildContext context) {
     //final parentInfo = ModalRoute.of(context)?.settings.arguments as Map?;
     return Scaffold(
-        appBar: AppBar(
-          scrolledUnderElevation: 0.0,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_rounded, color: MainTheme.gray7),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded, color: MainTheme.gray7),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -103,6 +113,11 @@ class _RegisterChild extends State<RegisterChild> {
                             checkFormComplete();
                           }
                         }, child :TextField(
+                        onChanged: (value){
+                          setState(() {
+                            nameMessage = null;
+                          });
+                        },
                         controller: te_name,
                         decoration: MainTheme.inputTextGray("이름을 입력하세요"),
                         style: MainTheme.body5(MainTheme.gray7),
@@ -112,6 +127,14 @@ class _RegisterChild extends State<RegisterChild> {
                         ],
                       ),)
                   ),
+                  nameMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(nameMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
                   Container(
                     height: 17,
                   ),
@@ -132,13 +155,16 @@ class _RegisterChild extends State<RegisterChild> {
                                 }
                               },
                               child: TextFormField(
+                                onChanged: (value){
+                                  setBirthMessage();
+                                },
                                 controller: te_birth,
-                                decoration: MainTheme.inputTextGray("YYMMDD"),
+                                decoration: MainTheme.inputTextGray("YYYYMMDD"),
                                 style: MainTheme.body5(MainTheme.gray7),
                                 keyboardType:  TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly, //숫자만!
-                                  LengthLimitingTextInputFormatter(6)
+                                  LengthLimitingTextInputFormatter(8)
                                 ],
                               ),
                             )
@@ -159,6 +185,9 @@ class _RegisterChild extends State<RegisterChild> {
                                   checkFormComplete();
                                 }
                               }, child :TextField(
+                              onChanged: (value){
+                                setBirthMessage();
+                              },
                               controller: te_sex,
                               onTap: (){
                                 if(te_sex.text != ""){
@@ -180,8 +209,18 @@ class _RegisterChild extends State<RegisterChild> {
                       ]
 
                   ),
+
+                  birthMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(birthMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
                   Container(
                     height: 17,
+
                   ),
                   Text("이메일", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
@@ -202,6 +241,13 @@ class _RegisterChild extends State<RegisterChild> {
                               onChanged: (String value){
                                 setState(() {
                                   emailChecked = false;
+                                  if(value.isEmpty){
+                                    emailMessage = null;
+                                  }else if(RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+                                    emailMessage = null;
+                                  }else{
+                                    emailMessage = "이메일 형식이 맞지 않아요.";
+                                  }
                                 });
                               },
                               controller: te_email,
@@ -219,13 +265,11 @@ class _RegisterChild extends State<RegisterChild> {
                             child: ElevatedButton(
                               onPressed: (){
                                 if(te_email.text == ""){
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(MainTheme.snackBar("이메일을 입력해 주세요."));
+                                  emailMessage = "이메일을 입력해주세요.";
                                 }else if(RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
                                   checkEmail();
                                 }else{
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(MainTheme.snackBar("이메일 형식이 아닙니다."));
+                                  emailMessage = "이메일 형식이 맞지 않아요.";
                                 }
                                 checkFormComplete();
                               },
@@ -245,55 +289,116 @@ class _RegisterChild extends State<RegisterChild> {
                       Text("사용 가능한 이메일입니다.", style: MainTheme.caption2(Color(0xff547cf1)),),
                     ],
                   ): SizedBox.shrink(),
-                  Container(
-                    height: 17,
-                  ),
-                  Text("비밀번호", style: MainTheme.caption1(MainTheme.gray5)),
-                  Container(
-                    height: 4,
-                  ),
-                  Container(height: 51,
-                      child: Focus(
-                        onFocusChange:(value) {
-                          if(!value){
-                            checkFormComplete();
-                          }
-                        }, child :TextField(
-                        controller: te_password,
-                        decoration: MainTheme.inputTextGray("8-16자리 영문, 숫자, 특수문자 조합"),
-                        obscureText : true,
-                        style: MainTheme.body5(MainTheme.gray7),
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(16)
+
+                  emailMessage != null?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(emailMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :
+                  SizedBox.shrink(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 17,
+                      ),
+                      Text("비밀번호", style: MainTheme.caption1(MainTheme.gray5)),
+                      Container(
+                        height: 4,
+                      ),
+                      Container(height: 51,
+                          child: Focus(
+                            onFocusChange:(value) {
+                              if(!value){
+                                checkFormComplete();
+                              }
+                            }, child :TextField(
+                            onChanged: (value){
+                              if(value.isEmpty){
+                                setState(() {
+                                  passwordMessage = null;
+                                });
+                              }else if(value.length < 8){
+                                setState(() {
+                                  passwordMessage = "비밀번호 8자리 이상을 입력해 주세요.";
+                                });
+                              }else if(!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)){
+                                setState(() {
+                                  passwordMessage = "비밀번호 조합이 맞지 않아요.";
+                                });
+                              }else{
+                                setState(() {
+                                  passwordMessage = null;
+                                });
+                              }
+                            },
+                            controller: te_password,
+                            decoration: MainTheme.inputTextGray("8-16자리 영문, 숫자, 특수문자 조합"),
+                            obscureText : true,
+                            style: MainTheme.body5(MainTheme.gray7),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(16)
+                            ],
+                          ),)
+                      ),
+
+                      passwordMessage != null ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 5,),
+                          Text(passwordMessage!, style: MainTheme.helper(Color(0xfff24147)),)
                         ],
-                      ),)
+                      ) :Container(
+                        height: 17,
+                      ),
+                      Text("비밀번호 확인", style: MainTheme.caption1(MainTheme.gray5)),
+                      Container(
+                        height: 4,
+                      ),
+                      Container(height: 51,
+                          child: Focus(
+                            onFocusChange:(value) {
+                              if(!value){
+                                checkFormComplete();
+                              }
+                            }, child :TextField(
+                            onChanged: (value){
+                              if(value.isEmpty){
+                                setState(() {
+                                  passwordCheckMessage = null;
+                                });
+                              }else if(te_password.text != te_password_check.text){
+                                setState(() {
+                                  passwordCheckMessage = "비밀번호가 일치하지 않아요.";
+                                });
+                              }else{
+                                setState(() {
+                                  passwordCheckMessage = null;
+                                });
+                              }
+                            },
+                            controller: te_password_check,
+                            decoration: MainTheme.inputTextGray("비밀번호를 다시 입력하세요"),
+                            obscureText : true,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(16)
+                            ],
+                            style: MainTheme.body5(MainTheme.gray7),
+                          ),)
+                      ),
+                    ],
                   ),
 
-                  Container(
-                    height: 17,
-                  ),
-                  Text("비밀번호 확인", style: MainTheme.caption1(MainTheme.gray5)),
-                  Container(
-                    height: 4,
-                  ),
-                  Container(height: 51,
-                      child: Focus(
-                        onFocusChange:(value) {
-                          if(!value){
-                            checkFormComplete();
-                          }
-                        }, child :TextField(
-                        controller: te_password_check,
-                        decoration: MainTheme.inputTextGray("비밀번호를 다시 입력하세요"),
-                        obscureText : true,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(16)
-                        ],
-                        style: MainTheme.body5(MainTheme.gray7),
-                      ),)
-                  ),
-
-                  Container(
+                  passwordCheckMessage != null ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(passwordCheckMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :Container(
                     height: 17,
                   ),
                   Text("주소", style: MainTheme.caption1(MainTheme.gray5)),
@@ -512,7 +617,13 @@ class _RegisterChild extends State<RegisterChild> {
                         ],
                       ),)
                   ),
-                  Container(
+                  nickNameMessage != null ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(nickNameMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                    ],
+                  ) :Container(
                     height: 17,
                   ),
                   Text("소개글", style: MainTheme.caption1(MainTheme.gray5)),
@@ -534,7 +645,16 @@ class _RegisterChild extends State<RegisterChild> {
                         ],
                       ),)
                   ),
-                  Container(height: 50,)
+                  introMessage != null ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Text(introMessage!, style: MainTheme.helper(Color(0xfff24147)),),
+                      SizedBox(height: 30,),
+                    ],
+                  ) :Container(
+                    height: 50,
+                  ),
 
                 ],
               ),
@@ -543,41 +663,71 @@ class _RegisterChild extends State<RegisterChild> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-        child:
-            SizedBox(
-              height: 49,
-              child:         Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children:[
-                    Expanded(child:
-                    Container(height: 49,
-                        child: ElevatedButton(onPressed: (){
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+          child:
+          SizedBox(
+            height: 49,
+            child:         Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[
+                  Expanded(child:
+                  Container(height: 49,
+                      child: ElevatedButton(onPressed: (){
 
-                          Navigator.of(context).pushReplacementNamed('/registerComplete');
-                        },
-                            style: MainTheme.primaryButton(MainTheme.gray4),
-                            child: Text("아이 등록 나중에하기", style: MainTheme.body4(Colors.white),))
-                    )
-                    ),
-                    Container(
-                      width: 15,
-                    ),
-                    Expanded(child:
-                    Container(height: 49,
-                        child: ElevatedButton(
-                            onPressed: formComplete ? (){
-                              register();
-                            } : null,
-                            style: MainTheme.primaryButton(MainTheme.mainColor),
-                            child: Text("아이 계정 생성하기", style: MainTheme.body4(Colors.white),))
-                    )
-                    ),
-                  ]
+                        Navigator.of(context).pushReplacementNamed('/registerComplete');
+                      },
+                          style: MainTheme.primaryButton(MainTheme.gray4),
+                          child: Text("아이 등록 나중에하기", style: MainTheme.body4(Colors.white),))
+                  )
+                  ),
+                  Container(
+                    width: 15,
+                  ),
+                  Expanded(child:
+                  Container(height: 49,
+                      child: ElevatedButton(
+                          onPressed: formComplete ? (){
+                            register();
+                          } : (){
 
-              ),
-            )
+                            setState(() {
+                              if(te_name.text.isEmpty){
+                                nameMessage = "이름을 입력해주세요.";
+                              }
+                              if(te_birth.text.isEmpty && te_sex.text.isEmpty){
+                                birthMessage = "생년월일을 입력해주세요.";
+                              }
+                              if(te_email.text.isEmpty){
+                                emailMessage = "이메일을 입력해주세요.";
+                              }
+                              if(!emailChecked){
+                                emailMessage = "이메일 중복확인을 해주세요.";
+                              }
+                              if(te_password.text.isEmpty){
+                                passwordMessage = "비밀번호를 입력해주세요.";
+                              }
+                              if(te_password_check.text.isEmpty){
+                                passwordCheckMessage = "비밀번호를 다시 입력하세요.";
+                              }
+                              if(te_nickname.text.isEmpty){
+                                nickNameMessage = "닉네임을 입력해주세요";
+                              }
+                              if(te_intro.text.isEmpty){
+                                introMessage = "소개글을 입력해주세요.";
+                              }
+                            });
+
+
+                          },
+                          style: MainTheme.primaryButton(formComplete ? MainTheme.mainColor : MainTheme.gray4),
+                          child: Text("아이 계정 생성하기", style: MainTheme.body4(Colors.white),))
+                  )
+                  ),
+                ]
+
+            ),
+          )
 
       ),
     );
@@ -615,7 +765,14 @@ class _RegisterChild extends State<RegisterChild> {
         te_password.text.isEmpty ||
         te_password.text != te_password_check.text ||
         te_nickname.text.isEmpty ||
-        te_intro.text.isEmpty
+        te_intro.text.isEmpty ||
+        (!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
+            int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)) ||
+        int.parse(te_sex.text.substring(0,1)) >= 5 ||
+        (te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20") ||
+        (te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3) ||
+        (te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3) ||
+        !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)
     ){
       setState(() {
         formComplete = false;
@@ -624,6 +781,8 @@ class _RegisterChild extends State<RegisterChild> {
       setState(() {
         formComplete = true;
       });
+
+
     }
   }
 
@@ -635,27 +794,6 @@ class _RegisterChild extends State<RegisterChild> {
   }
 
   Future<void> register() async {
-
-    if(!( int.parse(te_birth.text.substring(2,4)) >= 1 && int.parse(te_birth.text.substring(2,4)) <= 12 &&
-        int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("올바르지 않은 생년월일입니다."));
-
-      return;
-
-    }
-
-    if(!( te_password.text.length >= 8 &&
-        RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text))){
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("비밀번호는 8-16자리 영문, 숫자, 특수문자를 포함해야 합니다."));
-
-      return;
-
-    }
-
 
     MultipartFile? file;
     if (images.length > 0) {
@@ -676,7 +814,7 @@ class _RegisterChild extends State<RegisterChild> {
     formMap["name"] = te_name.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
-    formMap["birth"] = "${te_birth.text.substring(0,2)}/${te_birth.text.substring(2,4)}/${te_birth.text.substring(4)}";
+    formMap["birth"] = "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
     formMap["pushToken"] = null;
     formMap["nickName"] = te_nickname.text;
     formMap["intro"] = te_intro.text;
@@ -687,5 +825,67 @@ class _RegisterChild extends State<RegisterChild> {
 
     Navigator.of(context).pushNamed("/registerSchool", arguments: formMap);
   }
+  void setBirthMessage(){
+    if(te_birth.text.isEmpty && te_sex.text.isEmpty){
+      birthMessage = null;
+      setState(() {
 
+      });
+      return;
+    }
+
+
+    if(te_birth.text.length < 8 || te_sex.text.isEmpty){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
+        int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(int.parse(te_sex.text.substring(0,1)) >= 5){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+
+    if(te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3){
+      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      setState(() {
+
+      });
+      return;
+    }
+    birthMessage = null;
+    setState(() {
+
+    });
+  }
 }

@@ -170,7 +170,7 @@ class _PaymentInfo extends State<PaymentInfo> {
                                   ),
                                   Container(height: 19,),
 
-                                  map["payCycle"] == null ?
+                                  map["payCycle"] == "NONE" ?
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
@@ -345,7 +345,7 @@ class _PaymentInfo extends State<PaymentInfo> {
                                           ),
                                           padding: EdgeInsets.symmetric(horizontal: 16),
                                           child: Text(
-                                            (map["payAlarmTypeTitle"]??"") == "" ? "알림 없음" : map["payAlarmTypeTitle"], style: MainTheme.body5(MainTheme.gray7),
+                                            map["usePaymentAlarm"]??false ? "알림 있음" : "알림 없음", style: MainTheme.body5(MainTheme.gray7),
                                           )
                                       ))
                                       )
@@ -396,9 +396,9 @@ class _PaymentInfo extends State<PaymentInfo> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 6,
+                        color: Colors.black.withOpacity(0.05),
+                        spreadRadius: 0,
+                        blurRadius: 10,
                         offset: Offset(0, 4), // changes position of shadow
                       ),
                     ],

@@ -35,6 +35,7 @@ class _RegisterSchool extends State<RegisterSchool> {
 
   bool formComplete = false;
 
+  String? schoolCode;
 
   @override
   void initState() {
@@ -121,6 +122,7 @@ class _RegisterSchool extends State<RegisterSchool> {
                                 },
                               ).then((val) {
                                 if (val != null) {
+                                  schoolCode = val["schoolCode"];
                                   setState(() {te_schoolName.text = val["schoolNm"];
                                   });
                                 }
@@ -265,6 +267,7 @@ class _RegisterSchool extends State<RegisterSchool> {
     formMap!["grade"] = te_grade.text;
     formMap!["schoolClass"] = te_class.text;
     formMap!["classNumber"] = te_number.text;
+    formMap!["schoolCode"] = schoolCode;
 
     var formData = FormData.fromMap(formMap!);
 

@@ -34,6 +34,7 @@ class _ParentUpdateSchool extends State<ParentUpdateSchool> {
   bool formComplete = false;
 
   bool apiProcess = false;
+  String? schoolCode;
   @override
   void initState() {
     // TODO: implement initState
@@ -49,6 +50,7 @@ class _ParentUpdateSchool extends State<ParentUpdateSchool> {
       te_grade.text = childInfo!["grade"]?? "";
       te_class.text = childInfo!["schoolClass"]?? "";
       te_number.text = childInfo!["classNumber"]?? "";
+      schoolCode = childInfo!["schoolCode"]?? "";
       checkFormComplete();
     }
 
@@ -127,6 +129,7 @@ class _ParentUpdateSchool extends State<ParentUpdateSchool> {
                                   },
                                 ).then((val) {
                                   if (val != null) {
+                                    schoolCode = te_schoolName.text = val["schoolCode"];
                                     setState(() {te_schoolName.text = val["schoolNm"];
                                     });
                                   }
@@ -271,6 +274,7 @@ class _ParentUpdateSchool extends State<ParentUpdateSchool> {
     request["grade"] = te_grade.text;
     request["schoolClass"] = te_class.text;
     request["classNumber"] = te_number.text;
+    request["schoolCode"] = schoolCode;
 
     var response = await apiRequestPut("$urlUpdate/" + childInfo!["id"].toString(), request);
     var body =jsonDecode(utf8.decode(response.bodyBytes));

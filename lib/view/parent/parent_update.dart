@@ -521,18 +521,31 @@ class _ParentUpdate extends State<ParentUpdate> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children:[
                                   Expanded(child:
-                                  Container(height: 51,
-                                      child: Focus(
-                                        onFocusChange:(value) {
-                                          if(!value){
-                                            checkFormComplete();
-                                          }
-                                        }, child :TextField(
-                                        controller: te_address,
-                                        enabled: false,
-                                        decoration: MainTheme.inputTextGray("주소를 검색하세요"),
-                                        style: MainTheme.body5(MainTheme.gray7),
-                                      ),)
+                                  GestureDetector(
+                                      onTap: ()async {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                        KopoModel model = await Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) => RemediKopo(),
+                                          ),
+                                        );
+                                        if(model != null){
+                                          te_address.text = model.address!;
+                                        }
+
+                                        checkFormComplete();
+                                      },
+                                      child:
+                                      Container(height: 51,
+                                          child: TextField(
+                                            controller: te_address,
+                                            enabled: false,
+                                            decoration: MainTheme.inputTextGray("주소를 검색하세요"),
+                                            style: MainTheme.body5(MainTheme.gray7),
+
+                                          )
+                                      )
                                   )
                                   ),
                                   Container(
@@ -845,8 +858,8 @@ class _ParentUpdate extends State<ParentUpdate> {
     var response = await apiRequestPost(urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
       te_auth.clear();
       authNum = body["data"]["randomNumber"];
       authFocusNode.unfocus();

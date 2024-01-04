@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
@@ -30,7 +31,6 @@ String urlUpdate = "${dotenv.env['BASE_URL']}user/schedule";
     {"label" : "방과 후 교실", "value" : "CLASS"},
     {"label" : "차량 승하차", "value" : "VEHICLE"},
     {"label" : "일정", "value" : "SCHEDULE"},
-    {"label" : "결제일", "value" : "PAY"},
     {"label" : "기타", "value" : "ETC"},
   ];
 
@@ -77,7 +77,9 @@ class RegisterPlan extends StatefulWidget {
 
   final DateTime initTime;
   final Map? map;
-  const RegisterPlan ({ Key? key, required this.initTime , this.map }): super(key: key);
+  final int? childId;
+  final bool? onday;
+  const RegisterPlan ({ Key? key, required this.initTime , this.map , this.childId, this.onday}): super(key: key);
   @override
   _RegisterPlan createState() => _RegisterPlan();
 }
@@ -109,9 +111,13 @@ class _RegisterPlan extends State<RegisterPlan> {
   FocusNode _searchFocusNode = FocusNode();
   OverlayEntry? _overlayEntry;
   LayerLink _layerLink = LayerLink();
+  
+  String? academyMessage;
 
   //제목 컨트롤러
   TextEditingController te_title = TextEditingController();
+  //제목 포커스
+  FocusNode _titleFocusNode = FocusNode();
   //메모 컨트롤러
   TextEditingController te_note = TextEditingController();
 
@@ -137,13 +143,12 @@ class _RegisterPlan extends State<RegisterPlan> {
   String? planTypeValue;
   int profileIndex = 0;
   int colorIndex = 0;
-  int? selectIndex;
   String? alarmIndex;
   DateTime payDate = DateTime.now();
   String? payCycleIndex;
   DateTime? payCycleEndDate;
   DateTime? payAmount;
-  String? payAlarmIndex;
+  bool payAlarmIndex = false;
 
   bool formComplete = false;
 
@@ -153,14 +158,16 @@ class _RegisterPlan extends State<RegisterPlan> {
 
     startTime = widget.initTime;
     endTime = widget.initTime.add(Duration(hours: 1));
-
+    if(widget.onday != null){
+      onday = true;
+    }
     te_Academy = TextEditingController();
     _searchFocusNode = FocusNode()
       ..addListener(() {
         if (!_searchFocusNode.hasFocus) {
           _removeSearchOverlay();
-          checkFormComplete();
         }
+        checkFormComplete();
       });
     _controller.addListener(() {
 
@@ -197,6 +204,12 @@ class _RegisterPlan extends State<RegisterPlan> {
         }
       }
 
+      if(widget.map!["calendarCycle"] != null) {
+        if(widget.map!["calendarCycle"] != "NONE") {
+          repeatCycleValue = widget.map!["calendarCycle"];
+        }
+      }
+
       planTypeValue = widget.map!["scheduleType"];
       if(widget.map!["academy"] != null){
         te_Academy.text = widget.map!["academy"]["academyName"];
@@ -216,12 +229,12 @@ class _RegisterPlan extends State<RegisterPlan> {
         te_amount.text ="${NumberFormat('###,###,###,###').format( widget.map!["amount"])}원";
 
       }
+      payAlarmIndex = widget.map!["usePaymentAlarm"]??false;
 
+      alarmIndex = widget.map!["scheduleAlarmType"] == "NONE" ? null : widget.map!["scheduleAlarmType"];
 
       formComplete = true;
     }
-
-
     getChildren();
   }
 
@@ -294,6 +307,7 @@ class _RegisterPlan extends State<RegisterPlan> {
                                 TextField(
                                   controller: te_title,
                                   focusNode: titleFocus,
+                                  autofocus: true,
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.only(left: 4),
                                     fillColor: MainTheme.backgroundGray,
@@ -345,6 +359,7 @@ class _RegisterPlan extends State<RegisterPlan> {
                                                     if(pickedDate != null){
                                                       setState((){
                                                         startTime = pickedDate!;
+                                                        endTime = pickedDate!.add(Duration(hours: 1));
                                                       });}
                                                     checkFormComplete();
                                                   },
@@ -421,9 +436,8 @@ class _RegisterPlan extends State<RegisterPlan> {
                                                       );
                                                       if(pickedDate != null){
                                                         setState((){
-
                                                           startTime = pickedDate!;
-
+                                                          endTime = pickedDate!.add(Duration(hours: 1));
                                                         });}
                                                       checkFormComplete();
                                                     },
@@ -531,34 +545,56 @@ class _RegisterPlan extends State<RegisterPlan> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            CupertinoRadio<int>(
-                                              value: 0,
-                                              activeColor: MainTheme.mainColor,
-                                              groupValue: repeatType,
-                                              onChanged: (int? value) {
+                                            GestureDetector(
+                                              behavior: HitTestBehavior.translucent,
+                                              onTap: (){
                                                 setState(() {
-                                                  repeatType = value!;
+                                                  repeatType = 0;
                                                 });
                                                 checkFormComplete();
                                               },
+                                              child: IntrinsicWidth(
+                                                child: Row(
+                                                  children: [
+                                                    CupertinoRadio<int>(
+                                                      value: 0,
+                                                      activeColor: MainTheme.mainColor,
+                                                      groupValue: repeatType,
+                                                      onChanged: null
+                                                    ),
+                                                    SizedBox(width: 8,),
+                                                    Text("요일로 설정", style: MainTheme.body4(MainTheme.gray7),),
+                                                    
+                                                  ]
+                                                ),
+                                              )
                                             ),
-                                            SizedBox(width: 8,),
-                                            Text("요일로 설정", style: MainTheme.body4(MainTheme.gray7),),
+                                            
                                             SizedBox(width: 12),
-                                            CupertinoRadio<int>(
-                                              value: 1,
-                                              activeColor: MainTheme.mainColor,
-                                              groupValue: repeatType,
-                                              onChanged: (int? value) {
-                                                setState(() {
-                                                  repeatType = value!;
-                                                });
-                                                checkFormComplete();
-                                              },
+                                            GestureDetector(
+                                                behavior: HitTestBehavior.translucent,
+                                                onTap: (){
+                                                  setState(() {
+                                                    repeatType = 1;
+                                                  });
+                                                  checkFormComplete();
+                                                },
+                                                child: IntrinsicWidth(
+                                                  child: Row(
+                                                      children: [
+                                                        CupertinoRadio<int>(
+                                                          value: 1,
+                                                          activeColor: MainTheme.mainColor,
+                                                          groupValue: repeatType,
+                                                          onChanged: null
+                                                        ),
+                                                        SizedBox(width: 8,),
+                                                        Text("주기로 설정", style: MainTheme.body4(MainTheme.gray7),),
 
+                                                      ]
+                                                  ),
+                                                )
                                             ),
-                                            SizedBox(width: 8,),
-                                            Text("주기로 설정", style: MainTheme.body4(MainTheme.gray7),),
                                           ],
                                         ),
                                         Column(
@@ -634,7 +670,7 @@ class _RegisterPlan extends State<RegisterPlan> {
                                                 var pickedDate = await showModalBottomSheet<DateTime>(
                                                   context: context,
                                                   builder: (BuildContext context) {
-                                                    return DatePicker( initTime: DateTime.now(),);
+                                                    return DatePicker( initTime: repeatEndDate == null ? endTime : repeatEndDate!,);
                                                   },
                                                 );
                                                 if(pickedDate != null){
@@ -785,17 +821,28 @@ class _RegisterPlan extends State<RegisterPlan> {
                               (planTypeValue??"PAY") == "ACADEMY" || (planTypeValue??"PAY") == "VEHICLE"?
                               Padding(
                                 padding: EdgeInsets.only(top:8),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(width:24, height : 24),
-                                      Container(width: 9,),
-                                      Expanded(child:
-                                      _searchTextField()
-                                      )
+                                  child: 
+                                  Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children : [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        SizedBox(width:24, height : 24),
+                                        Container(width: 9,),
+                                        Expanded(child:
+                                        _searchTextField()
+                                        )
 
-                                    ],
+                                      ],
+                                    ),
+                                    academyMessage != null && _overlayEntry==null?
+                                        Padding(padding: EdgeInsets.only(top : 5, left:33),
+                                        child:  Text(academyMessage!, style: MainTheme.helper(Color(0xfff24147)),)
+                                        ) : SizedBox.shrink()
+                                  ]
                                   )
+
                               )
                               : SizedBox.shrink(),
                               (planTypeValue??"PAY") == "ACADEMY" || (planTypeValue??"PAY") == "SCHOOL"|| (planTypeValue??"PAY") == "CLASS"|| (planTypeValue??"PAY") == "VEHICLE"?
@@ -1270,7 +1317,7 @@ class _RegisterPlan extends State<RegisterPlan> {
                                               color: Colors.white,
                                               borderRadius: BorderRadius.circular(12)
                                           ),
-                                          child: DropdownButton<String>(
+                                          child: DropdownButton<bool>(
                                               borderRadius: BorderRadius.circular(10),
                                               isExpanded: true,
                                               dropdownColor: Colors.white,
@@ -1279,19 +1326,25 @@ class _RegisterPlan extends State<RegisterPlan> {
                                               underline: SizedBox.shrink(),
                                               alignment: Alignment.centerLeft,
                                               value: payAlarmIndex,
-                                              onChanged: (String? value) {
+                                              onChanged: (bool? value) {
                                                 // This is called when the user selects an item.
                                                 setState(() {
-                                                  payAlarmIndex = value == "" ? null :value;
+                                                  payAlarmIndex = value!;
                                                 });
                                               },
                                               items: [
-                                                ...List.generate(alarmType.length, (index) => DropdownMenuItem<String>(
+                                                DropdownMenuItem<bool>(
                                                     child: Text(
-                                                      alarmType[index]["label"]!,
+                                                      "없음",
                                                       style: MainTheme.body5(MainTheme.gray7),
                                                     ),
-                                                    value: alarmType[index]["value"]),)
+                                                    value: false),
+                                                DropdownMenuItem<bool>(
+                                                    child: Text(
+                                                      "있음",
+                                                      style: MainTheme.body5(MainTheme.gray7),
+                                                    ),
+                                                    value: true),
                                               ]),
                                         )
                                         )
@@ -1347,36 +1400,24 @@ class _RegisterPlan extends State<RegisterPlan> {
             bottom: 20,
             child : GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onTap: formComplete ? (){
+              onTap: (){
+              tryRegister();
 
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Alert(title: "저장하시겠어요?");
-                  },
-                )
-                    .then((val) {
-                  if (val != null) {
-                    if(val){
-                      register();
-                    }
-                  }
-                });
 
-              } : null,
+              },
               child: Container(
                 width: 105, height: 51,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25.5),
-                    color: formComplete ? MainTheme.mainColor : MainTheme.gray3
+                    color: MainTheme.mainColor
                 ),
                 alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset("assets/icons/check${formComplete ? "" : "_gray"}.svg",  width: 16, height: 16,),
+                    SvgPicture.asset("assets/icons/check.svg",  width: 16, height: 16,),
                     SizedBox(width: 5,),
-                    Text("저장",style: MainTheme.body4(formComplete ? Colors.white: MainTheme.gray4),)
+                    Text("저장",style: MainTheme.body4(Colors.white),)
                   ],
                 ),
               ),
@@ -1628,23 +1669,11 @@ class _RegisterPlan extends State<RegisterPlan> {
   void checkFormComplete(){
 
     setState(() {
-
-      if(
-        te_title.text.isEmpty ||
-        (repeat && repeatEndDate == null) ||
-        (repeat && repeatType == 0 && !repeatDaysFlag[0] && !repeatDaysFlag[1]&& !repeatDaysFlag[2]&& !repeatDaysFlag[3]&& !repeatDaysFlag[4]&& !repeatDaysFlag[5]&& !repeatDaysFlag[6])||
-        (repeat && repeatType == 1 && repeatCycleValue == null) ||
-        planTypeValue == null ||
-        (planTypeValue == "ACADEMY" && academyId == null) ||
-        (planTypeValue == "VEHICLE" && academyId == null) ||
-        (payment && (payDate == null || payCycleIndex == null || te_amount.text.isEmpty) ) ||
-        (payment && (payCycleIndex??"NONE") != "NONE" && payCycleEndDate == null)
-      ){
-          formComplete = false;
-      }else{
-        formComplete = true;
-      }
-
+      // if((planTypeValue == "ACADEMY" || planTypeValue == "VEHICLE") && !te_Academy.text.isEmpty && academyId == null){
+      //   academyMessage = "목록에서 학원을 선택해 주세요.";
+      // }else{
+      //   academyMessage = null;
+      // }
     });
   }
 
@@ -1695,6 +1724,17 @@ class _RegisterPlan extends State<RegisterPlan> {
             "profile" :random.nextInt(3) + 1,
           });
       }
+      if(widget.childId != null){
+        if(widget.childId != 0){
+          for(int i = 0; i < children.length; i++){
+            if(children[i]["id"] == widget.childId){
+
+              profileIndex = i;
+              break;
+            }
+          }
+        }
+      }
       if(widget.map != null){
         for(int i = 0; i < children.length; i++){
           if(children[i]["id"] == widget.map!["commonMemberId"]){
@@ -1708,26 +1748,85 @@ class _RegisterPlan extends State<RegisterPlan> {
       } });
     }
   }
+  void tryRegister(){
 
+    // if(
+    // te_title.text.isEmpty ||
+    //     (repeat && repeatEndDate == null) ||
+    //     (repeat && repeatType == 0 && !repeatDaysFlag[0] && !repeatDaysFlag[1]&& !repeatDaysFlag[2]&& !repeatDaysFlag[3]&& !repeatDaysFlag[4]&& !repeatDaysFlag[5]&& !repeatDaysFlag[6])||
+    //     (repeat && repeatType == 1 && repeatCycleValue == null) ||
+    //     planTypeValue == null ||
+    //     (planTypeValue == "ACADEMY" && academyId == null) ||
+    //     (planTypeValue == "VEHICLE" && academyId == null) ||
+    //     (payment && (payDate == null || payCycleIndex == null || te_amount.text.isEmpty) ) ||
+    //     (payment && (payCycleIndex??"NONE") != "NONE" && payCycleEndDate == null)
+    // ){
+    //   formComplete = false;
+    // }else{
+    //   formComplete = true;
+    // }
 
-  Future<void> register() async {
+    if(te_title.text.isEmpty){
+      MainTheme.toast("제목을 입력해주세요.");
+      return;
+    }
+
+    if(repeat && repeatEndDate == null){
+      MainTheme.toast("종료일자를 설정해주세요.");
+      return;
+    }
+
+    if(repeat && repeatType == 0 && !repeatDaysFlag[0] && !repeatDaysFlag[1]&& !repeatDaysFlag[2]&& !repeatDaysFlag[3]&& !repeatDaysFlag[4]&& !repeatDaysFlag[5]&& !repeatDaysFlag[6]){
+      MainTheme.toast("반복요일을 설정해주세요.");
+      return;
+    }
+
+    if(repeat && repeatType == 1 && repeatCycleValue == null){
+      MainTheme.toast("반복주기를 설정해주세요.");
+      return;
+    }
+
+    if(planTypeValue == null){
+      MainTheme.toast("일정 구분을 선택해주세요.");
+      return;
+    }
 
     if(endTime.isBefore(startTime)){
       MainTheme.toast("종료시간이 시작시간보다 이전입니다.");
       return;
     }
 
-    if(DateUtils.isSameDay(startTime, endTime) && startTime.hour == endTime.hour && startTime.minute == endTime.minute){
-      MainTheme.toast("시작시간과 종료시간이 같습니다.");
+    if(planTypeValue == "ACADEMY" && academyId == null){
+      MainTheme.toast("학원 목록에서 학원을 선택해주세요.");
       return;
     }
+    if(planTypeValue == "VEHICLE" && academyId == null){
+      MainTheme.toast("학원 목록에서 학원을 선택해주세요.");
+      return;
+    }
+
+    if(payment && payCycleIndex == null){
+      MainTheme.toast("결제 주기를 설정해주세요.");
+      return;
+    }
+    if(payment && te_amount.text.isEmpty){
+      MainTheme.toast("결제 금액을 입력해주세요.");
+      return;
+    }
+    if(payment && (payCycleIndex??"NONE") != "NONE" && payCycleEndDate == null){
+      MainTheme.toast("결제 주기 종료일자를 설정해주세요.");
+      return;
+    }
+    // if(DateUtils.isSameDay(startTime, endTime) && startTime.hour == endTime.hour && startTime.minute == endTime.minute){
+    //   MainTheme.toast("시작시간과 종료시간이 같습니다.");
+    //   return;
+    // }
     if(widget.map == null){
       if(profileIndex == 0 && (planTypeValue == "ACADEMY" || planTypeValue == "SCHOOL" || planTypeValue == "CLASS" || planTypeValue == "VEHICLE" )){
         MainTheme.toast("부모는 학교, 학원 관련 일정을 등록할 수 없어요.");
         return;
       }
     }
-
 
     if(repeat){
       if(endTime.isAfter(repeatEndDate!)){
@@ -1745,15 +1844,29 @@ class _RegisterPlan extends State<RegisterPlan> {
       }
     }
 
-    
-    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Alert(title: "저장하시겠어요?");
+      },
+    )
+        .then((val) {
+      if (val != null) {
+        if(val){
+          register();
+        }
+      }
+    });
+
+  }
+
+  Future<void> register() async {
+
     if(apiProcess){
       return;
     }else{
       apiProcess = true;
     }
-
-
 
     Map request = {};
     request["commonMemberId"] = children[profileIndex]["id"];
@@ -1783,7 +1896,7 @@ class _RegisterPlan extends State<RegisterPlan> {
     request["amount"] = te_amount.text.isEmpty ? null : int.parse(te_amount.text.replaceAll(",", "").replaceAll("원", ""));
 
     request["scheduleAlarmType"] = (alarmIndex??"") == "" ? "NONE" : alarmIndex;
-    request["paymentAlarmType"] = (payAlarmIndex??"") == "" ? "NONE" : payAlarmIndex;
+    request["usePaymentAlarm"] = payAlarmIndex;
 
     print(jsonEncode(request));
     var response;
@@ -1799,7 +1912,7 @@ class _RegisterPlan extends State<RegisterPlan> {
     if(response.statusCode == 200){
       if(response.statusCode == 200){
         if(widget.map == null){
-          Navigator.pop(context, body["data"]);
+          Navigator.pop(context, {"id" : body["data"], "index" :profileIndex});
         }else{
           Navigator.pop(context);
         }

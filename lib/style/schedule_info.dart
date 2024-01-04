@@ -50,7 +50,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return editMode ? RegisterPlan(initTime: DateTime.now(), map: map,) : Stack(
+    return editMode ? map["scheduleType"] == "PAY" ? RegisterPayment(initTime: DateTime.parse(map["payDate"]), map: map,) : RegisterPlan(initTime: DateTime.now(), map: map,) : Stack(
         alignment: Alignment.center,
         children: [
 
@@ -292,7 +292,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
                                   ),
                                   SizedBox(height: 19,),
 
-                                  map["cycleType"] == "NONE" ?
+                                  (map["cycleType"]??"NONE") == "NONE" ?
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
@@ -467,7 +467,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
                                               ),
                                               padding: EdgeInsets.symmetric(horizontal: 16),
                                               child: Text(
-                                                (map["alarmTypeTitle"]??"") == "" ? "알림 없음" : map["alarmTypeTitle"], style: MainTheme.body5(MainTheme.gray7),
+                                                (map["scheduleAlarmTypeTitle"]??"") == "" ? "알림 없음" : map["scheduleAlarmTypeTitle"], style: MainTheme.body5(MainTheme.gray7),
                                               )
                                           ))
                                       )
@@ -627,7 +627,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
                                                       ),
                                                       padding: EdgeInsets.symmetric(horizontal: 16),
                                                       child: Text(
-                                                        (map["payAlarmTypeTitle"]??"") == "" ? "알림 없음" : map["payAlarmTypeTitle"], style: MainTheme.body5(MainTheme.gray7),
+                                                        map["usePaymentAlarm"] ? "알림 있음" : "알림 없음", style: MainTheme.body5(MainTheme.gray7),
                                                       )
                                                   ))
                                               )
@@ -638,8 +638,6 @@ class _ScheduleInfo extends State<ScheduleInfo> {
                                           SizedBox(height: 19,),
                                         ],
                                       ) : SizedBox.shrink(),
-
-
 
                                   SizedBox(height: 100,),
 
@@ -688,9 +686,9 @@ class _ScheduleInfo extends State<ScheduleInfo> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 6,
+                        color: Colors.black.withOpacity(0.05),
+                        spreadRadius: 0,
+                        blurRadius: 10,
                         offset: Offset(0, 4), // changes position of shadow
                       ),
                     ],

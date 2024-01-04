@@ -157,7 +157,7 @@ class _Alarm extends State<Alarm> {
                     ),
                   );
               }else{
-                return MainTheme.ErrorPage(context,"게시글이 없어요");
+                return MainTheme.ErrorPage(context,"알림이 없어요");
               }
             }else{
               return MainTheme.ErrorPage(context, jsonDecode(utf8.decode(snapshot.data.bodyBytes))["message"]);

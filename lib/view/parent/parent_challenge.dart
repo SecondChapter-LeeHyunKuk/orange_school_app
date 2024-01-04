@@ -24,7 +24,7 @@ String urlChallenges = "${dotenv.env['BASE_URL']}user/challenges";
 String urlAddStamp = "${dotenv.env['BASE_URL']}user/challenge/stamp/add";
 String urlRemoveStamp = "${dotenv.env['BASE_URL']}user/challenge/stamp/remove";
 String urlComplete = "${dotenv.env['BASE_URL']}user/challenge/complete";
-
+String urlCancel = "${dotenv.env['BASE_URL']}user/challenge";
 
 class ParentChallenge extends StatefulWidget {
   @override
@@ -523,8 +523,34 @@ class _ParentChallenge extends State<ParentChallenge> {
                                           ),
 
                                         ),
-                                        SizedBox(height: 36,)
 
+                                        ongoingChallenge!["currentOrangeCount"] < ongoingChallenge!["requiredOrangeCount"] ?
+                                        Container(
+
+                                          margin: EdgeInsets.only(top: 20),
+                                          width: 143, height: 36,
+
+                                        child: ElevatedButton(
+                                          style: MainTheme.hollowButton(MainTheme.gray3),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Alert(title: "챌린지를 취소하시겠어요?");
+                                              },
+                                            )
+                                                .then((val) {
+                                              if (val != null) {
+                                                if(val){
+                                                  cancel();
+                                                }
+                                              }
+                                            });
+                                          },
+                                          child: Text("이 챌린지 취소하기", style: MainTheme.body8(MainTheme.gray4)),
+                                        ),
+                                        ) : SizedBox.shrink(),
+                                        SizedBox(height: 36,)
                                       ],
 
                                     );
@@ -998,4 +1024,16 @@ class _ParentChallenge extends State<ParentChallenge> {
           .showSnackBar(MainTheme.snackBar(body["message"]));
     }
   }
+
+  Future<http.Response> cancel() async {
+
+    var response = await apiRequestDelete(urlCancel + "/" + ongoingChallenge!["id"].toString(), {});
+    if(response.statusCode == 200){
+      setState(() {
+        ongoingChallenge = null;
+      });
+    }
+    return response;
+  }
 }
+

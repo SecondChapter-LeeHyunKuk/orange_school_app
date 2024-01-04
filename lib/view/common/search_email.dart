@@ -43,6 +43,8 @@ class _SearchEmail extends State<SearchEmail> {
   TextEditingController te_name = TextEditingController();
   FocusNode authFocusNode = FocusNode();
 
+  String? phoneMessage = null;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -138,11 +140,14 @@ class _SearchEmail extends State<SearchEmail> {
                                     checkFormComplete();
                                   });
                                 }
-
+                                setState(() {
+                                  phoneMessage = null;
+                                });
                               },
                               decoration: MainTheme.inputTextGray("번호만 입력가능합니다"),
                               style: MainTheme.body5(MainTheme.gray7),
                               controller: te_phone,
+                              enabled: !(authStatus == AuthStatus.auth),
                               focusNode: authFocusNode,
                               keyboardType:  TextInputType.number,
                               inputFormatters: [
@@ -182,6 +187,15 @@ class _SearchEmail extends State<SearchEmail> {
                         )
                       ]
                   ),
+                  phoneMessage != null ?Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(phoneMessage!, style: MainTheme.caption2(Color(0xfff24147)),),
+                    ],
+                  ): SizedBox(height: 0,),
                   authStatus == AuthStatus.auth ?Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -265,7 +279,7 @@ class _SearchEmail extends State<SearchEmail> {
                           SizedBox(
                             height: 4,
                           ),
-                          Text("인증번호가 일치하지 않습니다.", style: MainTheme.caption2(Color(0xfff24147)),),
+                          Text("인증번호를 다시 확인해주세요.", style: MainTheme.caption2(Color(0xfff24147)),),
                         ],
                       ): SizedBox.shrink(),
 
@@ -329,6 +343,7 @@ class _SearchEmail extends State<SearchEmail> {
       if(_seconds <= 0){
         setState(() {
           authStatus = AuthStatus.notAuth;
+          phoneMessage = "인증 시간이 지났어요. 인증을 다시 시도하세요.";
           _timer!.cancel();
         });
 
@@ -353,22 +368,24 @@ class _SearchEmail extends State<SearchEmail> {
   Future<void> checkPhone() async {
 
     if(te_phone.text == ""){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("전화번호를 입력해 주세요."));
+      setState(() {
+        phoneMessage = "휴대폰 번호를 입력해주세요.";
+      });
       return;
     }else if(te_phone.text.length < 13){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("올바르지 않은 전화번호입니다."));
+      setState(() {
+        phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
+      });
       return;
     }
-
+    phoneMessage = null;
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
     var response = await apiRequestPost(urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
-      ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
       te_auth.clear();
       authNum = body["data"]["randomNumber"];
       authFocusNode.unfocus();
@@ -409,7 +426,7 @@ class _SearchEmail extends State<SearchEmail> {
       Navigator.of(context).pushReplacementNamed("/searchEmailResult", arguments : body["data"]["emailList"]);
     }else{
       ScaffoldMessenger.of(context)
-          .showSnackBar(MainTheme.snackBar("정보를 찾을 수 없습니다."));
+          .showSnackBar(MainTheme.snackBar("등록된 회원정보가 없습니다."));
     }
 
   }
