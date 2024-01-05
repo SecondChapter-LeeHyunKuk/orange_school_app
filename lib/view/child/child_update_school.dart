@@ -84,12 +84,33 @@ class _ChildUpdateSchool extends State<ChildUpdateSchool> {
                       children:[
                         Expanded(child:
                         Container(height: 51,
-                          child: TextField(
-                            controller: te_schoolName,
-                            enabled: false,
-                            decoration: MainTheme.inputTextGray("학교명을 검색하세요"),
-                            style: MainTheme.body5(MainTheme.gray7),
-                          ),
+                            child:
+                            GestureDetector(
+                              onTap: (){
+                                showModalBottomSheet<Map>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (BuildContext context) {
+                                    return SearchSchoolBottom();
+                                  },
+                                ).then((val) {
+                                  if (val != null) {
+                                    schoolCode = te_schoolName.text = val["schoolCode"];
+                                    setState(() {te_schoolName.text = val["schoolNm"];
+                                    });
+                                  }
+                                });
+
+                              },
+                              child: TextField(
+                                controller: te_schoolName,
+                                enabled: false,
+                                decoration: MainTheme.inputTextGray("학교명을 검색하세요"),
+                                style: MainTheme.body5(MainTheme.gray7),
+                              ),
+                            )
+
+
                         )
                         ),
                         Container(

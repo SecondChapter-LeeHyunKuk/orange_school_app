@@ -45,7 +45,7 @@ Future<http.Response> apiRequestDelete(String url, Map<String, dynamic> param) a
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    log(url + " response =" + response.statusCode.toString());
+    //log(url + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
   return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크
@@ -61,7 +61,7 @@ Future<http.Response> apiRequestPost(String url, Map param) async {
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    log(url + " response =" + response.statusCode.toString());
+    //log(url + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
   return http.Response('{"message" : "server is not responding."}', 408); //timeout 체크
@@ -77,7 +77,7 @@ Future<http.Response> apiRequestPut(String url, Map param) async {
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    log(url + " response =" + response.statusCode.toString());
+    //log(url + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
   return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크

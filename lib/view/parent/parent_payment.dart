@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:orange_school/main.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/foundation.dart' as foundation;
@@ -38,13 +40,14 @@ class ParentPayment extends StatefulWidget {
 
 class _ParentPayment extends State<ParentPayment> {
 
-
+  final GlobalKey _widgetKey = GlobalKey();
   DateTime selectMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
   int paySum = 0;
   int previousMonth = 0;
 
   List images  = [];
-
+  ScrollController mainScrollController = ScrollController();
+  ScrollController chartScrollController = ScrollController();
   //아이 색상 매핑
   Map color = {};
 
@@ -92,6 +95,12 @@ class _ParentPayment extends State<ParentPayment> {
     bannerFuture = getBanner();
     getChart();
     getChildren();
+    mainScrollController.addListener(() {
+    _removeOverlay();
+    });
+    chartScrollController.addListener(() {
+      _removeOverlay();
+    });
   }
   OverlayEntry? _overlayEntry;
 
@@ -105,6 +114,7 @@ class _ParentPayment extends State<ParentPayment> {
         resizeToAvoidBottomInset: true,
         body:
         SingleChildScrollView(
+          controller: mainScrollController,
           child: Container(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
             child: Column(
@@ -118,6 +128,7 @@ class _ParentPayment extends State<ParentPayment> {
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () async {
+                    _removeOverlay();
                       var pickedDate = await showModalBottomSheet<DateTime>(
                       context: context,
                       builder: (BuildContext context) {
@@ -128,6 +139,7 @@ class _ParentPayment extends State<ParentPayment> {
                         setState(() {
                           selectMonth = pickedDate;
                           paymentFuture = getPayment();
+                          getChart();
                         });
                       }
 
@@ -316,6 +328,7 @@ class _ParentPayment extends State<ParentPayment> {
 
                                               ,
                                               child: Container(
+                                                key: DateFormat("yyyy.M").format(selectMonth) == money[index]["date"] ? _widgetKey : null,
 
                                                 height: 109,
                                                 child: Column(
@@ -375,7 +388,6 @@ class _ParentPayment extends State<ParentPayment> {
 
 
 
-                                      Container(width: 28),
                                     ],
                                   ),
                                 )
@@ -473,6 +485,8 @@ class _ParentPayment extends State<ParentPayment> {
                                   GestureDetector(
                                       behavior: HitTestBehavior.translucent,
                                       onTap: (){
+
+                                        _removeOverlay();
                                         showModalBottomSheet<int>(
                                           context: context,
                                           isScrollControlled: true,
@@ -675,58 +689,60 @@ class _ParentPayment extends State<ParentPayment> {
     bool left  = details.globalPosition.dx < MediaQuery.of(context).size.width/2;
 
     return OverlayEntry(
-      builder: (context) => SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: [
-            ModalBarrier(
-              onDismiss: () {
-                _removeOverlay();
-              },
-            ),
-            Positioned(
-              left: left ? details.globalPosition.dx + 40 : null,
-              right : left ? null : MediaQuery.of(context).size.width - details.globalPosition.dx+ 40,
-              top: details.globalPosition.dy -height/2,
-              child: SpeechBalloon(
-                  nipHeight: 8,
-                  nipLocation: left ?NipLocation.left : NipLocation.right,
-                  borderColor: MainTheme.mainColor,
-                  borderWidth: 1.5,
-                  borderRadius: 3,
-                  width: 140,
-                  height: height,
-                child: Container(
-                  height: height,
-                  width: 140,
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+      builder: (context) =>
+      //     SizedBox(
+      //   width: MediaQuery.of(context).size.width,
+      //   height: MediaQuery.of(context).size.height,
+      //   // child: Stack(
+      //   //   children: [
+      //   //     // ModalBarrier(
+      //   //     //   onDismiss: () {
+      //   //     //     _removeOverlay();
+      //   //     //   },
+      //   //     // ),
+      //   //
+      //   //   ],
+      //   // ),
+      // ),
+      Positioned(
+        left: left ? details.globalPosition.dx + 40 : null,
+        right : left ? null : MediaQuery.of(context).size.width - details.globalPosition.dx+ 40,
+        top: details.globalPosition.dy -height/2,
+        child: SpeechBalloon(
+          nipHeight: 8,
+          nipLocation: left ?NipLocation.left : NipLocation.right,
+          borderColor: MainTheme.mainColor,
+          borderWidth: 1.5,
+          borderRadius: 3,
+          width: 140,
+          height: height,
+          child: Container(
+            height: height,
+            width: 140,
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ...List.generate(money[index]["list"].length, (childIndex) => Container(
+                  width: 112,
+                  height: 19,
+                  margin: EdgeInsets.only(bottom: childIndex == money[index]["list"].length -1 ? 0 : 9),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      ...List.generate(money[index]["list"].length, (childIndex) => Container(
-                        width: 112,
-                        height: 19,
-                        margin: EdgeInsets.only(bottom: childIndex == money[index]["list"].length -1 ? 0 : 9),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(child:
-                            Text(money[index]["list"][childIndex]["name"], style: MainTheme.caption4(MainTheme.gray5), overflow: TextOverflow.ellipsis,)),
-                            Text("${NumberFormat('###,###,###,###').format(money[index]["list"][childIndex]["amount"])}원", style: MainTheme.caption1(Colors.black),
-                            )
-                          ],
-                        ),
-                      ))
-
+                      Expanded(child:
+                      Text(money[index]["list"][childIndex]["name"], style: MainTheme.caption4(MainTheme.gray5), overflow: TextOverflow.ellipsis,)),
+                      Text("${NumberFormat('###,###,###,###').format(money[index]["list"][childIndex]["amount"])}원", style: MainTheme.caption1(Colors.black),
+                      )
                     ],
                   ),
+                ))
 
-                ),
-              ),
+              ],
             ),
-          ],
+
+          ),
         ),
       ),
     );
@@ -767,20 +783,33 @@ class _ParentPayment extends State<ParentPayment> {
   Future<void> getChart() async {
     money = [];
     int max = 0;
-    var response = await apiRequestGet(urlChart,  {});
+    var response = await apiRequestGet(urlChart,  {"dayDate" : DateFormat("yyyy-MM-dd").format(selectMonth)});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
 
-      body["data"].forEach((key, value) {
-        for(int i = 0; i < value.length; i++){
-          if(max < value[i]["amount"]){
-            max = value[i]["amount"];
+      setState(() {
+        body["data"].forEach((key, value) {
+          for(int i = 0; i < value.length; i++){
+            if(max < value[i]["amount"]){
+              max = value[i]["amount"];
+            }
           }
-        }
-        money.add({"date" : key, "list" : value});
+          money.add({"date" : key, "list" : value});
+        });
+        maxAmount = max;
       });
-      maxAmount = max;
     }
+    move();
+  }
+
+  Future<void> move() async {
+    await Future.delayed(Duration(milliseconds: 500));
+    Scrollable.ensureVisible(
+      _widgetKey.currentContext!, // 초록색 컨테이너의 BuildContext
+    );
+    mainScrollController.jumpTo(
+      0,
+    );
   }
 
   Future<Response> getBanner() async {

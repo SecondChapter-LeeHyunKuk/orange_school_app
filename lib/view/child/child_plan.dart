@@ -17,6 +17,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:orange_school/style/month_picker.dart';
 import 'package:orange_school/style/register_plan.dart';
 import 'package:orange_school/style/schedule_info.dart';
+import 'package:orange_school/style/schedule_info_child.dart';
 import 'package:orange_school/util/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart';
@@ -105,7 +106,7 @@ class _ChildPlan extends State<ChildPlan> {
   List days = ["일", "월", "화", "수", "목", "금", "토"];
   List dates = [];
   List weeks = List.empty(growable: true);
-
+  CarouselController carouselController = CarouselController();
   //종일 일정
   List onDaySchedules = [
   ];
@@ -866,6 +867,7 @@ class _ChildPlan extends State<ChildPlan> {
 
                               ),
                               Expanded(child: CarouselSlider(
+                                carouselController: carouselController,
                                   options: CarouselOptions(
                                     autoPlay: false,
                                     initialPage: 1,
@@ -1029,7 +1031,7 @@ class _ChildPlan extends State<ChildPlan> {
                                           top: top,
                                           child:
                                           GestureDetector(
-                                              onTap: (){},
+                                              onTap: (){showScheduleInfo(onDaySchedules[index]["scheduleId"], 0);},
                                               behavior: HitTestBehavior.translucent,
                                               child:
                                               Container(
@@ -1061,7 +1063,7 @@ class _ChildPlan extends State<ChildPlan> {
                         Container(
                             decoration: MainTheme.roundBox(Colors.white),
                             width: double.infinity,
-                            height: 1152 + 23,
+                            height: 1536 + 23,
                             child :
 
                             Stack(
@@ -1136,6 +1138,31 @@ class _ChildPlan extends State<ChildPlan> {
                                     CustomPaint(
                                         painter: DashedLineHorizontalPainter(),
                                         size: Size(dashWidth, 0.5)),
+
+                                    SizedBox(height : 63.5),
+                                    CustomPaint(
+                                        painter: DashedLineHorizontalPainter(),
+                                        size: Size(dashWidth, 0.5)),
+                                    SizedBox(height : 63.5),
+                                    CustomPaint(
+                                        painter: DashedLineHorizontalPainter(),
+                                        size: Size(dashWidth, 0.5)),
+                                    SizedBox(height : 63.5),
+                                    CustomPaint(
+                                        painter: DashedLineHorizontalPainter(),
+                                        size: Size(dashWidth, 0.5)),
+                                    SizedBox(height : 63.5),
+                                    CustomPaint(
+                                        painter: DashedLineHorizontalPainter(),
+                                        size: Size(dashWidth, 0.5)),
+                                    SizedBox(height : 63.5),
+                                    CustomPaint(
+                                        painter: DashedLineHorizontalPainter(),
+                                        size: Size(dashWidth, 0.5)),
+                                    SizedBox(height : 63.5),
+                                    CustomPaint(
+                                        painter: DashedLineHorizontalPainter(),
+                                        size: Size(dashWidth, 0.5)),
                                   ],
                                 ),
                                 Row(
@@ -1143,12 +1170,12 @@ class _ChildPlan extends State<ChildPlan> {
                                     Column(
                                       children: [
                                         SizedBox(height: 23,),
-                                        ...List.generate(7, (index) => Container(
+                                        ...List.generate(13, (index) => Container(
                                           height: 64,
                                           width: 42,
                                           alignment: Alignment.center,
                                           child: Text(
-                                            "오전\n" + (index + 6).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
+                                            index == 0 ? "":"오전\n" + (index + 6).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
                                           ),
                                         )),
                                         ...List.generate(11, (index) => Container(
@@ -1163,38 +1190,38 @@ class _ChildPlan extends State<ChildPlan> {
                                     ),
                                     Expanded(child:
                                     Container(
-                                      height: 1152 + 23,
+                                      height: 1536 + 23,
                                       child: Stack(
                                         children: [
                                           Row(
                                             children: [
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                               SizedBox(width: dayWidth-0.5,),
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                               SizedBox(width: dayWidth-0.5,),
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                               SizedBox(width: dayWidth-0.5,),
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                               SizedBox(width: dayWidth-0.5,),
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                               SizedBox(width: dayWidth-0.5,),
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                               SizedBox(width: dayWidth-0.5,),
                                               CustomPaint(
                                                   painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1152 + 23)),
+                                                  size: Size(0.5, 1536 + 23)),
                                             ],
                                           ),
 
@@ -1202,7 +1229,7 @@ class _ChildPlan extends State<ChildPlan> {
                                           ...List.generate(7, (index) => Positioned(
                                               top: 0, left: dayWidth * index,
                                               child: Container(
-                                                height: 1152,
+                                                height: 1536,
                                                 width: dayWidth,
                                                 child: Column(
 
@@ -1266,7 +1293,7 @@ class _ChildPlan extends State<ChildPlan> {
                                             double width = dayWidth / (preCount + nextCount + 1);
                                             double left = width * preCount + (((weekList[index]["start"].weekday) % 7) * dayWidth);
                                             double height = 64/60.0 * (end.difference(start).inMinutes);
-                                            double top = 64/60.0 * (start.difference(DateTime(start.year, start.month, start.day, 6)).inMinutes);
+                                            double top = 64/60.0 * (start.difference(DateTime(start.year, start.month, start.day)).inMinutes);
                                             top = top + 23;
                                             int maxLine = (height.toInt() - 6) ~/ 14;
                                             return Positioned(
@@ -1274,7 +1301,12 @@ class _ChildPlan extends State<ChildPlan> {
                                                 top: top,
 
                                                 child : GestureDetector(
-                                                    onTap: (){},
+                                                    onTap: (){if (weekList[index]["scheduleId"] !=
+                                                        0) {
+                                                      showScheduleInfo(
+                                                          weekList[index]["scheduleId"],
+                                                          weekList[index]["id"]);
+                                                    }},
                                                     behavior: HitTestBehavior.translucent,
                                                     child: Container(
                                                       width: width,
@@ -1346,7 +1378,7 @@ class _ChildPlan extends State<ChildPlan> {
       weeks.add(week);
     }
     setState(() {
-
+      carouselController.jumpToPage(1);
     });
   }
 
@@ -1653,9 +1685,9 @@ class _ChildPlan extends State<ChildPlan> {
 
       for(int i = 0; i <body["data"].length; i++){
         if(!body["data"][i]["isAllDay"]){
-          if(DateTime.parse('${body["data"][i]["startDate"]} ${body["data"][i]["startTime"]}').isBefore(DateTime.parse('${body["data"][i]["startDate"]} 06:00'))){
-            body["data"][i]["startTime"] = "06:00";
-          }
+          // if(DateTime.parse('${body["data"][i]["startDate"]} ${body["data"][i]["startTime"]}').isBefore(DateTime.parse('${body["data"][i]["startDate"]} 06:00'))){
+          //   body["data"][i]["startTime"] = "06:00";
+          // }
           var start = DateTime.parse(body["data"][i]["startDate"] + " " + body["data"][i]["startTime"]);
           var end = DateTime.parse(body["data"][i]["endDate"] + " " + body["data"][i]["endTime"]);
           if(end.difference(start).inSeconds < 1800){
@@ -1760,6 +1792,24 @@ class _ChildPlan extends State<ChildPlan> {
 
   DateTime selectMonth(){
     return DateTime(selectDay.year, selectDay.month, 1);
+  }
+
+  void showScheduleInfo(int scheduleId, int calendarId){
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder:
+            (BuildContext context, StateSetter setState){
+          return ScheduleInfoChild(scheduleId: scheduleId, calendarId:  calendarId,);
+
+        }
+        );
+
+
+      },
+    );
   }
 
 }

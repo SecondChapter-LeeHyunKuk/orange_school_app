@@ -116,7 +116,7 @@ class _ParentPlan extends State<ParentPlan> {
 
   //선택한 자식
   int selectedChildIndex = 0;
-
+  CarouselController carouselController = CarouselController();
   //일자 선택
   DateTime selectDay = DateTime.now();
 
@@ -400,6 +400,7 @@ class _ParentPlan extends State<ParentPlan> {
                                 selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
                               }
                             });
+                            print("select:"  + selectDay.toString());
                             setWeeks();
                             getWeek();
                             getWeekSchedule();
@@ -843,6 +844,7 @@ class _ParentPlan extends State<ParentPlan> {
                           padding: EdgeInsets.only(right: 4),
 
                           child:
+                              selectedChildIndex == 0 ? SizedBox.shrink():
 
                           GestureDetector(
                             behavior: HitTestBehavior.translucent,
@@ -874,6 +876,7 @@ class _ParentPlan extends State<ParentPlan> {
 
                         ),
                         Expanded(child: CarouselSlider(
+                            carouselController: carouselController,
                             options: CarouselOptions(
                               autoPlay: false,
                               initialPage: 1,
@@ -1115,7 +1118,7 @@ class _ParentPlan extends State<ParentPlan> {
                   Container(
                     decoration: MainTheme.roundBox(Colors.white),
                     width: double.infinity,
-                    height: 1152 + 23,
+                    height: 1536 + 23,
                     child :
 
                     Stack(
@@ -1190,6 +1193,32 @@ class _ParentPlan extends State<ParentPlan> {
                             CustomPaint(
                                 painter: DashedLineHorizontalPainter(),
                                 size: Size(dashWidth, 0.5)),
+
+                            SizedBox(height : 63.5),
+                            CustomPaint(
+                                painter: DashedLineHorizontalPainter(),
+                                size: Size(dashWidth, 0.5)),
+                            SizedBox(height : 63.5),
+                            CustomPaint(
+                                painter: DashedLineHorizontalPainter(),
+                                size: Size(dashWidth, 0.5)),
+                            SizedBox(height : 63.5),
+                            CustomPaint(
+                                painter: DashedLineHorizontalPainter(),
+                                size: Size(dashWidth, 0.5)),
+                            SizedBox(height : 63.5),
+                            CustomPaint(
+                                painter: DashedLineHorizontalPainter(),
+                                size: Size(dashWidth, 0.5)),
+                            SizedBox(height : 63.5),
+                            CustomPaint(
+                                painter: DashedLineHorizontalPainter(),
+                                size: Size(dashWidth, 0.5)),
+                            SizedBox(height : 63.5),
+                            CustomPaint(
+                                painter: DashedLineHorizontalPainter(),
+                                size: Size(dashWidth, 0.5)),
+
                           ],
                         ),
                         Row(
@@ -1197,12 +1226,12 @@ class _ParentPlan extends State<ParentPlan> {
                             Column(
                               children: [
                                 SizedBox(height: 23,),
-                                ...List.generate(7, (index) => Container(
+                                ...List.generate(13, (index) => Container(
                                   height: 64,
                                   width: 42,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "오전\n" + (index + 6).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
+                                      index == 0 ? "" : "오전\n" + (index).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
                                   ),
                                 )),
                                 ...List.generate(11, (index) => Container(
@@ -1217,38 +1246,38 @@ class _ParentPlan extends State<ParentPlan> {
                             ),
                             Expanded(child:
                             Container(
-                              height: 1152 + 23,
+                              height: 1536 + 23,
                               child: Stack(
                                 children: [
                                   Row(
                                     children: [
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                       SizedBox(width: dayWidth-0.5,),
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                       SizedBox(width: dayWidth-0.5,),
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                       SizedBox(width: dayWidth-0.5,),
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                       SizedBox(width: dayWidth-0.5,),
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                       SizedBox(width: dayWidth-0.5,),
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                       SizedBox(width: dayWidth-0.5,),
                                       CustomPaint(
                                           painter: DashedLineVerticalPainter(),
-                                          size: Size(0.5, 1152 + 23)),
+                                          size: Size(0.5, 1536 + 23)),
                                     ],
                                   ),
 
@@ -1256,13 +1285,13 @@ class _ParentPlan extends State<ParentPlan> {
                                   ...List.generate(7, (index) => Positioned(
                                       top: 0, left: dayWidth * index,
                                       child: Container(
-                                        height: 1152,
+                                        height: 1536,
                                         width: dayWidth,
                                         child: Column(
 
                                           children: [
 
-                                            ...List.generate(18, (colIndex) =>
+                                            ...List.generate(24, (colIndex) =>
                                                 GestureDetector(
                                                   onTap: (){
                                                     showModalBottomSheet<Map>(
@@ -1270,7 +1299,7 @@ class _ParentPlan extends State<ParentPlan> {
                                                       context: context,
                                                       isScrollControlled: true,
                                                       builder: (BuildContext context) {
-                                                        int hour = 6+colIndex;
+                                                        int hour = colIndex;
                                                         DateTime date = selectDay.add(Duration(days: index));
                                                         return RegisterPlan(initTime:DateTime(date.year,date.month, date.day, hour, 0, 0),childId: children[selectedChildIndex]["id"],);
                                                       },
@@ -1353,7 +1382,7 @@ class _ParentPlan extends State<ParentPlan> {
                                     double width = dayWidth / (preCount + nextCount + 1);
                                     double left = width * preCount + (((weekList[index]["start"].weekday) % 7) * dayWidth);
                                     double height = 64/60.0 * (end.difference(start).inMinutes);
-                                    double top = 64/60.0 * (start.difference(DateTime(start.year, start.month, start.day, 6)).inMinutes);
+                                    double top = 64/60.0 * (start.difference(DateTime(start.year, start.month, start.day)).inMinutes);
                                     top = top + 23;
                                     int maxLine = (height.toInt() - 6) ~/ 14;
                                     return Positioned(
@@ -1505,7 +1534,7 @@ class _ParentPlan extends State<ParentPlan> {
       weeks.add(week);
     }
     setState(() {
-
+      carouselController.jumpToPage(1);
     });
   }
 
@@ -1900,9 +1929,9 @@ class _ParentPlan extends State<ParentPlan> {
 
       for(int i = 0; i <body["data"].length; i++){
         if(!body["data"][i]["isAllDay"]){
-          if(DateTime.parse('${body["data"][i]["startDate"]} ${body["data"][i]["startTime"]}').isBefore(DateTime.parse('${body["data"][i]["startDate"]} 06:00'))){
-            body["data"][i]["startTime"] = "06:00";
-          }
+          // if(DateTime.parse('${body["data"][i]["startDate"]} ${body["data"][i]["startTime"]}').isBefore(DateTime.parse('${body["data"][i]["startDate"]} 06:00'))){
+          //   body["data"][i]["startTime"] = "06:00";
+          // }
           var start = DateTime.parse(body["data"][i]["startDate"] + " " + body["data"][i]["startTime"]);
           var end = DateTime.parse(body["data"][i]["endDate"] + " " + body["data"][i]["endTime"]);
           if(end.difference(start).inSeconds < 1800){
@@ -1980,7 +2009,7 @@ class _ParentPlan extends State<ParentPlan> {
     if(response.statusCode == 200){
       List temp = [];
       for(int i = 0; i <body["data"].length; i++){
-        if(body["data"][i]["isAllDay"] || (body["data"][i]["startDate"] != body["data"][i]["endDate"])){
+        if(body["data"][i]["isAllDay"] || (body["data"][i]["startDate"] != body["data"][i]["endDate"] || body["data"][i]["isBetween"])){
           if(DateTime.parse('${body["data"][i]["startDate"]}').isBefore(DateTime(selectDay.year, selectDay.month, selectDay.day))){
             body["data"][i]["startDate"] = DateFormat('yyyy-MM-dd').format(selectDay);
           }
@@ -2012,7 +2041,6 @@ class _ParentPlan extends State<ParentPlan> {
   DateTime exMonth(){
     DateTime nextMonth = DateTime(selectDay.year, selectDay.month + 1, 1);
     DateTime lastDayOfMonth = nextMonth.subtract(Duration(days: 1));
-    print(lastDayOfMonth.day - selectDay.day);
     if(lastDayOfMonth.day - selectDay.day > 6){
       return selectDay;
     }else{
@@ -2026,7 +2054,7 @@ class _ParentPlan extends State<ParentPlan> {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return RegisterPlan(initTime:weeks[1][index]["date"],childId: children[selectedChildIndex]["id"],onday: true,);
+        return RegisterPlan(initTime:selectDay.add(Duration(days: index)),childId: children[selectedChildIndex]["id"],onday: true,);
       },
     ).then((value){
       if(value != null){

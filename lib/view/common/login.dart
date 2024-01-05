@@ -24,7 +24,7 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
-  bool autoLogin = false;
+  bool autoLogin = true;
   TextEditingController te_email = TextEditingController();
   TextEditingController te_password = TextEditingController();
   String? emailMessage;
