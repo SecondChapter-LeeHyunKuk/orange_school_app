@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -660,8 +661,8 @@ class _ParentPayment extends State<ParentPayment> {
               width: double.infinity,
               height: 99,
               color: Colors.grey,
-              child: Image.network(images[index]["fileUrl"], fit: BoxFit.cover,
-                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+              child: CachedNetworkImage(imageUrl:images[index]["fileUrl"], fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
                   return Container(height: 99,);
                 },
               ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -124,12 +125,12 @@ class _ChildChallenge extends State<ChildChallenge> {
                                         ClipRRect(
                                             borderRadius: BorderRadius.circular(300.0),
                                             child:
-                                            Image.network(
+                                            CachedNetworkImage(imageUrl:
                                               children[selectedChildIndex]["fileUrl"] ?? "",
                                               width : 30,
                                               height: 30,
                                               fit: BoxFit.cover,
-                                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                              errorWidget: (context, url, error) {
                                                 return SvgPicture.asset("assets/icons/profile_${(children[selectedChildIndex]["id"]%3) + 1}.svg",width: 30, height: 30, );
                                               },
                                             )
@@ -720,12 +721,12 @@ class _ChildChallenge extends State<ChildChallenge> {
                                           ClipRRect(
                                               borderRadius: BorderRadius.circular(300.0),
                                               child:
-                                              Image.network(
+                                              CachedNetworkImage(imageUrl:
                                                 children[index]["fileUrl"] ?? "",
                                                 width : 24,
                                                 height: 24,
                                                 fit: BoxFit.cover,
-                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                errorWidget: (context, url, error) {
                                                   return SvgPicture.asset("assets/icons/profile_${(children[index]["id"]%3) + 1}.svg",width: 30, height: 30, );
                                                 },
                                               )

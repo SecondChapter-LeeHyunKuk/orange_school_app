@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -106,8 +107,8 @@ bottomNavigationBar: Container(
           BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_home'+(screenIndex == 0 ? "_on" : "")+'.svg', width: 24, height: 24), label: '일정'),
           BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_challenge'+(screenIndex == 1 ? "_on" : "")+'.svg', width: 24, height: 24), label: '챌린지'),
           BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_post'+(screenIndex == 2 ? "_on" : "")+'.svg', width: 24, height: 24), label: "O's pick"),
-          BottomNavigationBarItem(icon: ClipRRect(borderRadius : BorderRadius.circular(12), child: Image.network(fileUrl ?? "", width: 24, height: 24,fit: BoxFit.cover,
-              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+          BottomNavigationBarItem(icon: ClipRRect(borderRadius : BorderRadius.circular(12), child: CachedNetworkImage(imageUrl:fileUrl ?? "", width: 24, height: 24,fit: BoxFit.cover,
+              errorWidget: (context, url, error) {
                 return SvgPicture.asset("assets/icons/profile_${((userId ?? 1) %3) + 1}.svg",width: 24, height: 24, );
               }
           )), label: '마이'),

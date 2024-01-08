@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
@@ -547,7 +548,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
                                         child:
                                         images[index]["network"] ?
 
-                                        Image.network(images[index]["url"], width: 100, height: 100,fit: BoxFit.cover,) :
+                                        CachedNetworkImage(imageUrl:images[index]["url"], width: 100, height: 100,fit: BoxFit.cover,) :
                                         Image(image : FileImage(images[index]["file"]), width: 100, height: 100,fit: BoxFit.cover,)
                                     ),
 

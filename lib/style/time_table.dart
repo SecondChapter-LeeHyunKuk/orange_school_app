@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -499,12 +500,12 @@ class _TimeTable extends State<TimeTable> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(300.0),
                                 child:
-                                Image.network(
+                                CachedNetworkImage(imageUrl:
                                   widget.map["fileUrl"] ?? "",
                                   width : 30,
                                   height: 30,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                  errorWidget: (context, url, error) {
                                     return SvgPicture.asset("assets/icons/profile_${(widget.map["id"]%3) + 1}.svg",width: 30, height: 30, );
                                   },
                                 ),

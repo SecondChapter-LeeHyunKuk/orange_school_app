@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:flutter/cupertino.dart';
@@ -119,12 +120,12 @@ class _PaymentInfo extends State<PaymentInfo> {
                                               ),
                                               child:ClipRRect(
                                                 borderRadius: BorderRadius.circular(300.0),
-                                                child: Image.network(
+                                                child: CachedNetworkImage(imageUrl:
                                                     map["fileUrl"] ?? "",
                                                     width : 30,
                                                     height: 30,
                                                     fit: BoxFit.cover,
-                                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                  errorWidget: (context, url, error) {
                                                     return SvgPicture.asset("assets/icons/profile_${(map["commonMemberId"]%3) + 1}.svg",width: 57, height: 57, );
                                                   },
                                                 ),)

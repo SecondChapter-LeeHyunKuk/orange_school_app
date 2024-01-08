@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -57,12 +58,12 @@ class _Popup extends State<Popup> {
 
           GestureDetector(
             onTap: () async {await launchUrl(Uri.parse(widget.map["link"]));},
-            child: Image.network(
+            child: CachedNetworkImage(imageUrl:
               widget.map["fileUrl"],
               width : 273,
               height: 334.5,
               fit: BoxFit.cover,
-              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+              errorWidget: (context, url, error) {
                 return Container(
                   width : 273,
                   height: 334.5,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -148,12 +149,12 @@ class _ParentChallengeSearch extends State<ParentChallengeSearch> {
                                       ClipRRect(borderRadius: BorderRadius.circular(32),
 
                                         child:
-                                        Image.network(
+                                        CachedNetworkImage(imageUrl:
                                         list[index]["fileUrl"] ?? "",
                                           width : 57,
                                           height: 57,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                          errorWidget: (context, url, error) {
                                           return SvgPicture.asset("assets/icons/profile_${(list[index]["id"]%3) + 1}.svg",width: 57, height: 57, );
                                           },
                                           )

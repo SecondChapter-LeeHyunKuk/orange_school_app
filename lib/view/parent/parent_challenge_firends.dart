@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -142,12 +143,12 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                           children: [
                                             ClipRRect(borderRadius: BorderRadius.circular(32),
                                               child:
-                                              Image.network(
+                                              CachedNetworkImage(imageUrl:
                                                 profile!["fileUrl"] ?? "",
                                                 width : 64,
                                                 height: 64,
                                                 fit: BoxFit.cover,
-                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                errorWidget: (context, url, error) {
                                                   return SvgPicture.asset("assets/icons/profile_${(profile!["id"]%3) + 1}.svg",width: 57, height: 57, );
                                                 },
                                               ),
@@ -259,12 +260,12 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                   SizedBox(height: 23.5,),
                                                   ClipRRect(borderRadius: BorderRadius.circular(32),
 
-                                                    child: Image.network(
+                                                    child: CachedNetworkImage(imageUrl:
                                                       topList[index]["fileUrl"] ?? "",
                                                       width : 57,
                                                       height: 57,
                                                       fit: BoxFit.cover,
-                                                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                      errorWidget: (context, url, error) {
                                                         return SvgPicture.asset("assets/icons/profile_${(topList[index]["id"]%3) + 1}.svg",width: 57, height: 57, );
                                                       },
                                                     ),
@@ -389,12 +390,12 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                 SizedBox(height: 23.5,),
                                                 ClipRRect(borderRadius: BorderRadius.circular(32),
 
-                                                  child: Image.network(
+                                                  child: CachedNetworkImage(imageUrl:
                                                     friendList[index]["fileUrl"] ?? "",
                                                     width : 57,
                                                     height: 57,
                                                     fit: BoxFit.cover,
-                                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                    errorWidget: (context, url, error) {
                                                       return SvgPicture.asset("assets/icons/profile_${(friendList[index]["id"]%3) + 1}.svg",width: 57, height: 57, );
                                                     },
                                                   ),

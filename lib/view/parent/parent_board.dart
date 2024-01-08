@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -105,8 +106,8 @@ class _ParentBoard extends State<ParentBoard> {
                                                   ClipRRect(
                                                     borderRadius: BorderRadius.circular(8),
                                                     child:
-                                                    Image.network(list[index]["fileUrl"]?? "", width: blockWidth,height: 158, fit: BoxFit.cover,
-                                                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                    CachedNetworkImage(imageUrl:list[index]["fileUrl"]?? "", width: blockWidth,height: 158, fit: BoxFit.cover,
+                                                      errorWidget: (context, url, error) {
                                                         return  Container(width: blockWidth, height:  158, color: MainTheme.gray2,);
 
                                                       },

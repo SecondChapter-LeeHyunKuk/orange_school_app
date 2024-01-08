@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -255,12 +256,12 @@ class _ChildPlan extends State<ChildPlan> {
                                             ClipRRect(
                                                 borderRadius: BorderRadius.circular(300.0),
                                                 child:
-                                                Image.network(
+                                                CachedNetworkImage(imageUrl:
                                                   children[selectedChildIndex]["fileUrl"] ?? "",
                                                   width : 30,
                                                   height: 30,
                                                   fit: BoxFit.cover,
-                                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                  errorWidget: (context, url, error) {
                                                     return SvgPicture.asset("assets/icons/profile_${children[selectedChildIndex]["id"]%3 + 1}.svg",width: 30, height: 30, );
                                                   },
                                                 )
@@ -487,7 +488,7 @@ class _ChildPlan extends State<ChildPlan> {
                                       Text(
                                         "오늘", style: MainTheme.caption2(MainTheme.gray7),),
                                       weather != null ?
-                                      Image.network("http://openweathermap.org/img/wn/"
+                                      CachedNetworkImage(imageUrl:"http://openweathermap.org/img/wn/"
                                           + weather!["weather"][0]["icon"] + ".png", width: 32 , height: 32,) :
                                       SizedBox(width: 32 , height: 32,),
                                       Container(width: 3,),
@@ -1561,12 +1562,12 @@ class _ChildPlan extends State<ChildPlan> {
                                           ClipRRect(
                                               borderRadius: BorderRadius.circular(300.0),
                                               child:
-                                              Image.network(
+                                              CachedNetworkImage(imageUrl:
                                                 children[index]["fileUrl"] ?? "",
                                                 width : 24,
                                                 height: 24,
                                                 fit: BoxFit.cover,
-                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                errorWidget: (context, url, error) {
                                                   return SvgPicture.asset("assets/icons/profile_${children[index]["id"]%3 + 1}.svg",width: 24, height: 24, );
                                                 },
                                               )
