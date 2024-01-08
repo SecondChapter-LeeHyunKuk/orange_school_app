@@ -946,52 +946,81 @@ class _ChildPlan extends State<ChildPlan> {
                         Container(
                           decoration: MainTheme.roundBox(Colors.white),
                           padding: EdgeInsets.symmetric(vertical: 0),
-                          width: double.infinity,
-                          height: 37,
+                          width: dashWidth,
                           child : Row(
                             children: [
                               Container(
                                 width: 41.75,
                                 alignment: Alignment.center,
                                 child: Text("종일", style: MainTheme.body8(MainTheme.gray7),),
-
                               ),
-                              CustomPaint(
-                                  painter: DashedLineVerticalPainter(),
-                                  size: Size(0.5, 37)),
-                              Expanded(child: Container(
+                              Container(
+                                width: dashWidth - 41.75,
                                 child: Stack(
                                   children: [
 
-                                    Row(
-                                      children: [
-                                        SizedBox(width: dayWidth-0.5, height: 37,),
-                                        CustomPaint(
-                                            painter: DashedLineVerticalPainter(),
-                                            size: Size(0.5, 37)),
-                                        SizedBox(width: dayWidth-0.5,),
-                                        CustomPaint(
-                                            painter: DashedLineVerticalPainter(),
-                                            size: Size(0.5, 37)),
-                                        SizedBox(width: dayWidth-0.5,),
-                                        CustomPaint(
-                                            painter: DashedLineVerticalPainter(),
-                                            size: Size(0.5, 37)),
-                                        SizedBox(width: dayWidth-0.5,),
-                                        CustomPaint(
-                                            painter: DashedLineVerticalPainter(),
-                                            size: Size(0.5, 37)),
-                                        SizedBox(width: dayWidth-0.5,),
-                                        CustomPaint(
-                                            painter: DashedLineVerticalPainter(),
-                                            size: Size(0.5, 37)),
-                                        SizedBox(width: dayWidth-0.5,),
-                                        CustomPaint(
-                                            painter: DashedLineVerticalPainter(),
-                                            size: Size(0.5, 37)),
-                                      ],
-                                    ),
+                                    Positioned.fill(
+                                        child: Row(
+                                          children: [
+                                            ...List.generate(7, (index) =>
+                                                GestureDetector(
+                                                    onTap: (){
+                                                    },
+                                                    behavior: HitTestBehavior.translucent,
+                                                    child:
+                                                    Container(
+                                                      child: Row(
+                                                        children: [
+                                                          CustomPaint(
+                                                              painter: DashedLineVerticalPainter(),
+                                                              size: Size(0.5, double.infinity)),
+                                                          Container(width: index == 7 ? dayWidth-0.25 : dayWidth-0.5,)
+                                                        ],
+                                                      ),
+                                                    ))
 
+                                            )
+
+                                          ],
+
+                                        )
+                                    ),
+                                    //기본 길이
+                                    Container(height: 37,),
+                                    //최대길이
+
+                                    ...List.generate(onDaySchedules.length, (index){
+
+                                      int preCount = 0;
+                                      for(int i = index ; i >= 0 ; i-- ){
+                                        if(i == 0){
+                                          break;
+                                        }
+                                        if(DateUtils.isSameDay(onDaySchedules[i-1]["end"], onDaySchedules[i]["start"]) || onDaySchedules[i-1]["end"].isAfter(onDaySchedules[i]["start"])){
+                                          preCount ++;
+                                        }else{
+                                          break;
+                                        }
+                                      }
+                                      int nextCount = 0;
+                                      for(int i = index ; i < onDaySchedules.length ; i++ ){
+                                        if(i == onDaySchedules.length -1){
+                                          break;
+                                        }
+                                        if(DateUtils.isSameDay(onDaySchedules[i]["end"], onDaySchedules[i + 1]["start"]) || onDaySchedules[i]["end"].isAfter(onDaySchedules[i + 1]["start"])){
+                                          nextCount ++;
+                                        }else{
+                                          break;
+                                        }
+                                      }
+                                      return
+                                        Container(
+                                          height: ((preCount + nextCount + 1)* 21) + ((preCount + nextCount)*2) + 16,
+                                        )
+                                      ;
+
+
+                                    }),
 
                                     ...List.generate(onDaySchedules.length, (index){
 
@@ -1020,15 +1049,17 @@ class _ChildPlan extends State<ChildPlan> {
                                       DateTime start = onDaySchedules[index]["start"];
                                       DateTime end = onDaySchedules[index]["end"];
 
-                                      double width = ((end.weekday % 7) - (start.weekday % 7) + 1) * dayWidth;
-                                      double left = (start.weekday % 7) * dayWidth;
-                                      double height = 21.0/ (nextCount + preCount + 1);
-                                      double top = (height * preCount) + 8;
+                                      double width = ((end.weekday % 7) - (start.weekday % 7) + 1) * dayWidth - 4;
+                                      double left = (start.weekday % 7) * dayWidth + 2;
+                                      double height = 21;
+                                      double top = ((height + 2)  * preCount) + 8;
                                       return
 
                                         Positioned(
                                           left: left,
                                           top: top,
+                                          width: width,
+                                          height: height,
                                           child:
                                           GestureDetector(
                                               onTap: (){showScheduleInfo(onDaySchedules[index]["scheduleId"], 0);},
@@ -1044,7 +1075,7 @@ class _ChildPlan extends State<ChildPlan> {
                                                 ),
                                                 child:
 
-                                                (nextCount + preCount + 1)  > 1 ? SizedBox.shrink() : Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
+                                                Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
                                                     overflow: TextOverflow.ellipsis, maxLines:1
                                                 ),
                                               )),
@@ -1052,10 +1083,12 @@ class _ChildPlan extends State<ChildPlan> {
                                       ;
 
 
-                                    })
+                                    }),
+
                                   ],
                                 ),
-                              ))
+
+                              )
                             ],
                           ),
                         ),

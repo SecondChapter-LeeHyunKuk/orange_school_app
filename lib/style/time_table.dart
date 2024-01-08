@@ -148,7 +148,7 @@ class _TimeTable extends State<TimeTable> {
                                           //빈시간은 표시 안함
                                       chartList[index]["color"] == null ? "" :
                                           //1시간 이하 표시 안함
-                                      chartList[index]["min"] * 1.0 <= 60 ? "" :
+                                      chartList[index]["min"] * 1.0 < 60 ? "" :
                                           //2시간 미만 2글자 이상이면 .. 처리
                                       //chartList[index]["min"] * 1.0 <= 120 ? chartList[index]["title"].length > 2 ? chartList[index]["title"].substring(0,2) + ".." : chartList[index]["title"] :
                                       chartList[index]["min"] * 1.0 <= 180 ? chartList[index]["title"].length > 4 ? chartList[index]["title"].substring(0,4) + ".." : chartList[index]["title"] :

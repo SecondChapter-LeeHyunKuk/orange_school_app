@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -253,12 +253,13 @@ class _ParentPlan extends State<ParentPlan> {
                                   ClipRRect(
                                       borderRadius: BorderRadius.circular(300.0),
                                       child:
-                                      Image.network(
-                                         children[selectedChildIndex]["fileUrl"] ?? "",
+                                      CachedNetworkImage(
+                                        imageUrl:
+                                        children[selectedChildIndex]["fileUrl"] ?? "",
                                           width : 30,
                                           height: 30,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                          errorWidget: (context, url, error) {
                                             return SvgPicture.asset("assets/icons/profile_${children[selectedChildIndex]["id"]%3 + 1}.svg",width: 30, height: 30, );
                                           },
                                       )
@@ -494,7 +495,7 @@ class _ParentPlan extends State<ParentPlan> {
                                 Text(
                                   "오늘", style: MainTheme.caption2(MainTheme.gray7),),
                                 weather != null ?
-                                Image.network("http://openweathermap.org/img/wn/"
+                                CachedNetworkImage(imageUrl:"http://openweathermap.org/img/wn/"
                                     + weather!["weather"][0]["icon"] + ".png", width: 32 , height: 32,) :
                                 SizedBox(width: 32 , height: 32,),
                                 Container(width: 3,),
@@ -957,96 +958,49 @@ class _ParentPlan extends State<ParentPlan> {
                   Container(
                     decoration: MainTheme.roundBox(Colors.white),
                     padding: EdgeInsets.symmetric(vertical: 0),
-                    width: double.infinity,
-                    height: 37,
+                    width: dashWidth,
                     child : Row(
                       children: [
                         Container(
                           width: 41.75,
                           alignment: Alignment.center,
                           child: Text("종일", style: MainTheme.body8(MainTheme.gray7),),
-
                         ),
-                        CustomPaint(
-                            painter: DashedLineVerticalPainter(),
-                            size: Size(0.5, 37)),
-                        Expanded(child: Container(
+                        Container(
+                          width: dashWidth - 41.75,
                           child: Stack(
                             children: [
 
-                              Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(0);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
+                              Positioned.fill(
+                                  child: Row(
+                                    children: [
+                                      ...List.generate(7, (index) =>
+                                          GestureDetector(
+                                          onTap: (){
+                                            showRegister(index);
+                                          },
+                                          behavior: HitTestBehavior.translucent,
+                                          child:
+                                      Container(
+                                        child: Row(
+                                          children: [
+                                          CustomPaint(
+                                                  painter: DashedLineVerticalPainter(),
+                                                  size: Size(0.5, double.infinity)),
+                                            Container(width: index == 7 ? dayWidth-0.25 : dayWidth-0.5,)
+                                          ],
+                                        ),
+                                      ))
 
-                                  CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                      size: Size(0.5, 37)),
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(1);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
-                                  CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                      size: Size(0.5, 37)),
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(2);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
-                                  CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                      size: Size(0.5, 37)),
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(3);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
-                                  CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                      size: Size(0.5, 37)),
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(4);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
-                                  CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                      size: Size(0.5, 37)),
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(5);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
-                                  CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                      size: Size(0.5, 37)),
-                                  GestureDetector(
-                                    onTap: (){
-                                      showRegister(6);
-                                    },
-                                    behavior: HitTestBehavior.translucent,
-                                    child: SizedBox(width: dayWidth-0.5,height: 37,),
-                                  ),
-                                ],
+                                      )
+
+                                    ],
+
+                          )
                               ),
-
+                              //기본 길이
+                              Container(height: 37,),
+                              //최대길이
 
                               ...List.generate(onDaySchedules.length, (index){
 
@@ -1072,45 +1026,82 @@ class _ParentPlan extends State<ParentPlan> {
                                     break;
                                   }
                                 }
-                                DateTime start = onDaySchedules[index]["start"];
-                                DateTime end = onDaySchedules[index]["end"];
-
-                                double width = ((end.weekday % 7) - (start.weekday % 7) + 1) * dayWidth;
-                                double left = (start.weekday % 7) * dayWidth;
-                                double height = 21.0/ (nextCount + preCount + 1);
-                                double top = (height * preCount) + 8;
                                 return
-
-                                   Positioned(
-                                        left: left,
-                                        top: top,
-                                        child:
-                                        GestureDetector(
-                                            onTap: (){showScheduleInfo(onDaySchedules[index]["scheduleId"], 0);},
-                                            behavior: HitTestBehavior.translucent,
-                                            child:
-                                        Container(
-                                          padding : EdgeInsets.all(3),
-                                          width: width,
-                                          height: height,
-                                          decoration: BoxDecoration(
-                                              color:MainTheme.planBgColor[int.parse(onDaySchedules[index]["color"])],
-                                              borderRadius: BorderRadius.circular(4)
-                                          ),
-                                          child:
-
-                                          (nextCount + preCount + 1)  > 1 ? SizedBox.shrink() : Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
-                                              overflow: TextOverflow.ellipsis, maxLines:1
-                                          ),
-                                        )),
+                                  Container(
+                                    height: ((preCount + nextCount + 1)* 21) + ((preCount + nextCount)*2) + 16,
                                   )
-                                  ;
+                                ;
 
 
-                              })
-                            ],
-                          ),
-                        ))
+                              }),
+
+                        ...List.generate(onDaySchedules.length, (index){
+
+                          int preCount = 0;
+                          for(int i = index ; i >= 0 ; i-- ){
+                            if(i == 0){
+                              break;
+                            }
+                            if(DateUtils.isSameDay(onDaySchedules[i-1]["end"], onDaySchedules[i]["start"]) || onDaySchedules[i-1]["end"].isAfter(onDaySchedules[i]["start"])){
+                              preCount ++;
+                            }else{
+                              break;
+                            }
+                          }
+                          int nextCount = 0;
+                          for(int i = index ; i < onDaySchedules.length ; i++ ){
+                            if(i == onDaySchedules.length -1){
+                              break;
+                            }
+                            if(DateUtils.isSameDay(onDaySchedules[i]["end"], onDaySchedules[i + 1]["start"]) || onDaySchedules[i]["end"].isAfter(onDaySchedules[i + 1]["start"])){
+                              nextCount ++;
+                            }else{
+                              break;
+                            }
+                          }
+                          DateTime start = onDaySchedules[index]["start"];
+                          DateTime end = onDaySchedules[index]["end"];
+
+                          double width = ((end.weekday % 7) - (start.weekday % 7) + 1) * dayWidth - 4;
+                          double left = (start.weekday % 7) * dayWidth + 2;
+                          double height = 21;
+                          double top = ((height + 2)  * preCount) + 8;
+                          return
+
+                            Positioned(
+                              left: left,
+                              top: top,
+                              width: width,
+                              height: height,
+                              child:
+                              GestureDetector(
+                                  onTap: (){showScheduleInfo(onDaySchedules[index]["scheduleId"], 0);},
+                                  behavior: HitTestBehavior.translucent,
+                                  child:
+                                  Container(
+                                    padding : EdgeInsets.all(3),
+                                    width: width,
+                                    height: height,
+                                    decoration: BoxDecoration(
+                                        color:MainTheme.planBgColor[int.parse(onDaySchedules[index]["color"])],
+                                        borderRadius: BorderRadius.circular(4)
+                                    ),
+                                    child:
+
+                                    Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
+                                        overflow: TextOverflow.ellipsis, maxLines:1
+                                    ),
+                                  )),
+                            )
+                          ;
+
+
+                        }),
+
+                      ],
+                    ),
+
+                        )
                       ],
                     ),
                   ),
@@ -1534,6 +1525,9 @@ class _ParentPlan extends State<ParentPlan> {
       weeks.add(week);
     }
     setState(() {
+
+    });
+    setState(() {
       carouselController.jumpToPage(1);
     });
   }
@@ -1710,12 +1704,12 @@ class _ParentPlan extends State<ParentPlan> {
                                         ClipRRect(
                                           borderRadius: BorderRadius.circular(300.0),
                                           child:
-                                          Image.network(
+                                          CachedNetworkImage(imageUrl:
                                             children[index]["fileUrl"] ?? "",
                                             width : 24,
                                             height: 24,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                            errorWidget: (context, url, error) {
                                               return SvgPicture.asset("assets/icons/profile_${children[index]["id"]%3 + 1}.svg",width: 24, height: 24, );
                                             },
                                           )
