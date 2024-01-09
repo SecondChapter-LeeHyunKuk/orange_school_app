@@ -63,7 +63,7 @@ class _ParentBoardDetail extends State<ParentBoardDetail> {
       (data["link"]??"") == "" ? SizedBox.shrink() :
 
       Padding(
-        padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+        padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
         child: ElevatedButton(onPressed: () async {
 
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -202,53 +203,67 @@ class _Login extends State<Login> {
                         GestureDetector(onTap: () async {
 
                           if (await isKakaoTalkInstalled()) {
-                          try {
-                          await UserApi.instance.loginWithKakaoTalk();
-                          try {
-                            User user = await UserApi.instance.me();
-                            socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
-                          } catch (error) {
-                            print('사용자 정보 요청 실패 $error');
-                          }
+                            try {
+                            await UserApi.instance.loginWithKakaoTalk();
+                            try {
+                              User user = await UserApi.instance.me();
+                              socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
+                            } catch (error) {
+                              print('사용자 정보 요청 실패 $error');
+                            }
 
-                          } catch (error) {
-                          }}
+                            } catch (error) {
+                            }
+                          }else {
+                            try {
+                              await UserApi.instance.loginWithKakaoAccount();
+                              try {
+                                User user = await UserApi.instance.me();
+                                socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
+                              } catch (error) {
+                                print('사용자 정보 요청 실패 $error');
+                              }
+                            } catch (error) {
+                              print('카카오계정으로 로그인 실패 $error');
+                            }
+                          }
 
 
                         }, child:  SvgPicture.asset("assets/icons/kakao.svg",width: 64, height: 64,),),
-                        // Row(
-                        //   children: [
-                        //     Container(width: 11,),
-                        //     GestureDetector(onTap: () async {
-                        //
-                        //       if(await TheAppleSignIn.isAvailable()) {
-                        //       // 2. 로그인 수행(FaceId 또는 Password 입력)
-                        //       final AuthorizationResult result = await TheAppleSignIn.performRequests([
-                        //       const AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
-                        //       ]);
-                        //
-                        //       // 3. 로그인 권한 여부 체크
-                        //       switch(result.status) {
-                        //       // 3-1. 로그인 권한을 부여받은 경우
-                        //       case AuthorizationStatus.authorized:
-                        //       print('로그인 결과 : ${result.credential!.fullName}\n ${result.credential!.email} ');
-                        //       break;
-                        //       // 3-2. 오류가 발생한 경우
-                        //       case AuthorizationStatus.error:
-                        //       print('애플 로그인 오류 : ${result.error!.localizedDescription}');
-                        //       break;
-                        //       // 3-3. 유저가 직접 취소한 경우
-                        //       case AuthorizationStatus.cancelled:
-                        //       print("취소!!!");
-                        //       break;
-                        //       }
-                        //       } else {
-                        //       print('애플 로그인을 지원하지 않는 기기입니다.');
-                        //       }
-                        //
-                        //     }, child:  SvgPicture.asset("assets/icons/apple.svg",width: 64, height: 64,),),
-                        //   ],
-                        // ): SizedBox.shrink()
+                        Platform.isIOS ?
+                        Row(
+                          children: [
+                            Container(width: 11,),
+                            GestureDetector(onTap: () async {
+
+                              if(await TheAppleSignIn.isAvailable()) {
+                              // 2. 로그인 수행(FaceId 또는 Password 입력)
+                              final AuthorizationResult result = await TheAppleSignIn.performRequests([
+                              const AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
+                              ]);
+
+                              // 3. 로그인 권한 여부 체크
+                              switch(result.status) {
+                              // 3-1. 로그인 권한을 부여받은 경우
+                              case AuthorizationStatus.authorized:
+                              print('로그인 결과 : ${result.credential!.fullName}\n ${result.credential!.email} ');
+                              break;
+                              // 3-2. 오류가 발생한 경우
+                              case AuthorizationStatus.error:
+                              print('애플 로그인 오류 : ${result.error!.localizedDescription}');
+                              break;
+                              // 3-3. 유저가 직접 취소한 경우
+                              case AuthorizationStatus.cancelled:
+                              print("취소!!!");
+                              break;
+                              }
+                              } else {
+                              print('애플 로그인을 지원하지 않는 기기입니다.');
+                              }
+
+                            }, child:  SvgPicture.asset("assets/icons/apple.svg",width: 64, height: 64,),),
+                          ],
+                        ): SizedBox.shrink()
                       ],
                     ),
                   ),

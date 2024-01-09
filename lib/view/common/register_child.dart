@@ -664,7 +664,7 @@ class _RegisterChild extends State<RegisterChild> {
         ),
       ),
       bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
           child:
           SizedBox(
             height: 49,

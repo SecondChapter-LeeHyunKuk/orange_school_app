@@ -178,7 +178,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+        padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
         child: ElevatedButton(onPressed:
 
         formComplete ?
