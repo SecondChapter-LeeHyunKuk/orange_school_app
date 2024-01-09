@@ -1620,9 +1620,7 @@ class _ParentPlan extends State<ParentPlan> {
   }
 
   Future<void> getWeather() async {
-
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
 
     var responseResult = await apiRequestGet("https://api.openweathermap.org/data/2.5/weather",  {"lat" :position.latitude.toString(), "lon": position.longitude.toString(), "appid": weatherKey});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));

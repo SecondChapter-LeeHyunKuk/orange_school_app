@@ -4,6 +4,8 @@
 <dict>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app needs access to location when open.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>This app needs access to location when in the background.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -30,7 +32,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
 	<key>naverConsumerKey</key>
     <string>HPljfb2H_Y4f7zVt_BaR</string>
     <key>naverConsumerSecret</key>
@@ -39,6 +40,7 @@
     <string>오렌지스쿨</string>
     <key>naverServiceAppUrlScheme</key>
     <string>naver</string>
+	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
@@ -55,5 +57,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>com.apple.security.network.client</key>
+    <true/>
 </dict>
 </plist>
