@@ -99,7 +99,7 @@ class _ChildMy extends State<ChildMy> {
                     width: 71, height: 33,
                   child: ElevatedButton(
                     style: MainTheme.primaryButton(MainTheme.subColor.withOpacity(0.1)),
-                    onPressed: (){Clipboard.setData(ClipboardData(text: "applink"));
+                    onPressed: (){Clipboard.setData(ClipboardData(text: "https://orangeschool.imweb.me/home"));
                     ScaffoldMessenger.of(context)
                         .showSnackBar(MainTheme.snackBar("링크가 복사되었습니다."));}, child: Text("친구초대", style: MainTheme.body4(MainTheme.subColor),),)
                   )
