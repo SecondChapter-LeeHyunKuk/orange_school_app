@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>프로필 사진 업로드를 위해 사진 권한이 필요합니다.</string>
+    <key>UILaunchStoryboardName</key>
+    <string></string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -26,16 +30,19 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>temp</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string></string>
+	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>temp</string>
+	<string>사용자 위치기반 날씨정보를 제공하기 위해서 위치 권한이 필요합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>temp</string>
+	<string>프로필 사진 업로드를 위해 사진 권한이 필요합니다.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -55,6 +62,25 @@
 	</array>
 	<key>com.apple.security.network.client</key>
 	<true/>
+
+
+	<key>CFBundleURLTypes</key>
+            <array>
+                <dict>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>socialloginex</string>
+                    </array>
+                </dict>
+            </array>
+
+            <key>LSApplicationQueriesSchemes</key>
+            <array>
+                <string>naversearchapp</string>
+                <string>naversearchthirdlogin</string>
+            </array>
 	<key>naverConsumerKey</key>
 	<string>HPljfb2H_Y4f7zVt_BaR</string>
 	<key>naverConsumerSecret</key>
@@ -62,6 +88,28 @@
 	<key>naverServiceAppName</key>
 	<string>오렌지스쿨</string>
 	<key>naverServiceAppUrlScheme</key>
-	<string>naver</string>
+	<string>socialloginex</string>
+	<key>NSAppTransportSecurity</key>
+            <dict>
+               <key>NSAllowsArbitraryLoads</key>
+               <true/>
+               <key>NSExceptionDomains</key>
+               <dict>
+                  <key>naver.com</key>
+                  <dict>
+                     <key>NSExceptionRequiresForwardSecrecy</key>
+                     <false/>
+                     <key>NSIncludesSubdomains</key>
+                     <true/>
+                  </dict>
+                  <key>naver.net</key>
+                  <dict>
+                     <key>NSExceptionRequiresForwardSecrecy</key>
+                     <false/>
+                     <key>NSIncludesSubdomains</key>
+                     <true/>
+                  </dict>
+               </dict>
+            </dict>
 </dict>
 </plist>

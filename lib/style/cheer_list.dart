@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import '../../util/api.dart';
 import 'main-theme.dart';
@@ -113,8 +115,15 @@ class _CheerList extends State<CheerList> {
                                     SizedBox(width: 6,),
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(30),
-                                      child:
-                                      Image.asset("assets/images/port.jpg", width: 24, height: 24, fit: BoxFit.cover,),
+                                      child: CachedNetworkImage(imageUrl:
+                                    list[index]["fileUrl"] ?? "",
+                                      width : 24,
+                                      height: 24,
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) {
+                                        return SvgPicture.asset("assets/icons/profile_${(list[index]["id"]%3) + 1}.svg",width: 57, height: 57, );
+                                      },
+                                    )
                                     ),
                                     SizedBox(width: 6,),
                                     Text(list[index]["name"], style: MainTheme.body5(MainTheme.gray7),)

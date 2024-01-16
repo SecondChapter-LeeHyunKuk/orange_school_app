@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -111,11 +112,17 @@ class _ChallengeDetail extends State<ChallengeDetail> {
                                         children: [
                                           ClipRRect(borderRadius: BorderRadius.circular(32),
 
-                                            child: Image.asset(
-                                              "assets/images/port.jpg",
-                                              width: 64, height: 64,
-                                              fit: BoxFit.cover,
-                                            ),
+
+
+                                              child: CachedNetworkImage(imageUrl:
+                                              profile!["fileUrl"] ?? "",
+                                                width : 64,
+                                                height: 64,
+                                                fit: BoxFit.cover,
+                                                errorWidget: (context, url, error) {
+                                                  return SvgPicture.asset("assets/icons/profile_${(profile!["id"]%3) + 1}.svg",width: 57, height: 57, );
+                                                },
+                                              )
                                           ),
                                           SizedBox(width: 17,),
                                           Column(
