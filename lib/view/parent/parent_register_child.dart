@@ -192,7 +192,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
                                       TextSelection.fromPosition(TextPosition(offset: 1));
                                 }
                               },
-                              decoration: MainTheme.inputTextGray("N●●●●●●"),
+                              decoration: MainTheme.inputTextGray("성별(선택)"),
                               style: MainTheme.body5(MainTheme.gray7),
                               keyboardType:  TextInputType.number,
                               inputFormatters: [
@@ -735,7 +735,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
 
     te_name.text.isEmpty ||
         te_birth.text.length < 6 ||
-        te_sex.text.isEmpty ||
+        // te_sex.text.isEmpty ||
         !emailChecked ||
         te_password.text.isEmpty ||
         te_password.text != te_password_check.text ||
@@ -743,10 +743,10 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
         te_intro.text.isEmpty ||
         (!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
             int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)) ||
-        int.parse(te_sex.text.substring(0,1)) >= 5 ||
+        (te_sex.text.isEmpty ? 1 : int.parse(te_sex.text.substring(0,1))) >= 5 ||
         (te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20") ||
-        (te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3) ||
-        (te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3) ||
+        // (te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3) ||
+        // (te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3) ||
         !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)
     ){
       setState(() {
@@ -789,7 +789,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
     formMap["memberType"] = "CHILD";
     formMap["email"] = te_email.text;
     formMap["password"] = te_password.text;
-    formMap["gender"] = te_sex.text.substring(0,1);
+    formMap["gender"] = te_sex.text.isEmpty ? 5 : te_sex.text.substring(0,1);
     formMap["name"] = te_name.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
@@ -812,8 +812,8 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
     }
 
 
-    if(te_birth.text.length < 8 || te_sex.text.isEmpty){
-      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+    if(te_birth.text.length < 8){
+      birthMessage = "생년월일을 입력해주세요.";
       setState(() {
 
       });
@@ -821,7 +821,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
     }
 
     if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
-      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      birthMessage = "생년월일을 정확히 입력해주세요.";
       setState(() {
 
       });
@@ -830,35 +830,21 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
 
     if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
         int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
-      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
+      birthMessage = "생년월일을 정확히 입력해주세요.";
       setState(() {
 
       });
       return;
     }
 
-    if(int.parse(te_sex.text.substring(0,1)) >= 5){
-      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
-      setState(() {
+    if(!te_sex.text.isEmpty){
+      if(int.parse(te_sex.text.substring(0,1)) >= 5){
+        birthMessage = "성별 입력 시 1~4 사이의 값을 입력해주세요.";
+        setState(() {
 
-      });
-      return;
-    }
-
-    if(te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3){
-      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
-      setState(() {
-
-      });
-      return;
-    }
-
-    if(te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3){
-      birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
-      setState(() {
-
-      });
-      return;
+        });
+        return;
+      }
     }
     birthMessage = null;
     setState(() {

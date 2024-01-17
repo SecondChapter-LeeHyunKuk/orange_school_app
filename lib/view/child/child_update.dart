@@ -172,7 +172,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                                       TextSelection.fromPosition(TextPosition(offset: 1));
                                 }
                               },
-                              decoration: MainTheme.inputTextGray("N●●●●●●"),
+                              decoration: MainTheme.inputTextGray(""),
                               style: MainTheme.body5(MainTheme.gray4),
                               keyboardType:  TextInputType.number,
                               inputFormatters: [
@@ -566,7 +566,7 @@ class _ChildUpdate extends State<ChildUpdate> {
     }
 
     Map<String, dynamic> formMap = Map<String, dynamic>();
-    formMap["gender"] = te_sex.text.substring(0,1);
+    formMap["gender"] = childInfo!["gender"];
     formMap["name"] = te_name.text;
     formMap["changeEmail"] = false;
     formMap["email"] = te_email.text;
@@ -616,7 +616,7 @@ class _ChildUpdate extends State<ChildUpdate> {
       childInfo = body["data"];
       te_name.text = childInfo!["name"];
       te_birth.text = childInfo!["birth"].replaceAll("/", "");
-      te_sex.text = "${childInfo!["gender"]}●●●●●●";
+      te_sex.text = childInfo!["gender"] == 5 ? "" : "${childInfo!["gender"]}●●●●●●";
       te_email.text = childInfo!["email"];
       te_address.text = childInfo!["address"];
       te_address_detail.text = childInfo!["addressDetail"] ?? "";

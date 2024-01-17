@@ -199,7 +199,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                                 TextSelection.fromPosition(TextPosition(offset: 1));
                                           }
                                         },
-                                        decoration: MainTheme.inputTextGray("N●●●●●●"),
+                                        decoration: MainTheme.inputTextGray(""),
                                         style: MainTheme.body5(MainTheme.gray4),
                                         keyboardType:  TextInputType.number,
                                         inputFormatters: [
@@ -883,12 +883,10 @@ class _ParentUpdate extends State<ParentUpdate> {
 
     te_name.text.isEmpty ||
         te_birth.text.length < 6 ||
-        te_sex.text.isEmpty ||
         (authStatus != AuthStatus.auth && changePhoneNumber)||
         (te_password.text.isEmpty && changePassword)  ||
         (te_password.text != te_password_check.text && changePassword)||
-        te_address.text.isEmpty ||
-        te_address_detail.text.isEmpty
+        te_address.text.isEmpty
     ){
       setState(() {
         formComplete = false;
@@ -934,7 +932,7 @@ class _ParentUpdate extends State<ParentUpdate> {
     }
 
     Map<String, dynamic> formMap = Map<String, dynamic>();
-    formMap["gender"] = te_sex.text.substring(0,1);
+    formMap["gender"] = myInfo!["gender"];
     formMap["name"] = te_name.text;
     formMap["changeEmail"] = false;
     formMap["email"] = te_email.text;
@@ -987,7 +985,7 @@ class _ParentUpdate extends State<ParentUpdate> {
 
     te_name.text = myInfo!["name"];
     te_birth.text = myInfo!["birth"].replaceAll("/", "");
-    te_sex.text = "${myInfo!["gender"]}●●●●●●";
+    te_sex.text = myInfo!["gender"] == 5 ? "" : "${myInfo!["gender"]}●●●●●●";
     te_email.text = myInfo!["email"];
     te_address.text = myInfo!["address"];
     te_address_detail.text = myInfo!["addressDetail"] ?? "";
