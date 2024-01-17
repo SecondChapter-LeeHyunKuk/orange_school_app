@@ -202,7 +202,7 @@ class _ChallengeDetail extends State<ChallengeDetail> {
                                         context: context,
                                         barrierDismissible: true, //바깥 영역 터치시 닫을지 여부 결정
                                         builder: ((context) {
-                                          return CheerList(cheerCount: profile!["totalCheeringCount"], commonMemberId: widget.commonMemberId,);
+                                          return CheerList(cheerCount: profile!["totalCheeringCount"], commonMemberId: widget.commonMemberId, childId: widget.childId,);
                                         }),
                                       );
 
@@ -215,7 +215,7 @@ class _ChallengeDetail extends State<ChallengeDetail> {
                                           Row(
                                             children: [
                                               Text("총 ", style: MainTheme.body8(MainTheme.gray7)),
-                                              Text("${profile!["totalCheeringCount"]}명", style: MainTheme.body8(MainTheme.subColor)),
+                                              Text("${profile!["totalCheeringCount"]}개", style: MainTheme.body8(MainTheme.subColor)),
                                               Text(" 응원", style: MainTheme.body8(MainTheme.gray7)),
                                               SizedBox(width: 4,),
                                               SvgPicture.asset(

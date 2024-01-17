@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import '../../util/api.dart';
+import 'challenge_detail.dart';
 import 'main-theme.dart';
 
 
@@ -14,9 +15,10 @@ import 'main-theme.dart';
 String urlCheerList = "${dotenv.env['BASE_URL']}user/cheerings";
 
 class CheerList extends StatefulWidget {
+  final int childId;
   final int cheerCount;
   final int commonMemberId;
-  const CheerList ({ Key? key, required this.cheerCount , required this.commonMemberId}): super(key: key);
+  const CheerList ({ Key? key, required this.cheerCount , required this.commonMemberId, required this.childId}): super(key: key);
   @override
   State<StatefulWidget> createState() => _CheerList();
 }
@@ -105,32 +107,49 @@ class _CheerList extends State<CheerList> {
                           child: ListView.builder(
                               controller: _scrollController,//여기도 전달
                               itemCount: list.length,
-                              itemBuilder: (context, index) => Container(
-                                height: 32,
-                                margin: EdgeInsets.only(top:16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(width: 6,),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(30),
-                                      child: CachedNetworkImage(imageUrl:
-                                    list[index]["fileUrl"] ?? "",
-                                      width : 24,
-                                      height: 24,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (context, url, error) {
-                                        return SvgPicture.asset("assets/icons/profile_${(list[index]["id"]%3) + 1}.svg",width: 57, height: 57, );
-                                      },
-                                    )
-                                    ),
-                                    SizedBox(width: 6,),
-                                    Text(list[index]["name"], style: MainTheme.body5(MainTheme.gray7),)
-                                  ],
-                                ),
+                              itemBuilder: (context, index) =>
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: (){
+                                      // if(list[index]["USERTYPE"])
+                                      // showModalBottomSheet<void>(
+                                      //   context: context,
+                                      //   isScrollControlled: true,
+                                      //   builder: (BuildContext context) {
+                                      //     return ChallengeDetail(childId: widget.childId, commonMemberId: list[index]["id"],);
+                                      //   },
+                                      // );
 
-                              )
+                                    },
+                                    child: Container(
+                                      height: 32,
+                                      margin: EdgeInsets.only(top:16),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SizedBox(width: 6,),
+                                          ClipRRect(
+                                              borderRadius: BorderRadius.circular(30),
+                                              child: CachedNetworkImage(imageUrl:
+                                              list[index]["fileUrl"] ?? "",
+                                                width : 24,
+                                                height: 24,
+                                                fit: BoxFit.cover,
+                                                errorWidget: (context, url, error) {
+                                                  return SvgPicture.asset("assets/icons/profile_${(list[index]["id"]%3) + 1}.svg",width: 57, height: 57, );
+                                                },
+                                              )
+                                          ),
+                                          SizedBox(width: 6,),
+                                          Text(list[index]["name"], style: MainTheme.body5(MainTheme.gray7),)
+                                        ],
+                                      ),
+
+                                    ),
+                                  )
+
+
                           ),
                         );
                     }else{
