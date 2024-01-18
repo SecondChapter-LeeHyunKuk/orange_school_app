@@ -164,7 +164,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                   children: [
                                                     Text(profile!["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                     SizedBox(width: 9,),
-                                                    Text(profile!["age"] > 200 ? "" :profile!["age"].toString() + "살", style: MainTheme.body8(MainTheme.gray6)),
+                                                    Text(profile!["age"] == 0 ? "" :profile!["age"].toString() + "살", style: MainTheme.body8(MainTheme.gray6)),
                                                     SizedBox(width: 8,),
                                                     SvgPicture.asset(
                                                       "assets/icons/challenge_orange.svg",
@@ -278,7 +278,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                     children: [
                                                       Text(topList[index]["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                       SizedBox(width:9,),
-                                                      Text(profile!["age"] > 200 ? "" :"${topList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
+                                                      Text(profile!["age"] == 0 ? "" :"${topList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
                                                     ],
                                                   ),
                                                   SizedBox(height:6,),
@@ -411,7 +411,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                   children: [
                                                     Text(friendList[index]["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                     SizedBox(width:9,),
-                                                    Text(profile!["age"] > 200 ? "" :"${friendList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
+                                                    Text(profile!["age"] == 0 ? "" :"${friendList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
                                                   ],
                                                 ),
                                                 SizedBox(height:6,),

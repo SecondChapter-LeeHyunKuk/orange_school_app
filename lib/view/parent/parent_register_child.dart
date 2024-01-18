@@ -808,7 +808,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
     formMap["name"] = te_name.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
-    formMap["birth"] = te_birth.text.isEmpty ? "1800/01/01" : "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
+    formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
     formMap["pushToken"] = null;
     formMap["nickName"] = te_nickname.text;
     formMap["intro"] = te_intro.text;

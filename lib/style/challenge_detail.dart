@@ -134,7 +134,7 @@ class _ChallengeDetail extends State<ChallengeDetail> {
                                                 children: [
                                                   Text(profile!["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                   SizedBox(width: 9,),
-                                                  Text(profile!["age"] > 200 ? "" : "${profile!["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
+                                                  Text(profile!["age"] == 0 ? "" : "${profile!["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
                                                   SizedBox(width: 8,),
                                                   SvgPicture.asset(
                                                     "assets/icons/challenge_orange.svg",

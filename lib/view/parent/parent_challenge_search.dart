@@ -167,7 +167,7 @@ class _ParentChallengeSearch extends State<ParentChallengeSearch> {
                                         children: [
                                           Text(list[index]["name"], style: MainTheme.body8(MainTheme.gray6)),
                                           SizedBox(width:9,),
-                                          Text(profile!["age"] > 200 ? "" :"${list[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
+                                          Text(list[index]["age"] == 0 ? "" :"${list[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
                                         ],
                                       ),
                                       SizedBox(height:6,),
