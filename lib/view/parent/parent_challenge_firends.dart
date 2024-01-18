@@ -164,7 +164,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                   children: [
                                                     Text(profile!["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                     SizedBox(width: 9,),
-                                                    Text(profile!["age"].toString() + "살", style: MainTheme.body8(MainTheme.gray6)),
+                                                    Text(profile!["age"] > 200 ? "" :profile!["age"].toString() + "살", style: MainTheme.body8(MainTheme.gray6)),
                                                     SizedBox(width: 8,),
                                                     SvgPicture.asset(
                                                       "assets/icons/challenge_orange.svg",
@@ -278,7 +278,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                     children: [
                                                       Text(topList[index]["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                       SizedBox(width:9,),
-                                                      Text("${topList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
+                                                      Text(profile!["age"] > 200 ? "" :"${topList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
                                                     ],
                                                   ),
                                                   SizedBox(height:6,),
@@ -329,7 +329,10 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                       }
                   ),
 
-
+                  SizedBox(height: 12,),
+                  Padding(padding: EdgeInsets.only(left: 12),
+                  child : Text("*이전 한 달 동안 모은 오렌지 개수", style: MainTheme.body9(MainTheme.gray4)),
+                  ),
                   SizedBox(height: 32,),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16),
 
@@ -408,7 +411,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                                   children: [
                                                     Text(friendList[index]["name"], style: MainTheme.body8(MainTheme.gray6)),
                                                     SizedBox(width:9,),
-                                                    Text("${friendList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
+                                                    Text(profile!["age"] > 200 ? "" :"${friendList[index]["age"]}살", style: MainTheme.body8(MainTheme.gray6)),
                                                   ],
                                                 ),
                                                 SizedBox(height:6,),
@@ -521,36 +524,6 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
     bool nowStatus = type == "TOP" ? topList[index]["isFollow"] : friendList[index]["isFollow"];
     var response = await apiRequestGet(urlGetFollow + "/" + childId.toString() + "/" + objectId.toString(),  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
-    // if(response.statusCode == 200){
-    //     var newStatus = body["data"]["isFollow"];
-    //     if(nowStatus != newStatus){
-    //       setState(() {
-    //         if(type == "TOP"){
-    //           topList[index]["isFollow"] = !topList[index]["isFollow"];
-    //           for(int i = 0; i < friendList.length; i++){
-    //             if(friendList[i]["id"] == objectId){
-    //               friendList[i]["isFollow"] = !friendList[i]["isFollow"];
-    //               break;
-    //             }
-    //           }
-    //
-    //           if(topList[index]["isFollow"]){
-    //             friendFuture = getFriend();
-    //           }
-    //
-    //         }else{
-    //           friendList[index]["isFollow"] = !friendList[index]["isFollow"];
-    //           for(int i = 0; i < friendList.length; i++){
-    //             if(topList[i]["id"] == objectId){
-    //               topList[i]["isFollow"] = !topList[i]["isFollow"];
-    //               break;
-    //             }
-    //           }
-    //         }
-    //       });
-    //
-    //     }
-    // }
 
     if(response.statusCode == 200){
       var newStatus = body["data"]["isFollow"];

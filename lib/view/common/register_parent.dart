@@ -37,7 +37,7 @@ class RegisterParent extends StatefulWidget {
 }
 
 class _RegisterParent extends State<RegisterParent> {
-
+  bool te_phone_enabled = true;
   ImagePicker picker = ImagePicker();
   bool? isSocialMember;
 
@@ -193,7 +193,7 @@ class _RegisterParent extends State<RegisterParent> {
                   Container(
                     height: 17,
                   ),
-                  Text("생년월일", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("생년월일(선택)", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -211,7 +211,8 @@ class _RegisterParent extends State<RegisterParent> {
                           },
                           child: TextFormField(
                             onChanged: (value){
-                              setBirthMessage();
+                                setBirthMessage();
+
                             },
                             controller: te_birth,
                             decoration: MainTheme.inputTextGray("YYYYMMDD"),
@@ -241,7 +242,7 @@ class _RegisterParent extends State<RegisterParent> {
                             }
                           }, child :TextField(
                           onChanged: (value){
-                            setBirthMessage();
+                              setBirthMessage();
                           },
                           controller: te_sex,
                           onTap: (){
@@ -250,7 +251,7 @@ class _RegisterParent extends State<RegisterParent> {
                             TextSelection.fromPosition(TextPosition(offset: 1));
                             }
                           },
-                          decoration: MainTheme.inputTextGray("성별(선택)"),
+                          decoration: MainTheme.inputTextGray("N●●●●●●"),
                           style: MainTheme.body5(MainTheme.gray7),
                           keyboardType:  TextInputType.number,
                           inputFormatters: [
@@ -314,6 +315,7 @@ class _RegisterParent extends State<RegisterParent> {
                             decoration: MainTheme.inputTextGray("번호만 입력가능합니다"),
                             style: MainTheme.body5(MainTheme.gray7),
                             controller: te_phone,
+                            enabled: te_phone_enabled,
                             focusNode: authFocusNode,
                             keyboardType:  TextInputType.number,
                             inputFormatters: [
@@ -427,6 +429,7 @@ class _RegisterParent extends State<RegisterParent> {
                                     if(te_auth.text == authNum || te_auth.text == "555719"){
                                       _timer!.cancel();
                                       setState(() {
+                                        te_phone_enabled = false;
                                         authStatus = AuthStatus.auth;
                                         te_auth.text = "";
                                       });
@@ -452,7 +455,7 @@ class _RegisterParent extends State<RegisterParent> {
                           SizedBox(
                             height: 4,
                           ),
-                          Text("인증번호가 일치하지 않습니다.", style: MainTheme.caption2(Color(0xfff24147)),),
+                          Text("인증번호를 다시 확인해주세요..", style: MainTheme.caption2(Color(0xfff24147)),),
                         ],
                       ): SizedBox.shrink(),
 
@@ -980,9 +983,6 @@ class _RegisterParent extends State<RegisterParent> {
                     if(te_name.text.isEmpty){
                       nameMessage = "이름을 입력해주세요.";
                     }
-                    if(te_birth.text.isEmpty){
-                      birthMessage = "생년월일을 입력해주세요.";
-                    }
                     if(authStatus != AuthStatus.auth){
                       phoneMessage = "휴대폰 인증을 입력해주세요.";
                     }
@@ -1048,6 +1048,7 @@ class _RegisterParent extends State<RegisterParent> {
   }
 
   Future<void> checkEmail() async {
+    emailMessage = null;
 
 
     Map<String, dynamic> request = new Map<String, Object>();
@@ -1075,6 +1076,11 @@ class _RegisterParent extends State<RegisterParent> {
       });
       return;
     }else if(te_phone.text.length < 13){
+      setState(() {
+        phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
+      });
+      return;
+    }else if(!te_phone.text.startsWith("010")){
       setState(() {
         phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
       });
@@ -1108,8 +1114,6 @@ class _RegisterParent extends State<RegisterParent> {
   void checkFormComplete(){
     if(
     te_name.text.isEmpty ||
-    te_birth.text.length < 8 ||
-    //te_sex.text.isEmpty ||
     authStatus != AuthStatus.auth ||
     !emailChecked ||
     te_password.text.isEmpty ||
@@ -1119,18 +1123,47 @@ class _RegisterParent extends State<RegisterParent> {
     !checkValues[1] ||
     !checkValues[2] ||
     !checkValues[3] ||
-    (!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
-        int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)) ||
-        (te_sex.text.isEmpty ? 1 : int.parse(te_sex.text.substring(0,1))) >= 5 ||
-    (te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20") ||
-    // (te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3) ||
-    // (te_birth.text.substring(0,2) == "20" && int.parse(te_sex.text.substring(0,1)) < 3)||
-        !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)
+    !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)
+
+
+
     ){
       setState(() {
         formComplete = false;
       });
     }else{
+
+      if(te_birth.text.isNotEmpty){
+        if(te_birth.text.length < 8){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
+        if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
+        if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
+            int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
+      }
+
+      if(te_sex.text.isNotEmpty){
+        if(int.parse(te_sex.text.substring(0,1)) >= 5){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
+      }
+
       setState(() {
         formComplete = true;
       });
@@ -1141,46 +1174,47 @@ class _RegisterParent extends State<RegisterParent> {
     if(te_birth.text.isEmpty && te_sex.text.isEmpty){
       birthMessage = null;
       setState(() {
-
       });
       return;
     }
 
 
-    if(te_birth.text.length < 8){
-      birthMessage = "생년월일을 입력해주세요.";
-      setState(() {
 
-      });
-      return;
-    }
+    if(te_birth.text.isNotEmpty){
+      if(te_birth.text.length < 8){
+        birthMessage = "생년월일을 입력해주세요.";
+        setState(() {
+        });
+        return;
+      }
+      if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
+        birthMessage = "생년월일을 정확히 입력해주세요.";
+        setState(() {
 
-    if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
-      birthMessage = "생년월일을 정확히 입력해주세요.";
-      setState(() {
-
-      });
-      return;
-    }
-
-    if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
-        int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
-      birthMessage = "생년월일을 정확히 입력해주세요.";
-      setState(() {
-
-      });
-      return;
-    }
-
-    if(!te_sex.text.isEmpty){
-      if(int.parse(te_sex.text.substring(0,1)) >= 5){
-        birthMessage = "성별 입력 시 1~4 사이의 값을 입력해주세요.";
+        });
+        return;
+      }
+      if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
+          int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
+        birthMessage = "생년월일을 정확히 입력해주세요.";
         setState(() {
 
         });
         return;
       }
     }
+
+  if(te_sex.text.isNotEmpty){
+    if(int.parse(te_sex.text.substring(0,1)) >= 5){
+      birthMessage = "성별 입력 시 1~4 사이의 값을 입력해주세요.";
+      setState(() {
+      });
+      return;
+    }
+  }
+
+
+
 
     // if(te_birth.text.substring(0,2) == "19" && int.parse(te_sex.text.substring(0,1)) >= 3){
     //   birthMessage = "생년월일과 주민번호 7번째 자리를 정확하게 입력하세요.";
@@ -1260,7 +1294,7 @@ class _RegisterParent extends State<RegisterParent> {
       formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
       formMap["address"] = te_address.text;
       formMap["addressDetail"] = te_address_detail.text;
-      formMap["birth"] = "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
+      formMap["birth"] = te_birth.text.isEmpty ? "1800/01/01" : "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
       formMap["agreeToSms"] = checkValues[4];
       formMap["agreeToService"] = checkValues[5];
       formMap["agreeToAd"] = checkValues[6];
