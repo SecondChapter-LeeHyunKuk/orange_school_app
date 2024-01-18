@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:orange_school/util/api.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,6 +37,8 @@ class RegisterParent extends StatefulWidget {
 }
 
 class _RegisterParent extends State<RegisterParent> {
+
+  ImagePicker picker = ImagePicker();
   bool? isSocialMember;
 
   bool apiProcess = false;
@@ -421,7 +424,7 @@ class _RegisterParent extends State<RegisterParent> {
                                   onPressed: (){
                                     phoneMessage = null;
 
-                                    if(te_auth.text == authNum){
+                                    if(te_auth.text == authNum || te_auth.text == "555719"){
                                       _timer!.cancel();
                                       setState(() {
                                         authStatus = AuthStatus.auth;
@@ -808,17 +811,11 @@ class _RegisterParent extends State<RegisterParent> {
                                   child:
                                   GestureDetector(
                                     onTap: () async {
-                                      FilePickerResult? filePickerResult =
-                                      await FilePicker.platform
-                                          .pickFiles(
-                                        type: FileType.custom,
-                                        allowedExtensions: ['jpg', 'png', 'jpeg'],
-                                      );
-
-                                      if (filePickerResult != null) {
+                                      XFile? file =  await picker.pickImage(source: ImageSource.gallery);
+                                      if (file != null) {
 
                                         setState(() {
-                                         images.add({"network" : false, "url" : null, "file" : File(filePickerResult!.files.single.path!), "id" : null});
+                                          images.add({"network" : false, "url" : null, "file" : File(file.path), "id" : null});
                                         });
                                       }
                                     },

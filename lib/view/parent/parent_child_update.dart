@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,6 +55,8 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
   TextEditingController te_intro = TextEditingController();
 
   Map? childInfo;
+
+  ImagePicker picker = ImagePicker();
 
   @override
   void initState(){
@@ -364,17 +367,11 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
                                 child:
                                 GestureDetector(
                                     onTap: () async {
-                                      FilePickerResult? filePickerResult =
-                                      await FilePicker.platform
-                                          .pickFiles(
-                                        type: FileType.custom,
-                                        allowedExtensions: ['jpg', 'png', 'jpeg'],
-                                      );
-
-                                      if (filePickerResult != null) {
+                                      XFile? file =  await picker.pickImage(source: ImageSource.gallery);
+                                      if (file != null) {
 
                                         setState(() {
-                                          images.add({"network" : false, "url" : null, "file" : File(filePickerResult!.files.single.path!), "id" : null});
+                                          images.add({"network" : false, "url" : null, "file" : File(file.path), "id" : null});
                                         });
                                       }
                                     },
