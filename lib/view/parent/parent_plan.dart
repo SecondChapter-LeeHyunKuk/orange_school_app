@@ -253,6 +253,10 @@ class _ParentPlan extends State<ParentPlan> {
                                         ClipRRect(
                                             borderRadius: BorderRadius.circular(300.0),
                                             child:
+                                            children[selectedChildIndex]["id"] == 0 ?
+                                            SvgPicture.asset("assets/icons/ic_all.svg",width: 30, height: 30, ) :
+                                            children[selectedChildIndex]["id"] == -1 ?
+                                            SvgPicture.asset("assets/icons/ic_reci.svg",width: 30, height: 30, ) :
                                             CachedNetworkImage(
                                               imageUrl:
                                               children[selectedChildIndex]["fileUrl"] ?? "",
@@ -1723,6 +1727,7 @@ class _ParentPlan extends State<ParentPlan> {
                                         if(screenIndex == 0){
                                           pref.setInt("selectedChildId", children[index]["id"]);
                                           getMonthly();
+                                          getDaily();
                                         }else{
                                           pref.setInt("selectedChildId", children[index]["id"]);
                                           getWeekSchedule();
@@ -1869,11 +1874,13 @@ class _ParentPlan extends State<ParentPlan> {
     String payOnly = "false";
     List<String> idList = [];
     if(screenIndex == 0){
-      if(selectedChildIndex == 0 || selectedChildIndex == monthChildren.length-1){
+      if(selectedChildIndex == 0 ){
         for(int i = 1; i < monthChildren.length-1 ; i++){
           idList.add(children[i]["id"].toString());
         }
-      }else{
+      }else if(selectedChildIndex == monthChildren.length-1){
+        idList.add(children[1]["id"].toString());
+      }else {
         idList.add(children[selectedChildIndex]["id"].toString());
       }
       if(selectedChildIndex == monthChildren.length-1){
