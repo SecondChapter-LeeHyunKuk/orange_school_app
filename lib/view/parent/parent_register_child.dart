@@ -157,7 +157,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
                                   setBirthMessage();
                                 },
                                 controller: te_birth,
-                                decoration: MainTheme.inputTextGray("YYYYMMDD"),
+                                decoration: MainTheme.inputTextGray("YYYYMMDD(선택)"),
                                 style: MainTheme.body5(MainTheme.gray7),
                                 keyboardType:  TextInputType.number,
                                 inputFormatters: [
@@ -193,7 +193,7 @@ class _ParentRegisterChild extends State<ParentRegisterChild> {
                                       TextSelection.fromPosition(TextPosition(offset: 1));
                                 }
                               },
-                              decoration: MainTheme.inputTextGray("N●●●●●●"),
+                              decoration: MainTheme.inputTextGray("성별(선택)"),
                               style: MainTheme.body5(MainTheme.gray7),
                               keyboardType:  TextInputType.number,
                               inputFormatters: [

@@ -141,7 +141,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                               child: TextFormField(
                                 enabled: false,
                                 controller: te_birth,
-                                decoration: MainTheme.inputTextGray("YYMMDD"),
+                                decoration: MainTheme.inputTextGray(""),
                                 style: MainTheme.body5(MainTheme.gray4),
                                 keyboardType:  TextInputType.number,
                                 inputFormatters: [
