@@ -1727,6 +1727,7 @@ class _ParentPlan extends State<ParentPlan> {
                                         if(screenIndex == 0){
                                           pref.setInt("selectedChildId", children[index]["id"]);
                                           getMonthly();
+
                                           getDaily();
                                         }else{
                                           pref.setInt("selectedChildId", children[index]["id"]);
@@ -1874,12 +1875,10 @@ class _ParentPlan extends State<ParentPlan> {
     String payOnly = "false";
     List<String> idList = [];
     if(screenIndex == 0){
-      if(selectedChildIndex == 0 ){
+      if(selectedChildIndex == 0 || selectedChildIndex == monthChildren.length-1){
         for(int i = 1; i < monthChildren.length-1 ; i++){
           idList.add(children[i]["id"].toString());
         }
-      }else if(selectedChildIndex == monthChildren.length-1){
-        idList.add(children[1]["id"].toString());
       }else {
         idList.add(children[selectedChildIndex]["id"].toString());
       }
