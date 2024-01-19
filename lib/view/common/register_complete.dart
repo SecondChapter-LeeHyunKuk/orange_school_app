@@ -20,7 +20,16 @@ class _RegisterComplete extends State<RegisterComplete> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded, color: MainTheme.gray7),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -31,7 +40,7 @@ class _RegisterComplete extends State<RegisterComplete> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(height: 252,),
+                  Container(height: 158,),
                   Container(height: 120,
                   margin: EdgeInsets.only(bottom: 4),
                   child: Column(

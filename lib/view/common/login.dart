@@ -341,6 +341,7 @@ class _Login extends State<Login> {
           pref.setString("name",body["data"]["name"]);
           pref.setString("email",body["data"]["email"]);
           pref.setInt("locationCode",body["data"]["locationCode"]);
+          pref.remove("selectedChildId");
           if(body["data"]["memberType"] == "PARENT"){
             apiRequestPost(urlVisitor, {"memberType" : "PARENT"});
             Navigator.pushNamedAndRemoveUntil(context,'/parentTabBar', (route) => false);
@@ -396,6 +397,7 @@ class _Login extends State<Login> {
         pref.setString("name",body["data"]["name"]);
         pref.setString("email",body["data"]["email"]);
         pref.setInt("locationCode",body["data"]["locationCode"]);
+        pref.remove("selectedChildId");
         if(body["data"]["memberType"] == "PARENT"){
           apiRequestPost(urlVisitor, {"memberType" : "PARENT"});
           Navigator.pushNamedAndRemoveUntil(context,'/parentTabBar', (route) => false);

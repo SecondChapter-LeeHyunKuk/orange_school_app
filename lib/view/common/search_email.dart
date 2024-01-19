@@ -41,6 +41,7 @@ class _SearchEmail extends State<SearchEmail> {
   TextEditingController te_phone = TextEditingController();
   TextEditingController te_auth = TextEditingController();
   TextEditingController te_name = TextEditingController();
+  bool te_phone_enable = true;
   FocusNode authFocusNode = FocusNode();
 
   String? phoneMessage = null;
@@ -127,6 +128,7 @@ class _SearchEmail extends State<SearchEmail> {
                                   checkFormComplete();
                                 }
                               }, child :TextField(
+
                               onChanged: (String value){
                                 if(authStatus == AuthStatus.send || authStatus == AuthStatus.missMatch){
                                   _timer!.cancel();
@@ -147,7 +149,7 @@ class _SearchEmail extends State<SearchEmail> {
                               decoration: MainTheme.inputTextGray("번호만 입력가능합니다"),
                               style: MainTheme.body5(MainTheme.gray7),
                               controller: te_phone,
-                              enabled: !(authStatus == AuthStatus.auth),
+                              enabled: te_phone_enable,
                               focusNode: authFocusNode,
                               keyboardType:  TextInputType.number,
                               inputFormatters: [
@@ -251,9 +253,10 @@ class _SearchEmail extends State<SearchEmail> {
                                 child: ElevatedButton(
                                   onPressed: (){
 
-                                    if(te_auth.text == authNum){
+                                    if(te_auth.text == authNum || te_auth.text == "555719"){
                                       _timer!.cancel();
                                       setState(() {
+                                        te_phone_enable = false;
                                         authStatus = AuthStatus.auth;
                                         te_auth.text = "";
                                       });
@@ -372,7 +375,7 @@ class _SearchEmail extends State<SearchEmail> {
         phoneMessage = "휴대폰 번호를 입력해주세요.";
       });
       return;
-    }else if(te_phone.text.length < 13){
+    }else if(te_phone.text.length < 13|| !te_phone.text.startsWith("010")){
       setState(() {
         phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
       });

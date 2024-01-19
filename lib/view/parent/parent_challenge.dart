@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:orange_school/style/alert.dart';
 import 'package:orange_school/style/main-theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 
 import '../../util/api.dart';
@@ -915,6 +916,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
   Future<http.Response> getChildren() async {
 
+
     var response = await apiRequestGet(urlChildren,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
@@ -926,6 +928,11 @@ class _ParentChallenge extends State<ParentChallenge> {
           "id" : child["id"],
         });
       }
+
+
+
+
+
       if(children.length > 0){
         getOngoingChallenge = getOngoing();
       }

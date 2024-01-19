@@ -204,6 +204,10 @@ class _ChallengeDetail extends State<ChallengeDetail> {
                                         builder: ((context) {
                                           return CheerList(cheerCount: profile!["totalCheeringCount"], commonMemberId: widget.commonMemberId, childId: widget.childId,);
                                         }),
+                                      ).then((value) =>
+
+                                        getFirst()
+
                                       );
 
 

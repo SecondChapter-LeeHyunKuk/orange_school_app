@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -11,13 +12,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:orange_school/style/sleep_time_picker.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 
 import '../util/api.dart';
 import 'main-theme.dart';
+import 'month_picker.dart';
 String urlChart = "${dotenv.env['BASE_URL']}user/timeTable";
 String urlMemo = "${dotenv.env['BASE_URL']}user/timeTable/message";
-
+String urlSleep = "${dotenv.env['BASE_URL']}user/timeTable/sleep";
 
 
 
@@ -43,12 +46,18 @@ class _TimeTable extends State<TimeTable> {
   TextEditingController te_ChildMemo = TextEditingController();
   bool parentReadOnly = true;
   bool childReadOnly = true;
-
+  double sleepMin = 0;
+  String? sleepStart = "23:00";
+  String? sleepEnd = "07:00";
+  double? degree;
+  DateTime? wakeup;
+  DateTime? sleep;
   @override
   void initState() {
     super.initState();
     getFuture = getChart();
     getMemo();
+    getSleep();
   }
 
   @override
@@ -92,6 +101,45 @@ class _TimeTable extends State<TimeTable> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
+                    Positioned(
+                        top: 410,
+                        right: 20,
+                        child:
+                            GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () async {
+                                await showModalBottomSheet<DateTime>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SleepTimePicker( commonMemberId:  widget.map["id"], wakeup: wakeup, sleep:  sleep,);
+                                  },
+                                ).then((value) => getSleep());
+                              },
+                              child:  Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: MainTheme.gray3,
+                                ),
+                                width: 87,
+                                height: 32,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(width: 6,),
+                                    SvgPicture.asset("assets/icons/ic_moon.svg",width: 24, height: 24,),
+                                    SizedBox(width: 2,),
+                                    Text("취침설정", style: MainTheme.caption2(MainTheme.gray5),)
+                                  ],
+
+                                ),
+
+                              ),
+                            )
+
+                    ),
+
+
+
                     Positioned(child:
                     SimpleShadow(
                       child:SvgPicture.asset('assets/images/chart_bg.svg',
@@ -103,8 +151,40 @@ class _TimeTable extends State<TimeTable> {
                       sigma: 20,             // Deffault: 2
                     )
                       ,top: 53,),
-
-
+                    //취침시간 파이차트
+                    Positioned(
+                        top: 118,
+                        width: 266,
+                        height: 266,
+                        child:
+                        PieChart(
+                          PieChartData(
+                              startDegreeOffset: degree ?? 0,
+                              sectionsSpace: 6,
+                              centerSpaceRadius: 0,
+                              sections: [
+                                PieChartSectionData(
+                                    color: Color(0xffFAF8C2),
+                                    value: sleepMin,
+                                    title:
+                                    "취침",
+                                    radius: 133,
+                                    titlePositionPercentageOffset : 0.7,
+                                    titleStyle: MainTheme.caption1(Color(0xffb3af3e))
+                                ),
+                                PieChartSectionData(
+                                    color: Colors.white,
+                                    value: 1440-sleepMin,
+                                    title:
+                                    "",
+                                    radius: 133,
+                                    titlePositionPercentageOffset : 0.7,
+                                    titleStyle: MainTheme.caption1(Colors.white)
+                                )
+                              ]
+                          ),
+                        )
+                    ),
                     Positioned(
                       top: 118,
                       width: 266,
@@ -143,15 +223,13 @@ class _TimeTable extends State<TimeTable> {
                               ...List.generate(chartList.length, (index) =>
 
                                   PieChartSectionData(
-                                      color: chartList[index]["color"] == null ? Color(0xffffffff) : MainTheme.planBgColor[int.parse(chartList[index]["color"])],
+                                      color: chartList[index]["color"] == null ? Colors.transparent : MainTheme.planBgColor[int.parse(chartList[index]["color"])],
                                       value: chartList[index]["min"] * 1.0,
                                       title:
                                           //빈시간은 표시 안함
                                       chartList[index]["color"] == null ? "" :
                                           //1시간 이하 표시 안함
                                       chartList[index]["min"] * 1.0 < 60 ? "" :
-                                          //2시간 미만 2글자 이상이면 .. 처리
-                                      //chartList[index]["min"] * 1.0 <= 120 ? chartList[index]["title"].length > 2 ? chartList[index]["title"].substring(0,2) + ".." : chartList[index]["title"] :
                                       chartList[index]["min"] * 1.0 <= 180 ? chartList[index]["title"].length > 4 ? chartList[index]["title"].substring(0,4) + ".." : chartList[index]["title"] :
                                       chartList[index]["title"].length > 9 ? chartList[index]["title"].substring(0,5) + "\n" + chartList[index]["title"].substring(5, 9) + "..." :
                                       chartList[index]["title"].length == 9 ? chartList[index]["title"].substring(0,5) + "\n" + chartList[index]["title"].substring(5, 9) :
@@ -162,48 +240,6 @@ class _TimeTable extends State<TimeTable> {
                                   )
 
                               )
-                              ,
-                              // PieChartSectionData(
-                              //     color: MainTheme.planBgColor[1],
-                              //     value: 17,
-                              //     title: '학교',
-                              //     radius: 133,
-                              //     titlePositionPercentageOffset : 0.7,
-                              //     titleStyle: MainTheme.caption1(MainTheme.planColor[1])
-                              // ),
-                              // PieChartSectionData(
-                              //     color: MainTheme.planBgColor[2],
-                              //     value: 16,
-                              //     title: '방과 후 교실',
-                              //     radius: 133,
-                              //     titlePositionPercentageOffset : 0.7,
-                              //     titleStyle: MainTheme.caption1(MainTheme.planColor[2])
-                              // ),
-                              // PieChartSectionData(
-                              //     color: MainTheme.planBgColor[3],
-                              //     value: 23,
-                              //     title: '차량 승하차',
-                              //     radius: 133,
-                              //     titlePositionPercentageOffset : 0.7,
-                              //     titleStyle: MainTheme.caption1(MainTheme.planColor[3])
-                              // ),
-                              // PieChartSectionData(
-                              //     color: MainTheme.planBgColor[4],
-                              //     value: 22,
-                              //     title: '일정',
-                              //     radius: 133,
-                              //     titlePositionPercentageOffset : 0.7,
-                              //     titleStyle: MainTheme.caption1(MainTheme.planColor[4])
-                              // ),
-                              // PieChartSectionData(
-                              //     color: MainTheme.planBgColor[5],
-                              //     value: 24,
-                              //     title: '결제일',
-                              //     radius: 133,
-                              //     titlePositionPercentageOffset : 0.7,
-                              //     titleStyle: MainTheme.caption1(MainTheme.planColor[5])
-                              // ),
-
                             ]
                         ),
                       ),)
@@ -211,7 +247,7 @@ class _TimeTable extends State<TimeTable> {
                     Column(
                       children: [
                         Container(
-                          height: 434,
+                          height: 463,
                         ),
 
 
@@ -449,7 +485,9 @@ class _TimeTable extends State<TimeTable> {
                                                       ],
                                                     )
                                                 ),
-
+                                                daySchedule[index]["scheduleType"] == "PAY" ? SizedBox.shrink() :
+                                                SvgPicture.asset("assets/icons/${daySchedule[index]["scheduleType"]}_GRAY.svg",width: 24, height: 24,),
+                                                SizedBox(width: 8,),
                                                 Container(
                                                   width: 7,
                                                   height: 7,
@@ -771,6 +809,41 @@ class _TimeTable extends State<TimeTable> {
         }
       }
     });
+  }
+
+  Future<void> getSleep() async {
+
+    var response = await apiRequestGet(urlSleep + "/" + widget.map["id"].toString(),{});
+    var body =jsonDecode(utf8.decode(response.bodyBytes));
+    if(response.statusCode == 200){
+      if(body["data"]["wakeTime"] != null && body["data"]["sleepTime"] != null) {
+        wakeup = DateTime.parse("2022-01-02 " + body["data"]["wakeTime"]);
+        sleep = DateTime.parse("2022-01-02 " + body["data"]["sleepTime"]);
+
+        if(sleep!.isAfter(wakeup!)){
+          //자정 이전에 잠드는 경우
+          sleep = sleep!.subtract(Duration(days: 1));
+        }
+        sleepMin = wakeup!.difference(sleep!).inMinutes.toDouble();
+
+        degree = (((sleep!.hour * 60 + sleep!.minute) / 1440) * 360) -90;
+        setState(() {
+
+        });
+
+
+      }else{
+        sleepMin = 0;
+        degree = 0;
+        return;
+      }
+    }
+
+
+
+
+
+
   }
 }
 

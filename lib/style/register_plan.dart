@@ -30,8 +30,8 @@ String urlUpdate = "${dotenv.env['BASE_URL']}user/schedule";
     {"label" : "학교", "value" : "SCHOOL"},
     {"label" : "방과 후 교실", "value" : "CLASS"},
     {"label" : "차량 승하차", "value" : "VEHICLE"},
+    {"label" : "기타 일상", "value" : "ETC"},
     {"label" : "일정", "value" : "SCHEDULE"},
-    {"label" : "기타", "value" : "ETC"},
   ];
 
 const repeatCycle = [
@@ -235,6 +235,13 @@ class _RegisterPlan extends State<RegisterPlan> {
 
       formComplete = true;
     }
+
+    _searchFocusNode.addListener(() { if(_searchFocusNode.hasFocus){
+
+      _showsearchOverlayFocus();
+
+    }});
+    
     getChildren();
   }
 
@@ -804,10 +811,22 @@ class _RegisterPlan extends State<RegisterPlan> {
                                         items: [
                                           ...List.generate(planType.length, (index) =>
                                               DropdownMenuItem<String>(
-                                              child: Text(
-                                                planType[index]["label"]!,
-                                                style: MainTheme.body5(MainTheme.gray7),
-                                              ),
+                                              child:
+
+                                              Row(
+                                              children: [
+                                                SvgPicture.asset("assets/icons/${planType[index]["value"]}.svg",width: 24, height: 24,),
+                                                SizedBox(width : 6),
+                                                Text(
+                                                  planType[index]["label"]!,
+                                                  style: MainTheme.body5(MainTheme.gray7),
+                                                )
+
+                                              ]
+
+                                              )
+
+                                              ,
                                               value: planType[index]["value"]),)
 
 
@@ -845,7 +864,7 @@ class _RegisterPlan extends State<RegisterPlan> {
 
                               )
                               : SizedBox.shrink(),
-                              (planTypeValue??"PAY") == "ACADEMY" || (planTypeValue??"PAY") == "SCHOOL"|| (planTypeValue??"PAY") == "CLASS"|| (planTypeValue??"PAY") == "VEHICLE"?
+                              (planTypeValue??"PAY") == "ACADEMY" || (planTypeValue??"PAY") == "SCHOOL"|| (planTypeValue??"PAY") == "CLASS"|| (planTypeValue??"PAY") == "VEHICLE" || (planTypeValue??"PAY") == "ETC"?
                               Padding(
                                   padding: EdgeInsets.only(top:8),
                                   child: Row(
@@ -854,7 +873,7 @@ class _RegisterPlan extends State<RegisterPlan> {
                                     children: [
                                       SvgPicture.asset("assets/icons/info_green.svg", width: 14,height: 14,),
                                       Container(width: 4,),
-                                      Text("${getLabel()}일정은 주간시간표에만 표기돼요", style: MainTheme.caption2(MainTheme.subColor),)
+                                      Text("${getLabel()} 일정은 주간시간표에만 표기돼요", style: MainTheme.caption2(MainTheme.subColor),)
                                     ],
                                   )
                               )
@@ -1372,7 +1391,7 @@ class _RegisterPlan extends State<RegisterPlan> {
 
                               ),
 
-                              SizedBox(height: 50,),
+                              SizedBox(height: _overlayEntry != null ? 300 : 50,),
 
 
                             ],
@@ -1434,7 +1453,22 @@ class _RegisterPlan extends State<RegisterPlan> {
   }
 
 
-
+  void _showsearchOverlayFocus() {
+    if (_overlayEntry == null) {
+      _overlayEntry = _searchListOverlayEntry();
+      setState(() {
+        
+      });
+      Overlay.of(context)?.insert(_overlayEntry!);
+      searchAcademy();
+      checkFormComplete();
+      _controller.animateTo(
+        280 + (repeat ? repeatType == 0 ? 138 : 144 :0),
+        duration: Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
+  }
 
   Widget _searchTextField() {
     final _border = OutlineInputBorder(
@@ -1445,33 +1479,35 @@ class _RegisterPlan extends State<RegisterPlan> {
     );
 
     void _showsearchOverlay() {
-      if (_searchFocusNode.hasFocus) {
-        if (te_Academy.text.isNotEmpty) {
-          final _search = te_Academy.text;
-
-          if (!_search.contains('@')) {
-            if (_overlayEntry == null) {
-              _overlayEntry = _searchListOverlayEntry();
-              Overlay.of(context)?.insert(_overlayEntry!);
-              _controller.animateTo(
-                280 + (repeat ? repeatType == 0 ? 138 : 144 :0),
-                duration: Duration(seconds: 1),
-                curve: Curves.fastOutSlowIn,
-              );
-            }
-          }
-
-          else {
-            _removeSearchOverlay();
-          }
-        } else {
-          _removeSearchOverlay();
-        }
-      }
+      // if (_searchFocusNode.hasFocus) {
+      //   if (te_Academy.text.isNotEmpty) {
+      //     final _search = te_Academy.text;
+      //
+      //     if (!_search.contains('@')) {
+      //       if (_overlayEntry == null) {
+      //         _overlayEntry = _searchListOverlayEntry();
+      //         Overlay.of(context)?.insert(_overlayEntry!);
+      //         _controller.animateTo(
+      //           280 + (repeat ? repeatType == 0 ? 138 : 144 :0),
+      //           duration: Duration(seconds: 1),
+      //           curve: Curves.fastOutSlowIn,
+      //         );
+      //       }
+      //     }
+      //
+      //     else {
+      //       _removeSearchOverlay();
+      //     }
+      //   } else {
+      //     _removeSearchOverlay();
+      //   }
+      // }
       searchAcademy();
       academyId = null;
       checkFormComplete();
     }
+
+
 
     return CompositedTransformTarget(
       link: _layerLink,
@@ -1486,7 +1522,7 @@ class _RegisterPlan extends State<RegisterPlan> {
           onChanged: (_) => _showsearchOverlay(),
           decoration : InputDecoration(
             suffixIcon: GestureDetector(
-                onTap: (){},
+                onTap: (){_showsearchOverlayFocus();},
                 child: const Icon(Icons.search, color: MainTheme.gray4, size: 24,)
             ),
             contentPadding: const EdgeInsets.symmetric(
@@ -1656,6 +1692,9 @@ class _RegisterPlan extends State<RegisterPlan> {
   void _removeSearchOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    setState(() {
+      
+    });
   }
 
   @override

@@ -24,26 +24,6 @@ import 'main-theme.dart';
 String urlChildren = "${dotenv.env['BASE_URL']}user/commonMembers";
 String urlRegister = "${dotenv.env['BASE_URL']}user/payment";
 String urlUpdate = "${dotenv.env['BASE_URL']}user/schedule/payment";
-  const planType = [
-    {"label" : "학원", "value" : "ACADEMY"},
-    {"label" : "학교", "value" : "SCHOOL"},
-    {"label" : "방과 후 교실", "value" : "CLASS"},
-    {"label" : "차량 승하차", "value" : "VEHICLE"},
-    {"label" : "일정", "value" : "SCHEDULE"},
-    {"label" : "결제일", "value" : "PAY"},
-    {"label" : "기타", "value" : "ETC"},
-  ];
-
-const repeatCycle = [
-  {"label" : "매일", "value" : "EVERY_DAY"},
-  {"label" : "매주", "value" : "EVERY_WEEK"},
-  {"label" : "2주", "value" : "TWO_WEEK"},
-  {"label" : "3주", "value" : "THREE_WEEK"},
-  {"label" : "4주", "value" : "FOUR_WEEK"},
-  {"label" : "매월", "value" : "EVERY_MONTH"},
-  {"label" : "매년", "value" : "EVERY_YEAR"},
-];
-
 const payCycle = [
   {"label" : "반복 없음", "value" : "NONE"},
   {"label" : "1개월", "value" : "ONE_MONTH"},
@@ -60,16 +40,6 @@ const payCycle = [
   {"label" : "매년", "value" : "EVERY_YEAR"},
 ];
 
-const alarmType = [
-  {"label" : "없음", "value" : ""},
-  {"label" : "이벤트 당시", "value" : "ZERO_MINUTES_AGO"},
-  {"label" : "5분전", "value" : "FIVE_MINUTES_AGO"},
-  {"label" : "15분전", "value" : "FIFTEEN_MINUTES_AGO"},
-  {"label" : "30분전", "value" : "THIRTY_MINUTES_AGO"},
-  {"label" : "1시간전", "value" : "ONE_HOURS_AGO"},
-  {"label" : "2시간전", "value" : "TWO_HOURS_AGO"},
-  {"label" : "1일전", "value" : "ONE_DAY_AGO"},
-];
 String urlAcademy = "${dotenv.env['BASE_URL']}user/academies";
 
 

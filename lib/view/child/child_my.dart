@@ -13,6 +13,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:orange_school/util/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../style/alert.dart';
+
 class ChildMy extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ChildMy();
@@ -139,9 +141,22 @@ class _ChildMy extends State<ChildMy> {
               SizedBox(height: 17,),
               GestureDetector(
                 onTap: () async {
-                  SharedPreferences pref = await SharedPreferences.getInstance();
-                  pref.setBool("autoLogin", false);
-                  Navigator.pushNamedAndRemoveUntil(context,'/login', (route) => false);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Alert(title: "로그아웃 하시겠어요?");
+                    },
+                  )
+                      .then((val) async {
+                    if (val != null) {
+                      if(val){
+                        SharedPreferences pref = await SharedPreferences.getInstance();
+                        pref.setBool("autoLogin", false);
+                        Navigator.pushNamedAndRemoveUntil(context,'/login', (route) => false);
+                      }
+                    }
+                  });
+
                 },
                 child: Text("로그아웃", style: MainTheme.body5(MainTheme.gray4)),
               )

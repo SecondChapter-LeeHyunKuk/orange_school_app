@@ -143,7 +143,7 @@ class _ChildPlan extends State<ChildPlan> {
   List monthChildren = [{}];
   List weekChildren = [{}];
   Map holidays = {};
-
+  ScrollController scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -206,535 +206,761 @@ class _ChildPlan extends State<ChildPlan> {
         extendBody: true,
         backgroundColor: MainTheme.backgroundGray,
         resizeToAvoidBottomInset: true,
-        body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
 
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).viewPadding.top,
+              ),
+              const SizedBox(height: 13,),
+              Stack(
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).viewPadding.top,
-                  ),
-                  const SizedBox(height: 13,),
-                  Stack(
-                    children: [
-                      Container(
-                        child:
-                        Row(
+                  Container(
+                    child:
+                    Row(
 
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
 
-                            GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap:(){
-                                  if (_overlayEntry == null) {
-                                    _overlayEntry = selectChild();
-                                    Overlay.of(context)?.insert(_overlayEntry!);
-                                  }
+                        GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap:(){
+                              if (_overlayEntry == null) {
+                                _overlayEntry = selectChild();
+                                Overlay.of(context)?.insert(_overlayEntry!);
+                              }
 
-                                },
-                                child:
-                                CompositedTransformTarget(
-                                  link: _layerLink,
-                                  child: Container(
-                                    child: IntrinsicWidth(
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            alignment: Alignment.center,
-                                            width: 36,
-                                            height: 36,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                            ),
+                            },
+                            child:
+                            CompositedTransformTarget(
+                              link: _layerLink,
+                              child: Container(
+                                child: IntrinsicWidth(
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.center,
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child:
+                                        ClipRRect(
+                                            borderRadius: BorderRadius.circular(300.0),
                                             child:
-                                            ClipRRect(
-                                                borderRadius: BorderRadius.circular(300.0),
-                                                child:
-                                                CachedNetworkImage(imageUrl:
-                                                  children[selectedChildIndex]["fileUrl"] ?? "",
-                                                  width : 30,
-                                                  height: 30,
-                                                  fit: BoxFit.cover,
-                                                  errorWidget: (context, url, error) {
-                                                    return SvgPicture.asset("assets/icons/profile_${children[selectedChildIndex]["id"]%3 + 1}.svg",width: 30, height: 30, );
-                                                  },
-                                                )
+                                            CachedNetworkImage(imageUrl:
+                                            children[selectedChildIndex]["fileUrl"] ?? "",
+                                              width : 30,
+                                              height: 30,
+                                              fit: BoxFit.cover,
+                                              errorWidget: (context, url, error) {
+                                                return SvgPicture.asset("assets/icons/profile_${children[selectedChildIndex]["id"]%3 + 1}.svg",width: 30, height: 30, );
+                                              },
                                             )
-                                            ,
-                                          ),
-                                          Container(width: 8,),
-                                          ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              maxWidth: 80,
-                                            ),
-                                            child: Text(children[selectedChildIndex]["name"], style: MainTheme.caption1(MainTheme.gray7),overflow: TextOverflow.ellipsis,),
-                                          )
-
-
-
-                                        ],
+                                        )
+                                        ,
                                       ),
-
-                                    ),
-                                  ),
-                                )
-
-
-                            ),
-
-                            GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: (){
-
-                                  if(screenIndex == 1){
-
-                                    DateTime today = DateTime.now();
-                                    if(!DateTime(selectDay.year, selectDay.month, selectDay.day).isAfter(DateTime(
-                                        today.year, today.month, today.day
-                                    ))){
-                                      if(DateTime(today.year, today.month, today.day).difference(DateTime(
-                                          selectDay.year, selectDay.month, selectDay.day
-                                      )).inDays <= 6){
-                                        selectDay = DateTime.now();
-                                      }
-
-                                    }
-
-
-                                    changeMonth();
-                                    getMonthly();
-                                    getDaily();
-                                    setState(() {
-                                      screenIndex = 0;
-                                    });
-                                  }else{
-                                    if(selectDay.weekday != 7){
-                                      selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
-                                    }
-                                    setWeeks();
-                                    getWeek();
-                                    getWeekSchedule();
-                                    setState(() {
-                                      screenIndex = 1;
-                                    });
-                                  }
-
-                                },
-                                child:
-                                Container(
-                                  width: 93,
-                                  height: 36,
-                                  padding: EdgeInsets.fromLTRB(6, 4, 6, 4),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(18)
-                                  ),
-                                  child:
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 37,
-                                        height: 28,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: screenIndex == 0 ? MainTheme.gray2 : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(14)
+                                      Container(width: 8,),
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: 80,
                                         ),
-                                        child: Text("월",style: MainTheme.body8(screenIndex == 0 ? MainTheme.gray6 : MainTheme.gray4),),
-
-
-                                      ),
-                                      Container(
-                                        width: 37,
-                                        height: 28,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: screenIndex == 1 ? MainTheme.gray2 : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(14)
-                                        ),
-                                        child: Text("주",style: MainTheme.body8(screenIndex == 1 ? MainTheme.gray6 : MainTheme.gray4),),),
-
-
-
-
-                                    ],
-                                  )
-                                  ,
-                                ))
-
-
-
-                          ],
-                        ),
-
-                      ),
-                      screenIndex == 0 ? SizedBox.shrink() :
-                      Container(
-                          alignment: Alignment.center,
-                          height: 36,
-                          child:
-                          GestureDetector(
-                              onTap: () async {
-                                var pickedDate = await showModalBottomSheet<DateTime>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return DatePicker( initTime: selectDay,);
-                                  },
-                                );
-                                if(pickedDate != null){
-                                  setState((){
-                                    selectDay = pickedDate!;
-                                    if(selectDay.weekday != 7){
-                                      selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
-                                    }
-                                  });
-                                  setWeeks();
-                                  getWeek();
-                                  getWeekSchedule();
-                                }
-                              },
-                              child: IntrinsicWidth(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-
-                                  children: [
-
-                                    Text(DateFormat('yyyy.').format(selectDay) + DateFormat('M').format(selectDay), style: MainTheme.body2(MainTheme.gray7),),
-                                    SizedBox(width : 7),
-                                    Icon(Icons.keyboard_arrow_down_rounded, color: MainTheme.gray4, size: 16,),
-
-                                  ],
-                                ),
-                              )
-                          )
-
-
-
-
-                      ),
-                    ],
-                  ),
-
-
-                  Container(height: 15,),
-
-                  screenIndex == 0 ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12)
-                        ),
-                        child: Column(
-                          children: [
-
-
-                            Container(height: 74,
-                              padding: EdgeInsets.only(left: 20, right: 20),
-
-
-
-                              child: Row(
-                                mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-
-                                  GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () async {
-                                      var pickedDate = await showModalBottomSheet<DateTime>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return MonthPicker( initTime: selectDay,);
-                                        },
-                                      );
-                                      if(pickedDate != null) {
-                                        if (!DateUtils.isSameMonth(
-                                            selectDay, pickedDate)) {
-                                          selectDay = pickedDate!;
-                                          changeMonth();
-                                          getMonthly();
-                                        }
-                                      }
-                                    },
-                                    child: Container(
-                                      child:Row(
-                                        children: [
-                                          Text(
-                                            selectDay.month < 10?
-                                            DateFormat('yyyy. M').format(selectDay):
-                                            DateFormat('yyyy.MM').format(selectDay)
-                                            , style: MainTheme.body2(MainTheme.gray7),),
-                                          Container(width: 4,),
-                                          Icon(Icons.keyboard_arrow_down_rounded, size: 20,color: MainTheme.gray4),
-
-                                        ],
-                                      ),
-
-                                    ),
-                                  ),
-
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "오늘", style: MainTheme.caption2(MainTheme.gray7),),
-                                      weather != null ?
-                                      CachedNetworkImage(imageUrl:"http://openweathermap.org/img/wn/"
-                                          + weather!["weather"][0]["icon"] + ".png", width: 32 , height: 32,) :
-                                      SizedBox(width: 32 , height: 32,),
-                                      Container(width: 3,),
-                                      Container(constraints: const BoxConstraints(
-                                        minWidth: 29,
-                                      ),
-                                          child: weather != null ? Text(
-                                            "${(weather!["main"]["temp"] - 273.15).toInt()}°C", style: MainTheme.caption2(MainTheme.gray7),) : SizedBox.shrink()
+                                        child: Text(children[selectedChildIndex]["name"], style: MainTheme.caption1(MainTheme.gray7),overflow: TextOverflow.ellipsis,),
                                       )
 
 
 
+                                    ],
+                                  ),
+
+                                ),
+                              ),
+                            )
+
+
+                        ),
+
+                        GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: (){
+
+                              if(screenIndex == 1){
+                                scrollController.jumpTo(0);
+                                DateTime today = DateTime.now();
+                                if(!DateTime(selectDay.year, selectDay.month, selectDay.day).isAfter(DateTime(
+                                    today.year, today.month, today.day
+                                ))){
+                                  if(DateTime(today.year, today.month, today.day).difference(DateTime(
+                                      selectDay.year, selectDay.month, selectDay.day
+                                  )).inDays <= 6){
+                                    selectDay = DateTime.now();
+                                  }
+
+                                }
+
+
+                                changeMonth();
+                                getMonthly();
+                                getDaily();
+                                setState(() {
+                                  screenIndex = 0;
+                                });
+                              }else{
+                                scrollController.jumpTo(535);
+                                if(selectDay.weekday != 7){
+                                  selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
+                                }
+                                setWeeks();
+                                getWeek();
+                                getWeekSchedule();
+                                setState(() {
+                                  screenIndex = 1;
+                                });
+                              }
+
+                            },
+                            child:
+                            Container(
+                              width: 93,
+                              height: 36,
+                              padding: EdgeInsets.fromLTRB(6, 4, 6, 4),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(18)
+                              ),
+                              child:
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: 37,
+                                    height: 28,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: screenIndex == 0 ? MainTheme.gray2 : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(14)
+                                    ),
+                                    child: Text("월",style: MainTheme.body8(screenIndex == 0 ? MainTheme.gray6 : MainTheme.gray4),),
+
+
+                                  ),
+                                  Container(
+                                    width: 37,
+                                    height: 28,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: screenIndex == 1 ? MainTheme.gray2 : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(14)
+                                    ),
+                                    child: Text("주",style: MainTheme.body8(screenIndex == 1 ? MainTheme.gray6 : MainTheme.gray4),),),
+
+
+
+
+                                ],
+                              )
+                              ,
+                            ))
+
+
+
+                      ],
+                    ),
+
+                  ),
+                  screenIndex == 0 ? SizedBox.shrink() :
+                  Container(
+                      alignment: Alignment.center,
+                      height: 36,
+                      child:
+                      GestureDetector(
+                          onTap: () async {
+                            var pickedDate = await showModalBottomSheet<DateTime>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return DatePicker( initTime: selectDay,);
+                              },
+                            );
+                            if(pickedDate != null){
+                              setState((){
+                                selectDay = pickedDate!;
+                                if(selectDay.weekday != 7){
+                                  selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
+                                }
+                              });
+                              setWeeks();
+                              getWeek();
+                              getWeekSchedule();
+                            }
+                          },
+                          child: IntrinsicWidth(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+
+                              children: [
+
+                                Text(DateFormat('yyyy.').format(selectDay) + DateFormat('M').format(selectDay), style: MainTheme.body2(MainTheme.gray7),),
+                                SizedBox(width : 7),
+                                Icon(Icons.keyboard_arrow_down_rounded, color: MainTheme.gray4, size: 16,),
+
+                              ],
+                            ),
+                          )
+                      )
+
+
+
+
+                  ),
+                ],
+              ),
+
+
+              Container(height: 15,),
+              screenIndex == 1 ? Column(
+                children: [
+                  Container(width: double.infinity,
+                    height: 94,
+                    decoration: MainTheme.roundBox(Colors.white),
+                    child: Row(
+                      children: [
+                        Container(width: 42,
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(right: 4),
+
+                            child:
+
+                            GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: (){
+                                setState(() {
+                                  school = !school;
+                                  getWeek();
+                                });
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("학교\n수업", style: MainTheme.caption4(MainTheme.gray6),),
+                                  SizedBox(height: 6,),
+
+                                  Container(
+                                    width: 28,
+                                    child: FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: CupertinoSwitch(value: school,activeColor: MainTheme.mainColor, trackColor: Color(0xffBEC5CC),onChanged: (bool value){
+                                      }),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+
+
+                        ),
+                        Expanded(child: CarouselSlider(
+                            carouselController: carouselController,
+                            options: CarouselOptions(
+                              autoPlay: false,
+                              initialPage: 1,
+                              viewportFraction: 1,
+                              onPageChanged: (index, reason) => setState(() {
+
+                                int preIndex = index == 0 ? 2 : index -1;
+                                int nextIndex = index == 2 ? 0 : index +1;
+                                selectDay = weeks[index][0]["date"];
+                                for(int i = 0; i < 7; i++){
+                                  weeks[preIndex][i]["date"] = selectDay.subtract(Duration(days: 7-i));
+                                }
+                                for(int i = 0; i < 7; i++){
+                                  weeks[nextIndex][i]["date"] = selectDay.add(Duration(days: i+7));
+                                }
+                                getWeekSchedule();
+                                getWeek();
+                              }),
+                            ),
+                            items :[
+
+                              ...List.generate(weeks.length, (index) =>Container(
+                                width: MediaQuery.of(context).size.width - 32 - 42,
+                                height: 94,
+                                child: Row(
+                                  children: [
+                                    ...List.generate(7, (dayIndex) =>
+
+                                        Expanded(child:
+
+                                        GestureDetector(
+                                            behavior: HitTestBehavior.translucent,
+                                            onTap: (){
+                                              showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"]);
+                                            },
+                                            child:Container(
+                                              height: 94,
+                                              margin: EdgeInsets.only(right: dayIndex == 6 ? 0 : 2),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(days[dayIndex], style: MainTheme.caption3(dayIndex == 0 ? Color(0xfff24147) : MainTheme.gray4),),
+                                                  SizedBox(height: 11,),
+                                                  Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: DateUtils.isSameDay(DateTime.now(), weeks[index][dayIndex]["date"]) ? MainTheme.mainColor.withOpacity(0.1) : Colors.transparent,
+                                                    ),
+                                                    child :  Text(DateFormat('d').format(weeks[index][dayIndex]["date"]), style: MainTheme.body4( DateUtils.isSameDay(DateTime.now(), weeks[index][dayIndex]["date"]) ? MainTheme.mainColor : MainTheme.gray7),),
+                                                  )
+
+                                                ],
+                                              ),
+
+                                            )
+
+                                        )
+                                        ))
+                                  ],
+
+                                ),
+
+                              ),)
+                              ,
+
+                            ]
+                        ),)
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 8,),
+                  Container(
+                    decoration: MainTheme.roundBox(Colors.white),
+                    padding: EdgeInsets.symmetric(vertical: 0),
+                    width: dashWidth,
+                    child : Row(
+                      children: [
+                        Container(
+                          width: 41.75,
+                          alignment: Alignment.center,
+                          child: Text("종일", style: MainTheme.body8(MainTheme.gray7),),
+                        ),
+                        Container(
+                          width: dashWidth - 41.75,
+                          child: Stack(
+                            children: [
+
+                              Positioned.fill(
+                                  child: Row(
+                                    children: [
+                                      ...List.generate(7, (index) =>
+                                          GestureDetector(
+                                              onTap: (){
+                                              },
+                                              behavior: HitTestBehavior.translucent,
+                                              child:
+                                              Container(
+                                                child: Row(
+                                                  children: [
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, double.infinity)),
+                                                    Container(width: index == 7 ? dayWidth-0.25 : dayWidth-0.5,)
+                                                  ],
+                                                ),
+                                              ))
+
+                                      )
+
+                                    ],
+
+                                  )
+                              ),
+                              //기본 길이
+                              Container(height: 37,),
+                              //최대길이
+
+                              ...List.generate(onDaySchedules.length, (index){
+
+                                int preCount = 0;
+                                for(int i = index ; i >= 0 ; i-- ){
+                                  if(i == 0){
+                                    break;
+                                  }
+                                  if(DateUtils.isSameDay(onDaySchedules[i-1]["end"], onDaySchedules[i]["start"]) || onDaySchedules[i-1]["end"].isAfter(onDaySchedules[i]["start"])){
+                                    preCount ++;
+                                  }else{
+                                    break;
+                                  }
+                                }
+                                int nextCount = 0;
+                                for(int i = index ; i < onDaySchedules.length ; i++ ){
+                                  if(i == onDaySchedules.length -1){
+                                    break;
+                                  }
+                                  if(DateUtils.isSameDay(onDaySchedules[i]["end"], onDaySchedules[i + 1]["start"]) || onDaySchedules[i]["end"].isAfter(onDaySchedules[i + 1]["start"])){
+                                    nextCount ++;
+                                  }else{
+                                    break;
+                                  }
+                                }
+                                return
+                                  Container(
+                                    height: ((preCount + nextCount + 1)* 21) + ((preCount + nextCount)*2) + 16,
+                                  )
+                                ;
+
+
+                              }),
+
+                              ...List.generate(onDaySchedules.length, (index){
+
+                                int preCount = 0;
+                                for(int i = index ; i >= 0 ; i-- ){
+                                  if(i == 0){
+                                    break;
+                                  }
+                                  if(DateUtils.isSameDay(onDaySchedules[i-1]["end"], onDaySchedules[i]["start"]) || onDaySchedules[i-1]["end"].isAfter(onDaySchedules[i]["start"])){
+                                    preCount ++;
+                                  }else{
+                                    break;
+                                  }
+                                }
+                                int nextCount = 0;
+                                for(int i = index ; i < onDaySchedules.length ; i++ ){
+                                  if(i == onDaySchedules.length -1){
+                                    break;
+                                  }
+                                  if(DateUtils.isSameDay(onDaySchedules[i]["end"], onDaySchedules[i + 1]["start"]) || onDaySchedules[i]["end"].isAfter(onDaySchedules[i + 1]["start"])){
+                                    nextCount ++;
+                                  }else{
+                                    break;
+                                  }
+                                }
+                                DateTime start = onDaySchedules[index]["start"];
+                                DateTime end = onDaySchedules[index]["end"];
+
+                                double width = ((end.weekday % 7) - (start.weekday % 7) + 1) * dayWidth - 4;
+                                double left = (start.weekday % 7) * dayWidth + 2;
+                                double height = 21;
+                                double top = ((height + 2)  * preCount) + 8;
+                                return
+
+                                  Positioned(
+                                    left: left,
+                                    top: top,
+                                    width: width,
+                                    height: height,
+                                    child:
+                                    GestureDetector(
+                                        onTap: (){showScheduleInfo(onDaySchedules[index]["scheduleId"], 0);},
+                                        behavior: HitTestBehavior.translucent,
+                                        child:
+                                        Container(
+                                          padding : EdgeInsets.all(3),
+                                          width: width,
+                                          height: height,
+                                          decoration: BoxDecoration(
+                                              color:MainTheme.planBgColor[int.parse(onDaySchedules[index]["color"])],
+                                              borderRadius: BorderRadius.circular(4)
+                                          ),
+                                          child:
+
+                                          Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
+                                              overflow: TextOverflow.ellipsis, maxLines:1
+                                          ),
+                                        )),
+                                  )
+                                ;
+
+
+                              }),
+
+                            ],
+                          ),
+
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 8,),
+                ],
+              ) : SizedBox.shrink(),
+              Expanded(child:
+
+              ClipRRect(
+                borderRadius: screenIndex == 1 ? BorderRadius.circular(12) : BorderRadius.zero,
+                child:  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(screenIndex == 1 ? 12 : 0)
+                    ),
+                    child : SingleChildScrollView(
+                        controller: scrollController,
+                        scrollDirection: Axis.vertical,
+                        child :  screenIndex == 0 ?
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)
+                              ),
+                              child: Column(
+                                children: [
+
+
+                                  Container(height: 74,
+                                    padding: EdgeInsets.only(left: 20, right: 20),
+
+
+
+                                    child: Row(
+                                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+
+                                        GestureDetector(
+                                          behavior: HitTestBehavior.translucent,
+                                          onTap: () async {
+                                            var pickedDate = await showModalBottomSheet<DateTime>(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return MonthPicker( initTime: selectDay,);
+                                              },
+                                            );
+                                            if(pickedDate != null) {
+                                              if (!DateUtils.isSameMonth(
+                                                  selectDay, pickedDate)) {
+                                                selectDay = pickedDate!;
+                                                changeMonth();
+                                                getMonthly();
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                            child:Row(
+                                              children: [
+                                                Text(
+                                                  selectDay.month < 10?
+                                                  DateFormat('yyyy. M').format(selectDay):
+                                                  DateFormat('yyyy.MM').format(selectDay)
+                                                  , style: MainTheme.body2(MainTheme.gray7),),
+                                                Container(width: 4,),
+                                                Icon(Icons.keyboard_arrow_down_rounded, size: 20,color: MainTheme.gray4),
+
+                                              ],
+                                            ),
+
+                                          ),
+                                        ),
+
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "오늘", style: MainTheme.caption2(MainTheme.gray7),),
+                                            weather != null ?
+                                            CachedNetworkImage(imageUrl:"http://openweathermap.org/img/wn/"
+                                                + weather!["weather"][0]["icon"] + ".png", width: 32 , height: 32,) :
+                                            SizedBox(width: 32 , height: 32,),
+                                            Container(width: 3,),
+                                            Container(constraints: const BoxConstraints(
+                                              minWidth: 29,
+                                            ),
+                                                child: weather != null ? Text(
+                                                  "${(weather!["main"]["temp"] - 273.15).toInt()}°C", style: MainTheme.caption2(MainTheme.gray7),) : SizedBox.shrink()
+                                            )
+
+
+
+
+                                          ],
+                                        ),
+
+                                      ],
+                                    ),
+
+                                  ),
+
+                                  //요일 그리기
+                                  Row(
+                                    children: [
+                                      ...List.generate(days.length, (index) =>
+                                          Container(
+                                            width: blockWidth,
+                                            height: 21,
+                                            alignment: Alignment.topCenter,
+                                            child: Text(
+                                              days[index], style: TextStyle(fontSize: 11, fontFamily: "SUIT", fontWeight: FontWeight.w600, color: index ==0? Color(0xffF24147) : MainTheme.gray4),
+                                            ),
+                                          )),
+
 
                                     ],
                                   ),
 
+                                  GridView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: dates.length,
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          childAspectRatio: blockWidth / 75,
+                                          crossAxisCount: 7),
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return
+                                          GestureDetector(
+                                            behavior: HitTestBehavior.translucent,
+                                            onTap: (){
+                                              if(DateUtils.isSameMonth(dates[index]["day"], selectDay)){
+                                                setState(() {
+                                                  selectDay = dates[index]["day"];
+                                                  getDaily();
+                                                });
+                                              }else{
+                                                // setState(() {
+                                                // selectDay = dates[index]["day"];
+                                                // changeMonth();
+                                                // getDaily();
+                                                // });
+                                              }
+
+
+
+                                            },
+                                            child: SizedBox(
+                                                width: blockWidth, height: 75,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+
+                                                    DateUtils.isSameDay(selectDay,dates[index]["day"] )?
+                                                    //선택된 날짜면 검은바탕에 흰 글자로 표시
+                                                    Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      decoration: BoxDecoration(
+                                                          color: MainTheme.gray7,
+                                                          shape: BoxShape.circle
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                          dates[index]["day"].day.toString(), style: TextStyle(fontSize: 13, fontFamily: "SUIT", fontWeight: FontWeight.w800, color:Colors.white)
+                                                      ),
+                                                    ):
+
+                                                    dates[index]["today"]?
+                                                    //오늘 날짜면 주황바탕으로 표시
+                                                    Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      decoration: BoxDecoration(
+                                                          color: Color(0x1aff881a),
+                                                          shape: BoxShape.circle
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                          dates[index]["day"].day.toString(), style: TextStyle(fontSize: 13, fontFamily: "SUIT", fontWeight: FontWeight.w800, color:MainTheme.mainColor)
+                                                      ),
+                                                    ):
+                                                    //아니면 검은색 혹은 빨간색으로 표시
+                                                    Container(
+                                                      child: Text(
+                                                        dates[index]["day"].day.toString(), style: TextStyle(fontSize: 13, fontFamily: "SUIT", fontWeight: FontWeight.w800, color: index%7 == 0
+
+
+                                                          || (holidays[DateFormat("yyyyMMdd").format(dates[index]["day"])]??{"isHoliday":false})["isHoliday"]
+
+
+                                                          ?
+                                                      dates[index]["previous"] != 0? Color(0x80F24147): Color(0xffF24147) : dates[index]["previous"] != 0? MainTheme.gray4:MainTheme.gray7),),
+                                                      alignment: Alignment.center,
+                                                      width: 24,
+                                                      height: 24,
+                                                    ),
+                                                    //일정 표시
+                                                    Container(height: 1,),
+                                                    Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        ...List.generate(min(2,   monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])] == null ? 0 : monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])].length
+                                                        ), (schIndex) =>
+
+                                                            Container(
+                                                              margin: EdgeInsets.only(bottom: 3, left: 1.4),
+                                                              width: 41,
+                                                              height: 14,
+                                                              padding: EdgeInsets.symmetric(horizontal: 3),
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(4),
+                                                                color: MainTheme.planBgColor[int.parse(monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])][schIndex]["color"])],
+                                                              ),
+                                                              child: Text(
+                                                                  monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])][schIndex]["title"], style: TextStyle(overflow:TextOverflow.ellipsis, fontSize: 10, fontFamily: "SUIT", fontWeight: FontWeight.w800, color:MainTheme.planColor[int.parse(monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])][schIndex]["color"])],)
+                                                              ),
+                                                            )
+
+                                                        ),
+
+                                                        (monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])] == null ? 0 : monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])].length) >=3 ?
+                                                        Container(
+                                                            margin: EdgeInsets.only( left: 1.4),
+                                                            width: 23,
+                                                            height: 14,
+                                                            alignment: Alignment.center,
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(4),
+                                                              color: Color(0xffecedf0),
+                                                            ),
+                                                            child: Text(
+                                                                "+" + ((monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])].length) -2).toString(), style: TextStyle(fontSize: 10, fontFamily: "SUIT", fontWeight: FontWeight.w600, color:Color(0xff5a636a)))
+                                                        ):SizedBox.shrink()
+                                                      ],
+                                                    )
+
+                                                  ],
+                                                )
+                                            ),
+
+                                          );
+
+
+                                      }),
+
+
+
                                 ],
                               ),
-
                             ),
-
-                            //요일 그리기
+                            Container(height: 24,),
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                ...List.generate(days.length, (index) =>
-                                    Container(
-                                      width: blockWidth,
-                                      height: 21,
-                                      alignment: Alignment.topCenter,
-                                      child: Text(
-                                        days[index], style: TextStyle(fontSize: 11, fontFamily: "SUIT", fontWeight: FontWeight.w600, color: index ==0? Color(0xffF24147) : MainTheme.gray4),
-                                      ),
-                                    )),
-
-
+                                Container(width: 13,),
+                                Text(DateFormat("E요일", 'ko_KR').format(selectDay), style: MainTheme.body4(MainTheme.gray7)),
+                                Container(width: 6,),
+                                Text(selectDay.day.toString(), style: MainTheme.body8(MainTheme.gray7))
                               ],
                             ),
-
-                            GridView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: dates.length,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    childAspectRatio: blockWidth / 75,
-                                    crossAxisCount: 7),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return
-                                    GestureDetector(
-                                      behavior: HitTestBehavior.translucent,
-                                      onTap: (){
-                                        if(DateUtils.isSameMonth(dates[index]["day"], selectDay)){
-                                          setState(() {
-                                            selectDay = dates[index]["day"];
-                                            getDaily();
-                                          });
-                                        }else{
-                                          // setState(() {
-                                          // selectDay = dates[index]["day"];
-                                          // changeMonth();
-                                          // getDaily();
-                                          // });
-                                        }
-
-
-
-                                      },
-                                      child: SizedBox(
-                                          width: blockWidth, height: 75,
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-
-                                              DateUtils.isSameDay(selectDay,dates[index]["day"] )?
-                                              //선택된 날짜면 검은바탕에 흰 글자로 표시
-                                              Container(
-                                                width: 24,
-                                                height: 24,
-                                                decoration: BoxDecoration(
-                                                    color: MainTheme.gray7,
-                                                    shape: BoxShape.circle
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                    dates[index]["day"].day.toString(), style: TextStyle(fontSize: 13, fontFamily: "SUIT", fontWeight: FontWeight.w800, color:Colors.white)
-                                                ),
-                                              ):
-
-                                              dates[index]["today"]?
-                                              //오늘 날짜면 주황바탕으로 표시
-                                              Container(
-                                                width: 24,
-                                                height: 24,
-                                                decoration: BoxDecoration(
-                                                    color: Color(0x1aff881a),
-                                                    shape: BoxShape.circle
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                    dates[index]["day"].day.toString(), style: TextStyle(fontSize: 13, fontFamily: "SUIT", fontWeight: FontWeight.w800, color:MainTheme.mainColor)
-                                                ),
-                                              ):
-                                              //아니면 검은색 혹은 빨간색으로 표시
-                                              Container(
-                                                child: Text(
-                                                  dates[index]["day"].day.toString(), style: TextStyle(fontSize: 13, fontFamily: "SUIT", fontWeight: FontWeight.w800, color: index%7 == 0
-
-
-                                                    || (holidays[DateFormat("yyyyMMdd").format(dates[index]["day"])]??{"isHoliday":false})["isHoliday"]
-
-
-                                                    ?
-                                                dates[index]["previous"] != 0? Color(0x80F24147): Color(0xffF24147) : dates[index]["previous"] != 0? MainTheme.gray4:MainTheme.gray7),),
-                                                alignment: Alignment.center,
-                                                width: 24,
-                                                height: 24,
-                                              ),
-                                              //일정 표시
-                                              Container(height: 1,),
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  ...List.generate(min(2,   monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])] == null ? 0 : monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])].length
-                                                  ), (schIndex) =>
-
-                                                      Container(
-                                                        margin: EdgeInsets.only(bottom: 3, left: 1.4),
-                                                        width: 41,
-                                                        height: 14,
-                                                        padding: EdgeInsets.symmetric(horizontal: 3),
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(4),
-                                                          color: MainTheme.planBgColor[int.parse(monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])][schIndex]["color"])],
-                                                        ),
-                                                        child: Text(
-                                                            monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])][schIndex]["title"], style: TextStyle(overflow:TextOverflow.ellipsis, fontSize: 10, fontFamily: "SUIT", fontWeight: FontWeight.w800, color:MainTheme.planColor[int.parse(monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])][schIndex]["color"])],)
-                                                        ),
-                                                      )
-
-                                                  ),
-
-                                                  (monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])] == null ? 0 : monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])].length) >=3 ?
-                                                  Container(
-                                                      margin: EdgeInsets.only( left: 1.4),
-                                                      width: 23,
-                                                      height: 14,
-                                                      alignment: Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(4),
-                                                        color: Color(0xffecedf0),
-                                                      ),
-                                                      child: Text(
-                                                          "+" + ((monthSchedule[DateFormat('yyyy-MM-dd').format(dates[index]["day"])].length) -2).toString(), style: TextStyle(fontSize: 10, fontFamily: "SUIT", fontWeight: FontWeight.w600, color:Color(0xff5a636a)))
-                                                  ):SizedBox.shrink()
-                                                ],
-                                              )
-
-                                            ],
-                                          )
-                                      ),
-
-                                    );
-
-
-                                }),
-
-
-
-                          ],
-                        ),
-                      ),
-                      Container(height: 24,),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(width: 13,),
-                          Text(DateFormat("E요일", 'ko_KR').format(selectDay), style: MainTheme.body4(MainTheme.gray7)),
-                          Container(width: 6,),
-                          Text(selectDay.day.toString(), style: MainTheme.body8(MainTheme.gray7))
-                        ],
-                      ),
-                      Container(height: 12,),
-                      Container(
-                        child: Column(
-                          children: [
-
-                            ...List.generate((holidays[DateFormat("yyyyMMdd").format(selectDay)]??{"list":[]})["list"].length, (holiIndex) => Container(
-                              width: double.infinity,
-                              height: 48,
-                              margin: EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.white
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                            Container(height: 12,),
+                            Container(
+                              child: Column(
                                 children: [
 
-                                  Container(
-                                    width: 7,
-                                    height: 7,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(2),
-                                        color: MainTheme.planColor[0]
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 6,
-                                  ),
-                                  Text("${holidays[DateFormat("yyyyMMdd").format(selectDay)]["list"][holiIndex]}", style: MainTheme.body8(MainTheme.gray7), overflow: TextOverflow.ellipsis,)
-                                ],
-                              ),
-
-                            ),),
-
-
-
-                          ],
-                        ),
-                      ),
-                      daySchedule.length == 0 ?
-
-                      Container(
-                        height: 100,
-                        width: double.infinity,
-                        child: MainTheme.ErrorPage(context, "일정이 없어요"),
-                      ):
-
-                      Container(
-                        child: Column(
-                          children: [
-
-
-
-
-                            ...List.generate(daySchedule.length, (index) =>
-
-                                GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: (){showTimeTable(children[selectedChildIndex], selectDay);},
-                                  child: Container(
+                                  ...List.generate((holidays[DateFormat("yyyyMMdd").format(selectDay)]??{"list":[]})["list"].length, (holiIndex) => Container(
                                     width: double.infinity,
                                     height: 48,
-                                    margin: EdgeInsets.only(bottom: index == daySchedule.length? 0: 10),
+                                    margin: EdgeInsets.only(bottom: 10),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(8),
                                         color: Colors.white
@@ -743,649 +969,452 @@ class _ChildPlan extends State<ChildPlan> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Container(width: 83,
-                                            alignment: Alignment.centerLeft,
-
-                                            child:
-
-                                            daySchedule[index]["isAllDay"]?
-                                            Text("종일", style: MainTheme.body8(MainTheme.gray7),) :
-
-                                            daySchedule[index]["startTime"] == "00:00:00"|| daySchedule[index]["endTime"] == "00:00:00"?
-
-                                            //시작시간, 종료시간이 자정일 경우 == 한줄만 표시
-
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text(DateFormat("aa", 'ko_KR').format(DateTime
-                                                    .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
-                                                daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.caption4(MainTheme.gray4),),
-                                                Container(width: 2,),
-                                                Text(DateFormat("hh:mm").format(DateTime
-                                                    .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
-                                                daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
-                                              ],
-                                            )
-
-                                                :
-
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-
-                                              children: [
-                                                Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
-                                                    Container(width: 2,),
-                                                    Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
-
-                                                  ],
-                                                ),
-                                                Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
-                                                    Container(width: 2,),
-                                                    Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption4(MainTheme.gray4),)
-
-                                                  ],
-                                                )
-
-                                              ],
-                                            )
-                                        ),
 
                                         Container(
                                           width: 7,
                                           height: 7,
                                           decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(2),
-                                              color: MainTheme.planColor[int.parse( daySchedule[index]["color"])]
+                                              color: MainTheme.planColor[0]
                                           ),
                                         ),
                                         Container(
                                           width: 6,
                                         ),
-                                        Text("${daySchedule[index]["title"]}", style: MainTheme.body8(MainTheme.gray7), overflow: TextOverflow.ellipsis,)
+                                        Text("${holidays[DateFormat("yyyyMMdd").format(selectDay)]["list"][holiIndex]}", style: MainTheme.body8(MainTheme.gray7), overflow: TextOverflow.ellipsis,)
                                       ],
                                     ),
 
-                                  ),
-                                )
-                            )
-
-                          ],
-                        ),
-                      ),
-                    ],
-                  ) :
-
-                  //주간 일정-----------------------------------------
-
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(width: double.infinity,
-                          height: 94,
-                          decoration: MainTheme.roundBox(Colors.white),
-                          child: Row(
-                            children: [
-                              Container(width: 42,
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.only(right: 4),
-
-                                  child:
-
-                                  GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: (){
-                                      setState(() {
-                                        school = !school;
-                                        getWeek();
-                                      });
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Text("학교\n수업", style: MainTheme.caption4(MainTheme.gray6),),
-                                        SizedBox(height: 6,),
-
-                                        Container(
-                                          width: 28,
-                                          child: FittedBox(
-                                            fit: BoxFit.contain,
-                                            child: CupertinoSwitch(value: school,activeColor: MainTheme.mainColor, trackColor: Color(0xffBEC5CC),onChanged: (bool value){
-                                            }),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                  ),),
 
 
+
+                                ],
                               ),
-                              Expanded(child: CarouselSlider(
-                                carouselController: carouselController,
-                                  options: CarouselOptions(
-                                    autoPlay: false,
-                                    initialPage: 1,
-                                    viewportFraction: 1,
-                                    onPageChanged: (index, reason) => setState(() {
+                            ),
+                            daySchedule.length == 0 ?
 
-                                      int preIndex = index == 0 ? 2 : index -1;
-                                      int nextIndex = index == 2 ? 0 : index +1;
-                                      selectDay = weeks[index][0]["date"];
-                                      for(int i = 0; i < 7; i++){
-                                        weeks[preIndex][i]["date"] = selectDay.subtract(Duration(days: 7-i));
-                                      }
-                                      for(int i = 0; i < 7; i++){
-                                        weeks[nextIndex][i]["date"] = selectDay.add(Duration(days: i+7));
-                                      }
-                                      getWeekSchedule();
-                                      getWeek();
-                                    }),
-                                  ),
-                                  items :[
+                            Container(
+                              height: 100,
+                              width: double.infinity,
+                              child: MainTheme.ErrorPage(context, "일정이 없어요"),
+                            ):
 
-                                    ...List.generate(weeks.length, (index) =>Container(
-                                      width: MediaQuery.of(context).size.width - 32 - 42,
-                                      height: 94,
-                                      child: Row(
-                                        children: [
-                                          ...List.generate(7, (dayIndex) =>
+                            Container(
+                              child: Column(
+                                children: [
 
-                                              Expanded(child:
 
-                                              GestureDetector(
-                                                  behavior: HitTestBehavior.translucent,
-                                                  onTap: (){
-                                                    showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"]);
-                                                  },
-                                                  child:Container(
-                                                    height: 94,
-                                                    margin: EdgeInsets.only(right: dayIndex == 6 ? 0 : 2),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Text(days[dayIndex], style: MainTheme.caption3(dayIndex == 0 ? Color(0xfff24147) : MainTheme.gray4),),
-                                                        SizedBox(height: 11,),
-                                                        Container(
-                                                          width: 24,
-                                                          height: 24,
-                                                          alignment: Alignment.center,
-                                                          decoration: BoxDecoration(
-                                                            shape: BoxShape.circle,
-                                                            color: DateUtils.isSameDay(DateTime.now(), weeks[index][dayIndex]["date"]) ? MainTheme.mainColor.withOpacity(0.1) : Colors.transparent,
-                                                          ),
-                                                          child :  Text(DateFormat('d').format(weeks[index][dayIndex]["date"]), style: MainTheme.body4( DateUtils.isSameDay(DateTime.now(), weeks[index][dayIndex]["date"]) ? MainTheme.mainColor : MainTheme.gray7),),
-                                                        )
 
-                                                      ],
-                                                    ),
 
+                                  ...List.generate(daySchedule.length, (index) =>
+
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.translucent,
+                                        onTap: (){showTimeTable(children[selectedChildIndex], selectDay);},
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 48,
+                                          margin: EdgeInsets.only(bottom: index == daySchedule.length? 0: 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(8),
+                                              color: Colors.white
+                                          ),
+                                          padding: EdgeInsets.symmetric(horizontal: 20),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Container(width: 83,
+                                                  alignment: Alignment.centerLeft,
+
+                                                  child:
+
+                                                  daySchedule[index]["isAllDay"]?
+                                                  Text("종일", style: MainTheme.body8(MainTheme.gray7),) :
+
+                                                  daySchedule[index]["startTime"] == "00:00:00"|| daySchedule[index]["endTime"] == "00:00:00"?
+
+                                                  //시작시간, 종료시간이 자정일 경우 == 한줄만 표시
+
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Text(DateFormat("aa", 'ko_KR').format(DateTime
+                                                          .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
+                                                      daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.caption4(MainTheme.gray4),),
+                                                      Container(width: 2,),
+                                                      Text(DateFormat("hh:mm").format(DateTime
+                                                          .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
+                                                      daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
+                                                    ],
                                                   )
 
-                                              )
-                                              ))
-                                        ],
+                                                      :
 
-                                      ),
+                                                  Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
 
-                                    ),)
-                                    ,
-
-                                  ]
-                              ),)
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 8,),
-                        Container(
-                          decoration: MainTheme.roundBox(Colors.white),
-                          padding: EdgeInsets.symmetric(vertical: 0),
-                          width: dashWidth,
-                          child : Row(
-                            children: [
-                              Container(
-                                width: 41.75,
-                                alignment: Alignment.center,
-                                child: Text("종일", style: MainTheme.body8(MainTheme.gray7),),
-                              ),
-                              Container(
-                                width: dashWidth - 41.75,
-                                child: Stack(
-                                  children: [
-
-                                    Positioned.fill(
-                                        child: Row(
-                                          children: [
-                                            ...List.generate(7, (index) =>
-                                                GestureDetector(
-                                                    onTap: (){
-                                                    },
-                                                    behavior: HitTestBehavior.translucent,
-                                                    child:
-                                                    Container(
-                                                      child: Row(
+                                                    children: [
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
-                                                          CustomPaint(
-                                                              painter: DashedLineVerticalPainter(),
-                                                              size: Size(0.5, double.infinity)),
-                                                          Container(width: index == 7 ? dayWidth-0.25 : dayWidth-0.5,)
+                                                          Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
+                                                          Container(width: 2,),
+                                                          Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
+
                                                         ],
                                                       ),
-                                                    ))
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
+                                                          Container(width: 2,),
+                                                          Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption4(MainTheme.gray4),)
 
-                                            )
+                                                        ],
+                                                      )
 
-                                          ],
-
-                                        )
-                                    ),
-                                    //기본 길이
-                                    Container(height: 37,),
-                                    //최대길이
-
-                                    ...List.generate(onDaySchedules.length, (index){
-
-                                      int preCount = 0;
-                                      for(int i = index ; i >= 0 ; i-- ){
-                                        if(i == 0){
-                                          break;
-                                        }
-                                        if(DateUtils.isSameDay(onDaySchedules[i-1]["end"], onDaySchedules[i]["start"]) || onDaySchedules[i-1]["end"].isAfter(onDaySchedules[i]["start"])){
-                                          preCount ++;
-                                        }else{
-                                          break;
-                                        }
-                                      }
-                                      int nextCount = 0;
-                                      for(int i = index ; i < onDaySchedules.length ; i++ ){
-                                        if(i == onDaySchedules.length -1){
-                                          break;
-                                        }
-                                        if(DateUtils.isSameDay(onDaySchedules[i]["end"], onDaySchedules[i + 1]["start"]) || onDaySchedules[i]["end"].isAfter(onDaySchedules[i + 1]["start"])){
-                                          nextCount ++;
-                                        }else{
-                                          break;
-                                        }
-                                      }
-                                      return
-                                        Container(
-                                          height: ((preCount + nextCount + 1)* 21) + ((preCount + nextCount)*2) + 16,
-                                        )
-                                      ;
-
-
-                                    }),
-
-                                    ...List.generate(onDaySchedules.length, (index){
-
-                                      int preCount = 0;
-                                      for(int i = index ; i >= 0 ; i-- ){
-                                        if(i == 0){
-                                          break;
-                                        }
-                                        if(DateUtils.isSameDay(onDaySchedules[i-1]["end"], onDaySchedules[i]["start"]) || onDaySchedules[i-1]["end"].isAfter(onDaySchedules[i]["start"])){
-                                          preCount ++;
-                                        }else{
-                                          break;
-                                        }
-                                      }
-                                      int nextCount = 0;
-                                      for(int i = index ; i < onDaySchedules.length ; i++ ){
-                                        if(i == onDaySchedules.length -1){
-                                          break;
-                                        }
-                                        if(DateUtils.isSameDay(onDaySchedules[i]["end"], onDaySchedules[i + 1]["start"]) || onDaySchedules[i]["end"].isAfter(onDaySchedules[i + 1]["start"])){
-                                          nextCount ++;
-                                        }else{
-                                          break;
-                                        }
-                                      }
-                                      DateTime start = onDaySchedules[index]["start"];
-                                      DateTime end = onDaySchedules[index]["end"];
-
-                                      double width = ((end.weekday % 7) - (start.weekday % 7) + 1) * dayWidth - 4;
-                                      double left = (start.weekday % 7) * dayWidth + 2;
-                                      double height = 21;
-                                      double top = ((height + 2)  * preCount) + 8;
-                                      return
-
-                                        Positioned(
-                                          left: left,
-                                          top: top,
-                                          width: width,
-                                          height: height,
-                                          child:
-                                          GestureDetector(
-                                              onTap: (){showScheduleInfo(onDaySchedules[index]["scheduleId"], 0);},
-                                              behavior: HitTestBehavior.translucent,
-                                              child:
+                                                    ],
+                                                  )
+                                              ),
+                                              SvgPicture.asset("assets/icons/${daySchedule[index]["scheduleType"]}_GRAY.svg",width: 24, height: 24,),
+                                              SizedBox(width: 8,),
                                               Container(
-                                                padding : EdgeInsets.all(3),
-                                                width: width,
-                                                height: height,
+                                                width: 7,
+                                                height: 7,
                                                 decoration: BoxDecoration(
-                                                    color:MainTheme.planBgColor[int.parse(onDaySchedules[index]["color"])],
-                                                    borderRadius: BorderRadius.circular(4)
+                                                    borderRadius: BorderRadius.circular(2),
+                                                    color: MainTheme.planColor[int.parse( daySchedule[index]["color"])]
                                                 ),
-                                                child:
-
-                                                Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
-                                                    overflow: TextOverflow.ellipsis, maxLines:1
-                                                ),
-                                              )),
-                                        )
-                                      ;
-
-
-                                    }),
-
-                                  ],
-                                ),
-
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 8,),
-                        Container(
-                            decoration: MainTheme.roundBox(Colors.white),
-                            width: double.infinity,
-                            height: 1536 + 23,
-                            child :
-
-                            Stack(
-                              children: [
-                                Column(
-                                  children: [
-                                    SizedBox(height : 63.75 + 23),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                    SizedBox(height : 63.5),
-                                    CustomPaint(
-                                        painter: DashedLineHorizontalPainter(),
-                                        size: Size(dashWidth, 0.5)),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        SizedBox(height: 23,),
-                                        ...List.generate(13, (index) => Container(
-                                          height: 64,
-                                          width: 42,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            index == 0 ? "":"오전\n" + (index + 6).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
-                                          ),
-                                        )),
-                                        ...List.generate(11, (index) => Container(
-                                          height: 64,
-                                          width: 42,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "오후\n" + (index + 1).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
-                                          ),
-                                        )),
-                                      ],
-                                    ),
-                                    Expanded(child:
-                                    Container(
-                                      height: 1536 + 23,
-                                      child: Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
-                                              SizedBox(width: dayWidth-0.5,),
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
-                                              SizedBox(width: dayWidth-0.5,),
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
-                                              SizedBox(width: dayWidth-0.5,),
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
-                                              SizedBox(width: dayWidth-0.5,),
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
-                                              SizedBox(width: dayWidth-0.5,),
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
-                                              SizedBox(width: dayWidth-0.5,),
-                                              CustomPaint(
-                                                  painter: DashedLineVerticalPainter(),
-                                                  size: Size(0.5, 1536 + 23)),
+                                              ),
+                                              Container(
+                                                width: 6,
+                                              ),
+                                              Text("${daySchedule[index]["title"]}", style: MainTheme.body8(MainTheme.gray7), overflow: TextOverflow.ellipsis,)
                                             ],
                                           ),
 
+                                        ),
+                                      )
+                                  )
 
-                                          ...List.generate(7, (index) => Positioned(
-                                              top: 0, left: dayWidth * index,
-                                              child: Container(
-                                                height: 1536,
-                                                width: dayWidth,
-                                                child: Column(
+                                ],
+                              ),
+                            ),
+                          ],
+                        ) :
 
+                        //주간 일정-----------------------------------------
+
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              Container(
+                                  decoration: MainTheme.roundBox(Colors.white),
+                                  width: double.infinity,
+                                  height: 1536 + 23,
+                                  child :
+
+                                  Stack(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          SizedBox(height : 63.75 + 23),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                          SizedBox(height : 63.5),
+                                          CustomPaint(
+                                              painter: DashedLineHorizontalPainter(),
+                                              size: Size(dashWidth, 0.5)),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              SizedBox(height: 23,),
+                                              ...List.generate(13, (index) => Container(
+                                                height: 64,
+                                                width: 42,
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  index == 0 ? "":"오전\n" + (index).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
+                                                ),
+                                              )),
+                                              ...List.generate(11, (index) => Container(
+                                                height: 64,
+                                                width: 42,
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  "오후\n" + (index + 1).toString() + "시", style: MainTheme.caption3(MainTheme.gray6),textAlign: TextAlign.center,
+                                                ),
+                                              )),
+                                            ],
+                                          ),
+                                          Expanded(child:
+                                          Container(
+                                            height: 1536 + 23,
+                                            child: Stack(
+                                              children: [
+                                                Row(
                                                   children: [
-
-                                                    ...List.generate(18, (colIndex) =>
-                                                        GestureDetector(
-                                                          behavior: HitTestBehavior.translucent,
-                                                          child: Container(
-                                                            width: dayWidth,
-                                                            height: 64,
-                                                          ),
-
-
-                                                        ))
-
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
+                                                    SizedBox(width: dayWidth-0.5,),
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
+                                                    SizedBox(width: dayWidth-0.5,),
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
+                                                    SizedBox(width: dayWidth-0.5,),
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
+                                                    SizedBox(width: dayWidth-0.5,),
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
+                                                    SizedBox(width: dayWidth-0.5,),
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
+                                                    SizedBox(width: dayWidth-0.5,),
+                                                    CustomPaint(
+                                                        painter: DashedLineVerticalPainter(),
+                                                        size: Size(0.5, 1536 + 23)),
                                                   ],
-
                                                 ),
 
 
-
-                                              )
-
-
-                                          )),
-
-
-
-
-
-                                          ...List.generate(weekList.length, (index){
-
-
-
-                                            int preCount = 0;
-                                            for(int i = index ; i >= 0 ; i-- ){
-                                              if(i == 0){
-                                                break;
-                                              }
-                                              if(weekList[i-1]["end"].isAfter(weekList[i]["start"])){
-                                                preCount ++;
-                                              }else{
-                                                break;
-                                              }
-                                            }
-                                            int nextCount = 0;
-                                            for(int i = index ; i < weekList.length ; i++ ){
-                                              if(i == weekList.length -1){
-                                                break;
-                                              }
-                                              if(weekList[i]["end"].isAfter(weekList[i + 1]["start"])){
-                                                nextCount ++;
-                                              }else{
-                                                break;
-                                              }
-                                            }
-
-                                            DateTime start = weekList[index]["start"];
-                                            DateTime end = weekList[index]["end"];
-                                            double width = dayWidth / (preCount + nextCount + 1);
-                                            double left = width * preCount + (((weekList[index]["start"].weekday) % 7) * dayWidth);
-                                            double height = 64/60.0 * (end.difference(start).inMinutes);
-                                            double top = 64/60.0 * (start.difference(DateTime(start.year, start.month, start.day)).inMinutes);
-                                            top = top + 23;
-                                            int maxLine = (height.toInt() - 6) ~/ 14;
-                                            return Positioned(
-                                                left: left,
-                                                top: top,
-
-                                                child : GestureDetector(
-                                                    onTap: (){if (weekList[index]["scheduleId"] !=
-                                                        0) {
-                                                      showScheduleInfo(
-                                                          weekList[index]["scheduleId"],
-                                                          weekList[index]["id"]);
-                                                    }},
-                                                    behavior: HitTestBehavior.translucent,
+                                                ...List.generate(7, (index) => Positioned(
+                                                    top: 0, left: dayWidth * index,
                                                     child: Container(
-                                                      width: width,
-                                                      height: height,
-                                                      padding: EdgeInsets.only(top: 2,left:1),
-                                                      child: Container(
-                                                        width: double.infinity,
-                                                        height: double.infinity,
-                                                        decoration: BoxDecoration(
-                                                            color:MainTheme.planBgColor[int.parse(weekList[index]["color"])],
-                                                            borderRadius: BorderRadius.circular(4)
-                                                        ),
-                                                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                                                        child:
+                                                      height: 1536,
+                                                      width: dayWidth,
+                                                      child: Column(
 
-                                                        maxLine == 0 ? SizedBox.shrink() :
-                                                        Text(weekList[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color: MainTheme.planColor[int.parse(weekList[index]["color"])]),
-                                                          overflow: TextOverflow.ellipsis, maxLines: maxLine,
-                                                        ),
+                                                        children: [
+
+                                                          ...List.generate(18, (colIndex) =>
+                                                              GestureDetector(
+                                                                behavior: HitTestBehavior.translucent,
+                                                                child: Container(
+                                                                  width: dayWidth,
+                                                                  height: 64,
+                                                                ),
+
+
+                                                              ))
+
+                                                        ],
 
                                                       ),
-                                                    )));
 
 
-                                          })
+
+                                                    )
+
+
+                                                )),
+
+
+
+
+
+                                                ...List.generate(weekList.length, (index){
+
+
+
+                                                  int preCount = 0;
+                                                  for(int i = index ; i >= 0 ; i-- ){
+                                                    if(i == 0){
+                                                      break;
+                                                    }
+                                                    if(weekList[i-1]["end"].isAfter(weekList[i]["start"])){
+                                                      preCount ++;
+                                                    }else{
+                                                      break;
+                                                    }
+                                                  }
+                                                  int nextCount = 0;
+                                                  for(int i = index ; i < weekList.length ; i++ ){
+                                                    if(i == weekList.length -1){
+                                                      break;
+                                                    }
+                                                    if(weekList[i]["end"].isAfter(weekList[i + 1]["start"])){
+                                                      nextCount ++;
+                                                    }else{
+                                                      break;
+                                                    }
+                                                  }
+
+                                                  DateTime start = weekList[index]["start"];
+                                                  DateTime end = weekList[index]["end"];
+                                                  double width = dayWidth / (preCount + nextCount + 1);
+                                                  double left = width * preCount + (((weekList[index]["start"].weekday) % 7) * dayWidth);
+                                                  double height = 64/60.0 * (end.difference(start).inMinutes);
+                                                  double top = 64/60.0 * (start.difference(DateTime(start.year, start.month, start.day)).inMinutes);
+                                                  top = top + 23;
+                                                  int maxLine = (height.toInt() - 6) ~/ 14;
+                                                  return Positioned(
+                                                      left: left,
+                                                      top: top,
+
+                                                      child : GestureDetector(
+                                                          onTap: (){if (weekList[index]["scheduleId"] !=
+                                                              0) {
+                                                            showScheduleInfo(
+                                                                weekList[index]["scheduleId"],
+                                                                weekList[index]["id"]);
+                                                          }},
+                                                          behavior: HitTestBehavior.translucent,
+                                                          child: Container(
+                                                            width: width,
+                                                            height: height,
+                                                            padding: EdgeInsets.only(top: 2,left:1),
+                                                            child: Container(
+                                                              width: double.infinity,
+                                                              height: double.infinity,
+                                                              decoration: BoxDecoration(
+                                                                  color:MainTheme.planBgColor[int.parse(weekList[index]["color"])],
+                                                                  borderRadius: BorderRadius.circular(4)
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+                                                              child:
+
+                                                              maxLine == 0 ? SizedBox.shrink() :
+                                                              Text(weekList[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color: MainTheme.planColor[int.parse(weekList[index]["color"])]),
+                                                                overflow: TextOverflow.ellipsis, maxLines: maxLine,
+                                                              ),
+
+                                                            ),
+                                                          )));
+
+
+                                                })
+                                              ],
+                                            ),
+                                          )
+                                          )
+
                                         ],
                                       ),
-                                    )
-                                    )
+                                    ],
+                                  )
 
-                                  ],
-                                ),
-                              ],
-                            )
+                              ),
 
-                        ),
-                        SizedBox(height: 8,),
+                            ]
+                        )
 
-                      ]
-                  )
+                      //주간 일정-----------------------------------------
 
-                ],
+
+                    )
+                ),
               ),
 
-            )
+
+
+
+
+              ),
+
+              screenIndex == 1 ? SizedBox(height: 8,) : SizedBox.shrink()
+
+
+            ],
+          ),
 
         ),
 
@@ -1632,7 +1661,7 @@ class _ChildPlan extends State<ChildPlan> {
     setWeeks();
     getWeek();
     getWeekSchedule();
-
+    scrollController.jumpTo(535);
   }
 
   Future<void> getMonthly() async {
@@ -1653,14 +1682,15 @@ class _ChildPlan extends State<ChildPlan> {
       var holidayBody = XmlDocument.parse(utf8.decode(holidayResponse.bodyBytes));
 
       var itemList = holidayBody.lastChild?.lastChild?.firstChild?.childElements;
+      if(itemList != null){
+        for(int i = 0; i< itemList!.length; i++){
 
-      for(int i = 0; i< itemList!.length; i++){
-
-        if(holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] == null){
-          holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] = {"isHoliday" : false, "list" : []};
+          if(holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] == null){
+            holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] = {"isHoliday" : false, "list" : []};
+          }
+          holidays[itemList?.elementAt(i).findElements("locdate").single.innerText]["isHoliday"] = itemList?.elementAt(i).findElements("isHoliday").single.innerText == "Y";
+          holidays[itemList?.elementAt(i).findElements("locdate").single.innerText]["list"].add(itemList?.elementAt(i).findElements("dateName").single.innerText);
         }
-        holidays[itemList?.elementAt(i).findElements("locdate").single.innerText]["isHoliday"] = itemList?.elementAt(i).findElements("isHoliday").single.innerText == "Y";
-        holidays[itemList?.elementAt(i).findElements("locdate").single.innerText]["list"].add(itemList?.elementAt(i).findElements("dateName").single.innerText);
       }
     }
 
@@ -1670,13 +1700,14 @@ class _ChildPlan extends State<ChildPlan> {
       var holidayBody = XmlDocument.parse(utf8.decode(holidayResponse.bodyBytes));
 
       var itemList = holidayBody.lastChild?.lastChild?.firstChild?.childElements;
-
+      if(itemList != null){
       for(int i = 0; i< itemList!.length; i++){
 
         if(holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] == null){
           holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] = {"isHoliday" : false, "list" : []};
         }
         holidays[itemList?.elementAt(i).findElements("locdate").single.innerText]["list"].add(itemList?.elementAt(i).findElements("dateName").single.innerText);
+      }
       }
     }
     setState(() {

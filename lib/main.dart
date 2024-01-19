@@ -71,7 +71,6 @@ Future<void> main() async {
   }
   KakaoSdk.init(nativeAppKey: '615c25ed06f51a8b7e8125b8ddb6c2e7');
 
-  print(await KakaoSdk.origin);
   runApp(const MyApp());
 }
 
@@ -237,7 +236,7 @@ class _MyAppState extends State<MyApp> {
             channelDescription: channel.description,
             // TODO add a proper drawable resource to android, for now using
             //      one that already exists in example app.
-            icon: 'launch_background',
+            icon: 'ic_notification',
           ),
         ),
       );

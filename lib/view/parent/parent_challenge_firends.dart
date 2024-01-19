@@ -126,7 +126,12 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                           builder: (BuildContext context) {
                                             return ChallengeDetail(childId: childId!, commonMemberId: childId!,);
                                           },
-                                        );
+                                        ).then((value){
+                                          profileFuture = getProfile();
+                                          topFuture = getTop();
+                                          friendFuture = getFriend();
+
+                                        });
 
                                       },
                                       child:
@@ -239,7 +244,14 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                             builder: (BuildContext context) {
                                               return ChallengeDetail(childId: childId!, commonMemberId: topList[index]["id"],);
                                             },
-                                          ).then((value) => {updateFollow("TOP", index)});
+                                          ).then((value)  {
+
+
+                                            //updateFollow("TOP", index)
+                                            profileFuture = getProfile();
+                                            topFuture = getTop();
+                                            friendFuture = getFriend();
+                                          });
                                         },
                                         behavior: HitTestBehavior.translucent,
                                         child:Container(
@@ -373,7 +385,11 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                                               builder: (BuildContext context) {
                                                 return ChallengeDetail(childId: childId!, commonMemberId: friendList[index]["id"],);
                                               },
-                                            ).then((value) => {updateFollow("FRIEND", index)});
+                                            ).then((value) {
+                                              profileFuture = getProfile();
+                                              topFuture = getTop();
+                                              friendFuture = getFriend();
+                                            });
                                           },
                                           behavior: HitTestBehavior.translucent,
                                           child:Container(

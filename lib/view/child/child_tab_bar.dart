@@ -106,15 +106,15 @@ bottomNavigationBar: Container(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_home'+(screenIndex == 0 ? "_on" : "")+'.svg', width: 24, height: 24), label: '일정'),
           BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_challenge'+(screenIndex == 1 ? "_on" : "")+'.svg', width: 24, height: 24), label: '챌린지'),
-          BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_post'+(screenIndex == 2 ? "_on" : "")+'.svg', width: 24, height: 24), label: "O's pick"),
+          BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_post'+(screenIndex == 2 ? "_on" : "")+'.svg', width: 24, height: 24), label: "O’s pick"),
           BottomNavigationBarItem(icon: ClipRRect(borderRadius : BorderRadius.circular(12), child: CachedNetworkImage(imageUrl:fileUrl ?? "", width: 24, height: 24,fit: BoxFit.cover,
               errorWidget: (context, url, error) {
                 return SvgPicture.asset("assets/icons/profile_${((userId ?? 1) %3) + 1}.svg",width: 24, height: 24, );
               }
           )), label: '마이'),
         ],
-        selectedLabelStyle: MainTheme.caption4(MainTheme.mainColor),
-        unselectedLabelStyle: MainTheme.caption4(MainTheme.gray4),
+        selectedLabelStyle: MainTheme.caption4Pretendard(MainTheme.mainColor),
+        unselectedLabelStyle: MainTheme.caption4Pretendard(MainTheme.gray4),
       ),
     )),
 

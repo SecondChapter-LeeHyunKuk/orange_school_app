@@ -9,11 +9,28 @@ import 'package:http/http.dart' as http;
 
 
 Future<http.Response> openApiRequestGet(String url, Map<String, dynamic> param) async {
+
   try {
     http.Response response = await http.get(
         Uri.parse(url + "?" + Uri(queryParameters: param).query),
         headers: {
         }).timeout(const Duration(seconds: 10));
+    log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
+    return response;
+  }on TimeoutException {
+    return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크
+  }
+}
+
+Future<http.Response> openApiXmlRequestGet(String url, Map<String, dynamic> param) async {
+
+  try {
+    http.Response response = await http.get(
+        Uri.parse(url + "?" + Uri(queryParameters: param).query),
+        headers: {
+          'Content-Type': 'text/xml',
+        }).timeout(const Duration(seconds: 10));
+    log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
     return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크

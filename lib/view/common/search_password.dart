@@ -24,6 +24,7 @@ class SearchPassword extends StatefulWidget {
 }
 
 class _SearchPassword extends State<SearchPassword> {
+  bool te_phone_enable = true;
   String? phoneMessage = null;
   //타이머 클래스
   Timer? _timer = null;
@@ -126,7 +127,7 @@ class _SearchPassword extends State<SearchPassword> {
                                   checkFormComplete();
                                 }
                               }, child :TextField(
-                              enabled: authStatus != AuthStatus.auth,
+                              enabled: te_phone_enable,
                               onChanged: (String value){
                                 if(authStatus == AuthStatus.send || authStatus == AuthStatus.missMatch){
                                   _timer!.cancel();
@@ -253,6 +254,7 @@ class _SearchPassword extends State<SearchPassword> {
                                     if(te_auth.text == authNum){
                                       _timer!.cancel();
                                       setState(() {
+                                        te_phone_enable;
                                         authStatus = AuthStatus.auth;
                                         te_auth.text = "";
                                       });
@@ -278,7 +280,7 @@ class _SearchPassword extends State<SearchPassword> {
                           SizedBox(
                             height: 4,
                           ),
-                          Text("인증번호가 일치하지 않습니다.", style: MainTheme.caption2(Color(0xfff24147)),),
+                          Text("인증번호를 다시 확인해주세요..", style: MainTheme.caption2(Color(0xfff24147)),),
                         ],
                       ): SizedBox.shrink(),
 
@@ -371,7 +373,7 @@ class _SearchPassword extends State<SearchPassword> {
         phoneMessage = "휴대폰 번호를 입력해주세요.";
       });
       return;
-    }else if(te_phone.text.length < 13){
+    }else if(te_phone.text.length < 13 || !te_phone.text.startsWith("010")){
       setState(() {
         phoneMessage = "휴대폰 번호 형식이 맞지 않아요.";
       });

@@ -41,6 +41,7 @@ class MainTheme {
     Color(0xffEEEEEE),];
 
   static const chartColor = [
+    Color(0xffFF881A),
     Color(0xffF56397),
     Color(0xff8500F4),
     Color(0xffF4B000),
@@ -337,6 +338,10 @@ class MainTheme {
 
   static TextStyle caption4(Color color){
     return TextStyle(fontWeight: FontWeight.w500, fontFamily: "SUIT", fontSize: 12, height:1.375, color: color, letterSpacing: 0);
+  }
+
+  static TextStyle caption4Pretendard(Color color){
+    return TextStyle(fontWeight: FontWeight.w500, fontFamily: "Pretendard", fontSize: 12, height:1.375, color: color, letterSpacing: 0);
   }
 
   static TextStyle caption5(Color color){

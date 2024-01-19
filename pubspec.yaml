@@ -71,6 +71,8 @@ dependencies:
   xml: ^6.5.0
   cached_network_image: ^3.3.1
   image_picker: ^1.0.7
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: 2.3.9
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -173,7 +175,6 @@ flutter:
     - assets/images/login.svg
     - assets/images/splash.png
     - assets/images/sample.png
-    - assets/images/port.jpg
     - assets/images/challenge.png
     - assets/images/stamp_on.svg
     - assets/images/stamp_off.svg
@@ -206,6 +207,23 @@ flutter:
     - assets/images/chart_bg.svg
     - assets/icons/copy.svg
     - assets/icons/check_gray.svg
+    - assets/icons/launcher_clear.png
+    - assets/icons/ic_all.svg
+    - assets/icons/ic_reci.svg
+    - assets/icons/ic_moon.svg
+    - assets/icons/arrow_right_gray.svg
+    - assets/icons/ACADEMY.svg
+    - assets/icons/CLASS.svg
+    - assets/icons/ETC.svg
+    - assets/icons/SCHEDULE.svg
+    - assets/icons/SCHOOL.svg
+    - assets/icons/VEHICLE.svg
+    - assets/icons/ACADEMY_GRAY.svg
+    - assets/icons/CLASS_GRAY.svg
+    - assets/icons/ETC_GRAY.svg
+    - assets/icons/SCHEDULE_GRAY.svg
+    - assets/icons/SCHOOL_GRAY.svg
+    - assets/icons/VEHICLE_GRAY.svg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -111,15 +111,15 @@ class _CheerList extends State<CheerList> {
                                   GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: (){
-                                      // if(list[index]["USERTYPE"])
-                                      // showModalBottomSheet<void>(
-                                      //   context: context,
-                                      //   isScrollControlled: true,
-                                      //   builder: (BuildContext context) {
-                                      //     return ChallengeDetail(childId: widget.childId, commonMemberId: list[index]["id"],);
-                                      //   },
-                                      // );
-
+                                      if(list[index]["memberType"] == "CHILD"){
+                                        showModalBottomSheet<void>(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (BuildContext context) {
+                                            return ChallengeDetail(childId: widget.childId, commonMemberId: list[index]["commonMemberId"],);
+                                          },
+                                        );
+                                      }
                                     },
                                     child: Container(
                                       height: 32,
@@ -142,7 +142,7 @@ class _CheerList extends State<CheerList> {
                                               )
                                           ),
                                           SizedBox(width: 6,),
-                                          Text(list[index]["name"], style: MainTheme.body5(MainTheme.gray7),)
+                                          Text(list[index]["name"] + "${list[index]["nickName"].isEmpty ? "" : "(${list[index]["nickName"]})"}", style: MainTheme.body5(MainTheme.gray7),)
                                         ],
                                       ),
 

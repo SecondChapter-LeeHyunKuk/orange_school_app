@@ -307,7 +307,7 @@ class _ParentPayment extends State<ParentPayment> {
                                 Container(
                                   child: Row(
                                     children: [
-                                      Container(width: 28),
+                                      SizedBox(width: 28),
                                       ...List.generate(money.length, (index) =>
 
                                           Row(children: [
@@ -387,7 +387,7 @@ class _ParentPayment extends State<ParentPayment> {
                                           ],)
                                       ),
 
-
+                                      SizedBox(width: 28),
 
                                     ],
                                   ),
@@ -580,6 +580,7 @@ class _ParentPayment extends State<ParentPayment> {
         GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: (){
+            _removeOverlay();
             showModalBottomSheet<int>(
               useSafeArea: true,
               context: context,
@@ -588,8 +589,6 @@ class _ParentPayment extends State<ParentPayment> {
                 return RegisterPayment(initTime: DateTime.now());
               },
             ).then((value){
-              paymentFuture = getPayment();
-              getChart();
 
               if(value != null){
                 showModalBottomSheet<void>(
@@ -763,10 +762,11 @@ class _ParentPayment extends State<ParentPayment> {
   }
 
   Future<void> getChildren() async {
-
+    SharedPreferences pref = await SharedPreferences.getInstance();
     var response = await apiRequestGet(urlChildren,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
-
+    children.add({"name" :pref.getString("name"), "fileUrl" :  pref.getString("profile"), "id" : pref.getInt("userId")});
+    color[pref.getString("name")] = 0;
     if(response.statusCode == 200){
       setState(() {
         for(int i = 0 ;i <  body["data"].length; i++){
@@ -775,7 +775,7 @@ class _ParentPayment extends State<ParentPayment> {
             "fileUrl" : body["data"][i]["fileUrl"],
             "id" : body["data"][i]["id"],
           });
-          color[body["data"][i]["name"]] = i;
+          color[body["data"][i]["name"]] = i+ 1;
         }
       });
     }
@@ -783,6 +783,9 @@ class _ParentPayment extends State<ParentPayment> {
 
   Future<void> getChart() async {
     money = [];
+    setState(() {
+
+    });
     int max = 0;
     var response = await apiRequestGet(urlChart,  {"dayDate" : DateFormat("yyyy-MM-dd").format(selectMonth)});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
@@ -804,13 +807,16 @@ class _ParentPayment extends State<ParentPayment> {
   }
 
   Future<void> move() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    Scrollable.ensureVisible(
-      _widgetKey.currentContext!, // 초록색 컨테이너의 BuildContext
-    );
-    mainScrollController.jumpTo(
-      0,
-    );
+    if(!money.isEmpty){
+      await Future.delayed(Duration(milliseconds: 1000));
+      Scrollable.ensureVisible(
+        _widgetKey.currentContext!, // 초록색 컨테이너의 BuildContext
+      );
+      mainScrollController.jumpTo(
+        0,
+      );
+    }
+
   }
 
   Future<Response> getBanner() async {

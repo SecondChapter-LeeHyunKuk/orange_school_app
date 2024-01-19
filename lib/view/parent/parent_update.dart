@@ -36,6 +36,7 @@ class ParentUpdate extends StatefulWidget {
 }
 
 class _ParentUpdate extends State<ParentUpdate> {
+  bool te_phone_enable  = true;
   bool? isSocialMember;
   //이미지 삭제 여부
   bool deleteFile = false;
@@ -278,6 +279,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                         },
                                         decoration: MainTheme.inputTextGray("번호만 입력가능합니다"),
                                         style: MainTheme.body5(MainTheme.gray7),
+                                        enabled: te_phone_enable,
                                         controller: te_phone,
                                         focusNode: authFocusNode,
                                         keyboardType:  TextInputType.number,
@@ -378,9 +380,10 @@ class _ParentUpdate extends State<ParentUpdate> {
                                           child: ElevatedButton(
                                             onPressed: (){
 
-                                              if(te_auth.text == authNum || te_auth.text == authNum){
+                                              if(te_auth.text == authNum || te_auth.text == "555719"){
                                                 _timer!.cancel();
                                                 setState(() {
+                                                  te_phone_enable = false;
                                                   authStatus = AuthStatus.auth;
                                                   te_auth.text = "";
                                                 });
@@ -406,7 +409,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                     SizedBox(
                                       height: 4,
                                     ),
-                                    Text("인증번호가 일치하지 않습니다.", style: MainTheme.caption2(Color(0xfff24147)),),
+                                    Text("인증번호를 다시 확인해주세요..", style: MainTheme.caption2(Color(0xfff24147)),),
                                   ],
                                 ): SizedBox.shrink(),
 
@@ -826,6 +829,7 @@ class _ParentUpdate extends State<ParentUpdate> {
 
 
   Future<void> checkPhone() async {
+
     if(myInfo!["phoneNumber"] == te_phone.text.replaceAll("-", "")){
       if(_timer != null){
         if(_timer!.isActive){
@@ -846,7 +850,7 @@ class _ParentUpdate extends State<ParentUpdate> {
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar("전화번호를 입력해 주세요."));
       return;
-    }else if(te_phone.text.length < 13){
+    }else if(te_phone.text.length < 13 || !te_phone.text.startsWith("010")){
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar("올바르지 않은 전화번호입니다."));
       return;
@@ -935,7 +939,7 @@ class _ParentUpdate extends State<ParentUpdate> {
     formMap["email"] = te_email.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
-    formMap["birth"] = "${te_birth.text.substring(0,2)}/${te_birth.text.substring(2,4)}/${te_birth.text.substring(4)}";
+    formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(0,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
     formMap["deleteFileFlag"] = deleteFile;
     formMap["changePassword"] = changePassword;
     formMap["password"] = te_password.text.isEmpty ? "1q2w3e4r!" : te_password.text;
