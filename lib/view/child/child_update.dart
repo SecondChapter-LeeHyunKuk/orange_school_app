@@ -569,7 +569,7 @@ class _ChildUpdate extends State<ChildUpdate> {
     formMap["email"] = te_email.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
-    formMap["birth"] = "${te_birth.text.substring(0,2)}/${te_birth.text.substring(2,4)}/${te_birth.text.substring(4)}";
+    formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(0,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
     formMap["deleteFileFlag"] = deleteFile;
     formMap["nickName"] = te_nickname.text;
     formMap["intro"] = te_intro.text;

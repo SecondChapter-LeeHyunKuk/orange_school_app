@@ -1294,7 +1294,7 @@ class _RegisterParent extends State<RegisterParent> {
       formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
       formMap["address"] = te_address.text;
       formMap["addressDetail"] = te_address_detail.text;
-      formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(2,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
+      formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(0,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
       formMap["agreeToSms"] = checkValues[4];
       formMap["agreeToService"] = checkValues[5];
       formMap["agreeToAd"] = checkValues[6];
