@@ -432,7 +432,7 @@ class _RegisterPayment extends State<RegisterPayment> {
                                           controller : te_amount,
                                           decoration: MainTheme.inputTextWhite("00,000원"),
                                           style: MainTheme.body5(MainTheme.gray7),
-                                          keyboardType:  TextInputType.number,
+                                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                           inputFormatters: [
                                             FilteringTextInputFormatter.digitsOnly, //숫자만!
                                             CommaFormatter()

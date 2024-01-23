@@ -89,7 +89,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
                           }
                         }, child :TextField(
                         focusNode: nodeMission,
-                        controller: te_reward,
+                        controller: te_mission,
                         enableInteractiveSelection: true,
                         textAlignVertical: TextAlignVertical.top,
                         expands: true,
@@ -116,7 +116,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
                       controller: te_requiredOrangeCount,
                       decoration: MainTheme.inputTextGray("갯수를 입력하세요"),
                       style: MainTheme.body5(MainTheme.gray7),
-                      keyboardType:  TextInputType.number,
+                      keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly, //숫자만!
                         DesimalFomatter(),

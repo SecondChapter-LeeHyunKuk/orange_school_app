@@ -143,7 +143,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                                 controller: te_birth,
                                 decoration: MainTheme.inputTextGray(""),
                                 style: MainTheme.body5(MainTheme.gray4),
-                                keyboardType:  TextInputType.number,
+                                keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly, //숫자만!
                                   LengthLimitingTextInputFormatter(6)
@@ -177,7 +177,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                               },
                               decoration: MainTheme.inputTextGray(""),
                               style: MainTheme.body5(MainTheme.gray4),
-                              keyboardType:  TextInputType.number,
+                              keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly, //숫자만!
                                 SevenFormatter(),

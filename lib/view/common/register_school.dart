@@ -174,7 +174,7 @@ class _RegisterSchool extends State<RegisterSchool> {
                           controller: te_grade,
                           decoration: MainTheme.inputTextGray("학년"),
                           style: MainTheme.body5(MainTheme.gray7),
-                          keyboardType:  TextInputType.number,
+                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly, //숫자만!
                             LengthLimitingTextInputFormatter(1)
@@ -202,7 +202,7 @@ class _RegisterSchool extends State<RegisterSchool> {
                           controller: te_class,
                           decoration: MainTheme.inputTextGray("반"),
                           style: MainTheme.body5(MainTheme.gray7),
-                          keyboardType:  TextInputType.number,
+                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly, //숫자만!
                             LengthLimitingTextInputFormatter(2)
@@ -230,7 +230,7 @@ class _RegisterSchool extends State<RegisterSchool> {
                           controller: te_number,
                           decoration: MainTheme.inputTextGray("번호"),
                           style: MainTheme.body5(MainTheme.gray7),
-                          keyboardType:  TextInputType.number,
+                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly, //숫자만!
                             LengthLimitingTextInputFormatter(3)

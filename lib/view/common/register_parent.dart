@@ -217,7 +217,7 @@ class _RegisterParent extends State<RegisterParent> {
                             controller: te_birth,
                             decoration: MainTheme.inputTextGray("YYYYMMDD(선택)"),
                             style: MainTheme.body5(MainTheme.gray7),
-                            keyboardType:  TextInputType.number,
+                            keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly, //숫자만!
                               LengthLimitingTextInputFormatter(8)
@@ -253,7 +253,7 @@ class _RegisterParent extends State<RegisterParent> {
                           },
                           decoration: MainTheme.inputTextGray("성별(선택)"),
                           style: MainTheme.body5(MainTheme.gray7),
-                          keyboardType:  TextInputType.number,
+                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly, //숫자만!
                             SevenFormatter(),
@@ -317,7 +317,7 @@ class _RegisterParent extends State<RegisterParent> {
                             controller: te_phone,
                             enabled: te_phone_enabled,
                             focusNode: authFocusNode,
-                            keyboardType:  TextInputType.number,
+                            keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly, //숫자만!
                               NumberFormatter(),
@@ -408,7 +408,7 @@ class _RegisterParent extends State<RegisterParent> {
                                 controller: te_auth,
                                 decoration: MainTheme.inputTextAuthNum("번호만 입력가능합니다", _seconds),
                                 style: MainTheme.body5(MainTheme.gray7),
-                                keyboardType:  TextInputType.number,
+                                keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                 obscureText : true,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly, //숫자만!

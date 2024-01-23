@@ -163,7 +163,7 @@ class _RegisterChild extends State<RegisterChild> {
                                 controller: te_birth,
                                 decoration: MainTheme.inputTextGray("YYYYMMDD(선택)"),
                                 style: MainTheme.body5(MainTheme.gray7),
-                                keyboardType:  TextInputType.number,
+                                keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly, //숫자만!
                                   LengthLimitingTextInputFormatter(8)
@@ -199,7 +199,7 @@ class _RegisterChild extends State<RegisterChild> {
                               },
                               decoration: MainTheme.inputTextGray("성별(선택)"),
                               style: MainTheme.body5(MainTheme.gray7),
-                              keyboardType:  TextInputType.number,
+                              keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly, //숫자만!
                                 SevenFormatter(),

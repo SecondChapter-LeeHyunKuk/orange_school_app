@@ -151,7 +151,7 @@ class _SearchEmail extends State<SearchEmail> {
                               controller: te_phone,
                               enabled: te_phone_enable,
                               focusNode: authFocusNode,
-                              keyboardType:  TextInputType.number,
+                              keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly, //숫자만!
                                 NumberFormatter(),
@@ -236,7 +236,7 @@ class _SearchEmail extends State<SearchEmail> {
                                 controller: te_auth,
                                 decoration: MainTheme.inputTextAuthNum("번호만 입력가능합니다", _seconds),
                                 style: MainTheme.body5(MainTheme.gray7),
-                                keyboardType:  TextInputType.number,
+                                keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                 obscureText : true,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly, //숫자만!

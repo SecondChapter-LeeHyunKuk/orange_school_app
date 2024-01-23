@@ -171,7 +171,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                           controller: te_birth,
                                           decoration: MainTheme.inputTextGray(""),
                                           style: MainTheme.body5(MainTheme.gray4),
-                                          keyboardType:  TextInputType.number,
+                                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                           inputFormatters: [
                                             FilteringTextInputFormatter.digitsOnly, //숫자만!
                                             LengthLimitingTextInputFormatter(6)
@@ -205,7 +205,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                         },
                                         decoration: MainTheme.inputTextGray(""),
                                         style: MainTheme.body5(MainTheme.gray4),
-                                        keyboardType:  TextInputType.number,
+                                        keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly, //숫자만!
                                           SevenFormatter(),
@@ -282,7 +282,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                         enabled: te_phone_enable,
                                         controller: te_phone,
                                         focusNode: authFocusNode,
-                                        keyboardType:  TextInputType.number,
+                                        keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly, //숫자만!
                                           NumberFormatter(),
@@ -363,7 +363,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                           controller: te_auth,
                                           decoration: MainTheme.inputTextAuthNum("번호만 입력가능합니다", _seconds),
                                           style: MainTheme.body5(MainTheme.gray7),
-                                          keyboardType:  TextInputType.number,
+                                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                           obscureText : true,
                                           inputFormatters: [
                                             FilteringTextInputFormatter.digitsOnly, //숫자만!
@@ -883,7 +883,6 @@ class _ParentUpdate extends State<ParentUpdate> {
     if(
 
     te_name.text.isEmpty ||
-        te_birth.text.length < 6 ||
         (authStatus != AuthStatus.auth && changePhoneNumber)||
         (te_password.text.isEmpty && changePassword)  ||
         (te_password.text != te_password_check.text && changePassword)||
