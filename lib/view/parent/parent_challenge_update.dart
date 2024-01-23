@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:orange_school/util/desimal_formatter.dart';
@@ -28,7 +31,7 @@ class _ParentChallengeUpdate extends State<ParentChallengeUpdate> {
   bool formComplete = true;
   TextEditingController te_mission = TextEditingController();
   Map? challenge;
-
+  final FocusNode nodeMission = FocusNode();
   @override
   void initState() {
     // TODO: implement initState
@@ -58,7 +61,9 @@ class _ParentChallengeUpdate extends State<ParentChallengeUpdate> {
           title: Text("챌린지 수정", style:MainTheme.body5(MainTheme.gray7)),
         ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: KeyboardActions(
+    config: _buildConfig(context),
+    child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
 
@@ -80,20 +85,22 @@ class _ParentChallengeUpdate extends State<ParentChallengeUpdate> {
                   ),
                   Container(height: 162,
                     child: Focus(
-                      onFocusChange:(value) {
-                        if(!value){
-                          checkFormComplete();
-                        }
-                      }, child :TextField(
-                      controller: te_mission,
-                      enableInteractiveSelection: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      expands: true,
-                      minLines: null,
-                      maxLines: null,
-                      decoration: MainTheme.inputTextGrayExpand("챌린지 미션을 입력하세요"),
-                      style: MainTheme.body5(MainTheme.gray7),
-                    ),),
+                        onFocusChange:(value) {
+                          if(!value){
+                            checkFormComplete();
+                          }
+                        }, child :TextField(
+                        focusNode: nodeMission,
+                        controller: te_mission,
+                        enableInteractiveSelection: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        expands: true,
+                        minLines: null,
+                        maxLines: null,
+                        decoration: MainTheme.inputTextGrayExpand("챌린지 미션을 입력하세요"),
+                        style: MainTheme.body5(MainTheme.gray7),
+                      ),),
+
                   ),
                   Container(
                     height: 22,
@@ -116,7 +123,7 @@ class _ParentChallengeUpdate extends State<ParentChallengeUpdate> {
             )
           ],
         ),
-      ),
+      )),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
         child: ElevatedButton(onPressed:
@@ -174,5 +181,41 @@ class _ParentChallengeUpdate extends State<ParentChallengeUpdate> {
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar(body["message"]));
     }
+  }
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: false,
+      actions: [
+        KeyboardActionsItem(
+            displayArrows: false,
+            focusNode: nodeMission, toolbarButtons: [
+              (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.close),
+              ),
+            );
+          }
+        ]),
+        // KeyboardActionsItem(
+        //     displayArrows: false,
+        //     focusNode: nodereward, toolbarButtons: [
+        //       (node) {
+        //     return GestureDetector(
+        //       onTap: () => node.unfocus(),
+        //       child: Padding(
+        //         padding: EdgeInsets.all(8.0),
+        //         child: Icon(Icons.close),
+        //       ),
+        //     );
+        //   }
+        // ]),
+
+      ],
+    );
   }
 }

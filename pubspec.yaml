@@ -73,6 +73,7 @@ dependencies:
   image_picker: ^1.0.7
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: 2.3.9
+  keyboard_actions: ^4.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

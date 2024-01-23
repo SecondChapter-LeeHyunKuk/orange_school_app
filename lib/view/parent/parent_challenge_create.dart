@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:orange_school/util/desimal_formatter.dart';
@@ -22,7 +24,8 @@ class ParentChallengeCreate extends StatefulWidget {
 }
 
 class _ParentChallengeCreate extends State<ParentChallengeCreate> {
-
+  final FocusNode nodeMission = FocusNode();
+  final FocusNode nodeReward = FocusNode();
   bool apiProcess = false;
   bool exposure = false;
   bool formComplete = false;
@@ -55,7 +58,9 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
           title: Text("챌린지 생성", style:MainTheme.body5(MainTheme.gray7)),
         ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: KeyboardActions(
+          config: _buildConfig(context),
+          child:SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
 
@@ -68,6 +73,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
                   Container(
                     height: 22,
                   ),
+
                   Container(
                     height: 17,
                   ),
@@ -76,21 +82,22 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
                     height: 4,
                   ),
                   Container(height: 162,
-                    child: Focus(
-                      onFocusChange:(value) {
-                        if(!value){
-                          checkFormComplete();
-                        }
-                      }, child :TextField(
-                      controller: te_mission,
-                      enableInteractiveSelection: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      expands: true,
-                      minLines: null,
-                      maxLines: null,
-                      decoration: MainTheme.inputTextGrayExpand("챌린지 미션을 입력하세요"),
-                      style: MainTheme.body5(MainTheme.gray7),
-                    ),),
+                      child: Focus(
+                        onFocusChange:(value) {
+                          if(!value){
+                            checkFormComplete();
+                          }
+                        }, child :TextField(
+                        focusNode: nodeMission,
+                        controller: te_reward,
+                        enableInteractiveSelection: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        expands: true,
+                        minLines: null,
+                        maxLines: null,
+                        decoration: MainTheme.inputTextGrayExpand("챌린지 미션을 입력하세요"),
+                        style: MainTheme.body5(MainTheme.gray7),
+                      ),)
                   ),
                   Container(
                     height: 22,
@@ -146,6 +153,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
                         }
                       }, child :TextField(
                       controller: te_reward,
+                      focusNode: nodeReward,
                       enableInteractiveSelection: true,
                       textAlignVertical: TextAlignVertical.top,
                       expands: true,
@@ -176,7 +184,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
             )
           ],
         ),
-      ),
+      )),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
         child: ElevatedButton(onPressed:
@@ -249,5 +257,41 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
           .showSnackBar(MainTheme.snackBar(body["message"]));
     }
     apiProcess = false;
+  }
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: false,
+      actions: [
+        KeyboardActionsItem(
+            displayArrows: false,
+            focusNode: nodeMission, toolbarButtons: [
+              (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.close),
+              ),
+            );
+          }
+        ]),
+        KeyboardActionsItem(
+            displayArrows: false,
+            focusNode: nodeReward, toolbarButtons: [
+              (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.close),
+              ),
+            );
+          }
+        ]),
+      ],
+    );
   }
 }
