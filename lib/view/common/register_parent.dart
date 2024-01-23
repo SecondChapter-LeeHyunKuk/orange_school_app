@@ -43,6 +43,8 @@ class _RegisterParent extends State<RegisterParent> {
 
   bool apiProcess = false;
 
+  bool nameEnabled = true;
+
   Map? userInfo;
 
   //타이머 클래스
@@ -174,6 +176,7 @@ class _RegisterParent extends State<RegisterParent> {
                         });
                       },
                       controller: te_name,
+                      enabled: nameEnabled,
                       decoration: MainTheme.inputTextGray("이름을 입력하세요"),
                       style: MainTheme.body5(MainTheme.gray7),
                       inputFormatters: [
@@ -1362,6 +1365,10 @@ class _RegisterParent extends State<RegisterParent> {
       }
       if(userInfo!["profile"] != null){
         images.add({"network" : true, "url" : userInfo!["profile"], "id" : null});
+      }
+      if(userInfo!["name"]!= null){
+        te_name.text = userInfo!["name"];
+        nameEnabled = true;
       }
     });
 

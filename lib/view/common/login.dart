@@ -246,7 +246,7 @@ class _Login extends State<Login> {
                               switch(result.status) {
                               // 3-1. 로그인 권한을 부여받은 경우
                               case AuthorizationStatus.authorized:
-                                socialLogin({"joinType" : "APPLE", "socialToken" : result.credential!.user, "profile" : null});
+                                socialLogin({"joinType" : "APPLE", "socialToken" : result.credential!.user, "profile" : null, "email" : result.credential!.email, "name" : result.credential!.fullName});
                               break;
                               // 3-2. 오류가 발생한 경우
                               case AuthorizationStatus.error:
