@@ -1368,7 +1368,7 @@ class _RegisterParent extends State<RegisterParent> {
       }
       if(userInfo!["name"]!= null){
         te_name.text = userInfo!["name"];
-        nameEnabled = true;
+        nameEnabled = false;
       }
     });
 
