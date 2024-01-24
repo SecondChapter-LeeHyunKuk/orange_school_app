@@ -101,6 +101,8 @@ class _TimeTable extends State<TimeTable> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
+
+                    widget.isParent ?
                     Positioned(
                         top: 410,
                         right: 20,
@@ -136,7 +138,7 @@ class _TimeTable extends State<TimeTable> {
                               ),
                             )
 
-                    ),
+                    ): SizedBox.shrink(),
 
 
 

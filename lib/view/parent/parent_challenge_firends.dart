@@ -77,7 +77,21 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
                 icon: Icon(Icons.search, color: MainTheme.gray7),
-                onPressed: () => Navigator.of(context).pushNamed("/parent/challenge/search",arguments: childId),
+                onPressed: () { Navigator.of(context).pushNamed("/parent/challenge/search",arguments: childId).then((value)  {
+                  setState(() {
+                    profileFuture = getProfile();
+                    topFuture = getTop();
+                    friendFuture = getFriend();
+                  });
+                  profileFuture = getProfile();
+                  topFuture = getTop();
+                  friendFuture = getFriend();
+                  });
+
+                }
+
+
+                ,
               ),
             )
             ,],

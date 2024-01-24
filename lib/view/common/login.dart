@@ -194,7 +194,7 @@ class _Login extends State<Login> {
                         GestureDetector(onTap: () async {
 
                           NaverLoginResult _result = await FlutterNaverLogin.logIn();
-                          socialLogin({"joinType" : "NAVER", "email" : null, "socialToken" : _result.account.id, "profile" : null});
+                          socialLogin({"joinType" : "NAVER", "email" : null, "socialToken" : _result.account.id, "profile" : null, "name" : _result.account.name});
 
 
 
