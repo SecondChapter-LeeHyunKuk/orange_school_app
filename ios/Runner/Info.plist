@@ -69,7 +69,7 @@
 				<string>Editor</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>socialloginex</string>
+					<string>com.orangeschool.orangeSchool</string>
 				</array>
 			</dict>
 		</array>
@@ -85,7 +85,7 @@
 		<key>naverServiceAppName</key>
 		<string>오렌지스쿨</string>
 		<key>naverServiceAppUrlScheme</key>
-		<string>socialloginex</string>
+		<string>com.orangeschool.orangeSchool</string>
 		<key>NSAppTransportSecurity</key>
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>
