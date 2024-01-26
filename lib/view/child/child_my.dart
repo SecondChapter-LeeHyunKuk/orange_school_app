@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -101,7 +102,7 @@ class _ChildMy extends State<ChildMy> {
                     width: 71, height: 33,
                   child: ElevatedButton(
                     style: MainTheme.primaryButton(MainTheme.subColor.withOpacity(0.1)),
-                    onPressed: (){Clipboard.setData(ClipboardData(text: "https://orangeschool.imweb.me/home"));
+                    onPressed: (){Clipboard.setData(ClipboardData(text:  Platform.isIOS ?"https://apps.apple.com/kr/app/id6475079694" : "https://play.google.com/store/apps/details?id=com.orangeschool.orange_school&hl=ko-KR"));
                     ScaffoldMessenger.of(context)
                         .showSnackBar(MainTheme.snackBar("링크가 복사되었습니다."));}, child: Text("친구초대", style: MainTheme.body4(MainTheme.subColor),),)
                   )

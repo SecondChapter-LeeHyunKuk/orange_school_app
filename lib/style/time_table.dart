@@ -29,7 +29,8 @@ class TimeTable extends StatefulWidget {
   final Map map;
   final DateTime dateTime;
   final bool isParent;
-  const TimeTable ({ Key? key, required this.map, required this.dateTime , required this.isParent}): super(key: key);
+  final bool parentSelf;
+  const TimeTable ({ Key? key, required this.map, required this.dateTime , required this.isParent, required this.parentSelf}): super(key: key);
 
   @override
   _TimeTable createState() => _TimeTable();
@@ -102,7 +103,7 @@ class _TimeTable extends State<TimeTable> {
                   alignment: Alignment.center,
                   children: [
 
-                    widget.isParent ?
+                    widget.isParent && !widget.parentSelf?
                     Positioned(
                         top: 410,
                         right: 20,
@@ -257,158 +258,164 @@ class _TimeTable extends State<TimeTable> {
                         Padding(padding: EdgeInsets.symmetric(horizontal: 16),
                             child:Column(
                               children: [
-                                Container(
-                                  height: 79,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(width: 1, color: MainTheme.gray3)
-                                  ),
-                                  child:
+                                !widget.parentSelf ?
+                                Column(
+                                  children: [
+                                    Container(
+                                        height: 79,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(width: 1, color: MainTheme.gray3)
+                                        ),
+                                        child:
 
-                                  Stack(
-                                    children: [
-                                      Positioned(
-                                        top:15,
-                                        left: 18,
-                                        child: Text("부모님 메모", style : MainTheme.body8(MainTheme.gray6)),),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(width: 18,),
-                                          Expanded(child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(height: 25,),
-                                              SizedBox(height: 4,),
-                                              Container(
-                                                height: 40,
-                                                child: TextField(
+                                        Stack(
+                                          children: [
+                                            Positioned(
+                                              top:15,
+                                              left: 18,
+                                              child: Text("부모님 메모", style : MainTheme.body8(MainTheme.gray6)),),
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(width: 18,),
+                                                Expanded(child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(height: 25,),
+                                                    SizedBox(height: 4,),
+                                                    Container(
+                                                      height: 40,
+                                                      child: TextField(
 
-                                                  readOnly: parentReadOnly,
-                                                  controller: te_parentMemo,
-                                                  decoration: InputDecoration(
-                                                    isDense: true,
-                                                    focusedBorder: InputBorder.none,
-                                                    enabledBorder: InputBorder.none,
-                                                    border: InputBorder.none,
-                                                    hintText: "메모가 없어요",
-                                                    hintStyle: MainTheme.body5(MainTheme.gray4),
+                                                        readOnly: parentReadOnly,
+                                                        controller: te_parentMemo,
+                                                        decoration: InputDecoration(
+                                                          isDense: true,
+                                                          focusedBorder: InputBorder.none,
+                                                          enabledBorder: InputBorder.none,
+                                                          border: InputBorder.none,
+                                                          hintText: "메모가 없어요",
+                                                          hintStyle: MainTheme.body5(MainTheme.gray4),
+                                                        ),
+                                                        style: MainTheme.body5(MainTheme.gray7),
+                                                      ),
+
+                                                    )
+                                                  ],
+                                                )),
+                                                widget.isParent ? GestureDetector(
+                                                  behavior: HitTestBehavior.translucent,
+                                                  onTap: (){
+                                                    if(!parentReadOnly){
+                                                      saveMemo();
+                                                    }
+                                                    setState(() {
+                                                      parentReadOnly = !parentReadOnly;
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    width: 36,
+                                                    height: 36,
+                                                    margin: EdgeInsets.only(top: 13, right: 13),
+                                                    decoration: BoxDecoration(
+                                                        color: MainTheme.gray1,
+                                                        shape: BoxShape.circle
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child : parentReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
                                                   ),
-                                                  style: MainTheme.body5(MainTheme.gray7),
-                                                ),
+                                                ) : SizedBox.shrink()
 
-                                              )
-                                            ],
-                                          )),
-                                          widget.isParent ? GestureDetector(
-                                            behavior: HitTestBehavior.translucent,
-                                            onTap: (){
-                                              if(!parentReadOnly){
-                                                saveMemo();
-                                              }
-                                              setState(() {
-                                                parentReadOnly = !parentReadOnly;
-                                              });
-                                            },
-                                            child: Container(
-                                              width: 36,
-                                              height: 36,
-                                              margin: EdgeInsets.only(top: 13, right: 13),
-                                              decoration: BoxDecoration(
-                                                  color: MainTheme.gray1,
-                                                  shape: BoxShape.circle
-                                              ),
-                                              alignment: Alignment.center,
-                                              child : parentReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
+                                              ],
                                             ),
-                                          ) : SizedBox.shrink()
+                                          ],
 
-                                        ],
-                                      ),
-                                    ],
+                                        )
 
-                                  )
+                                    ),
+                                    SizedBox(height: 12,),
+                                    Container(
+                                        height: 79,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(width: 1, color: MainTheme.gray3)
+                                        ),
+                                        child:
 
-                                ),
-                                SizedBox(height: 12,),
-                                Container(
-                                  height: 79,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(width: 1, color: MainTheme.gray3)
-                                  ),
-                                  child:
+                                        Stack(
+                                          children: [
+                                            Positioned(
+                                              top:15,
+                                              left: 18,
+                                              child: Text("아이 메모", style : MainTheme.body8(MainTheme.gray6)),),
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(width: 18,),
+                                                Expanded(child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(height: 25,),
+                                                    SizedBox(height: 4,),
+                                                    Container(
+                                                      height: 40,
+                                                      child:TextField(
+                                                        controller: te_ChildMemo,
+                                                        readOnly: childReadOnly,
+                                                        decoration: InputDecoration(
+                                                          isDense: true,
+                                                          focusedBorder: InputBorder.none,
+                                                          enabledBorder: InputBorder.none,
+                                                          border: InputBorder.none,
+                                                          hintText: "메모가 없어요",
+                                                          hintStyle: MainTheme.body5(MainTheme.gray4),
+                                                        ),
+                                                        style: MainTheme.body5(MainTheme.gray7),
+                                                      ),
 
-                                  Stack(
-                                    children: [
-                                      Positioned(
-                                        top:15,
-                                        left: 18,
-                                        child: Text("아이 메모", style : MainTheme.body8(MainTheme.gray6)),),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(width: 18,),
-                                          Expanded(child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(height: 25,),
-                                              SizedBox(height: 4,),
-                                              Container(
-                                                height: 40,
-                                                child:TextField(
-                                                  controller: te_ChildMemo,
-                                                  readOnly: childReadOnly,
-                                                  decoration: InputDecoration(
-                                                    isDense: true,
-                                                    focusedBorder: InputBorder.none,
-                                                    enabledBorder: InputBorder.none,
-                                                    border: InputBorder.none,
-                                                    hintText: "메모가 없어요",
-                                                    hintStyle: MainTheme.body5(MainTheme.gray4),
+                                                    )
+                                                  ],
+                                                )),
+                                                !widget.isParent ?
+                                                GestureDetector(
+                                                  behavior: HitTestBehavior.translucent,
+                                                  onTap: (){
+                                                    if(!childReadOnly){
+                                                      saveMemo();
+                                                    }
+                                                    setState(() {
+                                                      childReadOnly = !childReadOnly;
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    width: 36,
+                                                    height: 36,
+                                                    margin: EdgeInsets.only(top: 13, right: 13),
+                                                    decoration: BoxDecoration(
+                                                        color: MainTheme.gray1,
+                                                        shape: BoxShape.circle
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child : childReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
                                                   ),
-                                                  style: MainTheme.body5(MainTheme.gray7),
-                                                ),
+                                                ) : SizedBox.shrink()
 
-                                              )
-                                            ],
-                                          )),
-                                          !widget.isParent ?
-                                          GestureDetector(
-                                            behavior: HitTestBehavior.translucent,
-                                            onTap: (){
-                                              if(!childReadOnly){
-                                                saveMemo();
-                                              }
-                                              setState(() {
-                                                childReadOnly = !childReadOnly;
-                                              });
-                                            },
-                                            child: Container(
-                                              width: 36,
-                                              height: 36,
-                                              margin: EdgeInsets.only(top: 13, right: 13),
-                                              decoration: BoxDecoration(
-                                                  color: MainTheme.gray1,
-                                                  shape: BoxShape.circle
-                                              ),
-                                              alignment: Alignment.center,
-                                              child : childReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
+                                              ],
                                             ),
-                                          ) : SizedBox.shrink()
+                                          ],
 
-                                        ],
-                                      ),
-                                    ],
+                                        )
 
-                                  )
+                                    ),
+                                    Container(height: 8,),
+                                  ],
+                                ) : SizedBox.shrink(),
 
-                                ),
-                                Container(height: 8,),
                                 daySchedule.length == 0 ?
 
                                 Container(

@@ -628,7 +628,7 @@ class _ScheduleInfoChild extends State<ScheduleInfoChild> {
                                                       ),
                                                       padding: EdgeInsets.symmetric(horizontal: 16),
                                                       child: Text(
-                                                        map["usePaymentAlarm"] ? "알림 있음" : "알림 없음", style: MainTheme.body5(MainTheme.gray7),
+                                                        map["usePaymentAlarm"] ? "당일오전9시" : "알림 없음", style: MainTheme.body5(MainTheme.gray7),
                                                       )
                                                   ))
                                               )

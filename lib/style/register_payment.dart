@@ -616,7 +616,7 @@ class _RegisterPayment extends State<RegisterPayment> {
                                               value: false),
                                           DropdownMenuItem<bool>(
                                               child: Text(
-                                                "알림 있음",
+                                                "당일오전9시",
                                                 style: MainTheme.body5(MainTheme.gray7),
                                               ),
                                               value: true),

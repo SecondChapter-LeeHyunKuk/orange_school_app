@@ -171,7 +171,7 @@ class _AcademyField extends State<AcademyField> {
                             SizedBox(width: 9,),
                             Container(
                               margin:EdgeInsets.only(top: 22),
-                              child: Material(color: Colors.transparent, child: Text("찾으시는 학원이\n없으신가요?", style: MainTheme.body4(MainTheme.gray7),))
+                              child: Material(color: Colors.transparent, child: Text("찾으시는 학원이 없나요?", style: MainTheme.body4(MainTheme.gray7),))
                             )
 
                           ],

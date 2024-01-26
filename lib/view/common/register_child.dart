@@ -793,6 +793,19 @@ class _RegisterChild extends State<RegisterChild> {
           });
           return;
         }
+
+        if(te_birth.text.startsWith('19') && int.parse(te_sex.text.substring(0,1)) > 2){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
+        if(te_birth.text.startsWith('20') && int.parse(te_sex.text.substring(0,1)) < 3){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
       }
       setState(() {
         formComplete = true;
@@ -826,7 +839,7 @@ class _RegisterChild extends State<RegisterChild> {
     formMap["memberType"] = "CHILD";
     formMap["email"] = te_email.text;
     formMap["password"] = te_password.text;
-    formMap["gender"] = te_sex.text.isEmpty? 5 : te_sex.text.substring(0,1);
+    formMap["gender"] = te_sex.text.isEmpty? "" : te_sex.text.substring(0,1);
     formMap["name"] = te_name.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
@@ -878,6 +891,18 @@ class _RegisterChild extends State<RegisterChild> {
     if(te_sex.text.isNotEmpty){
       if(int.parse(te_sex.text.substring(0,1)) >= 5){
         birthMessage = "성별 입력 시 1~4 사이의 값을 입력해주세요.";
+        setState(() {
+        });
+        return;
+      }
+      if(te_birth.text.startsWith('19') && int.parse(te_sex.text.substring(0,1)) > 2){
+        birthMessage = "주민번호 7번째 자리를 바르게 입력하세요";
+        setState(() {
+        });
+        return;
+      }
+      if(te_birth.text.startsWith('20') && int.parse(te_sex.text.substring(0,1)) < 3){
+        birthMessage = "주민번호 7번째 자리를 바르게 입력하세요";
         setState(() {
         });
         return;

@@ -456,6 +456,10 @@ class _ChildPlan extends State<ChildPlan> {
                                     child: FittedBox(
                                       fit: BoxFit.contain,
                                       child: CupertinoSwitch(value: school,activeColor: MainTheme.mainColor, trackColor: Color(0xffBEC5CC),onChanged: (bool value){
+                                        setState(() {
+                                          school = !school;
+                                          getWeek();
+                                        });
                                       }),
                                     ),
                                   ),
@@ -1489,7 +1493,7 @@ class _ChildPlan extends State<ChildPlan> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder:
             (BuildContext context, StateSetter setState){
-          return TimeTable(map: map, dateTime: date, isParent: false);
+          return TimeTable(map: map, dateTime: date, isParent: false, parentSelf:  false,);
 
         }
         );

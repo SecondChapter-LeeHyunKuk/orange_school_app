@@ -476,6 +476,10 @@ class _ParentPlan extends State<ParentPlan> {
                                   child: FittedBox(
                                     fit: BoxFit.contain,
                                     child: CupertinoSwitch(value: school,activeColor: MainTheme.mainColor, trackColor: Color(0xffBEC5CC),onChanged: (bool value){
+                                      setState(() {
+                                        school = !school;
+                                        getWeek();
+                                      });
                                     }),
                                   ),
                                 ),
@@ -520,9 +524,9 @@ class _ParentPlan extends State<ParentPlan> {
                                       GestureDetector(
                                           behavior: HitTestBehavior.translucent,
                                           onTap: (){
-                                            if(selectedChildIndex != 0){
-                                              showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"]);
-                                            }
+                                            //if(selectedChildIndex != 0){
+                                              showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"], selectedChildIndex == 0);
+                                            //}
                                           },
                                           child:Container(
                                             height: 94,
@@ -1636,7 +1640,7 @@ class _ParentPlan extends State<ParentPlan> {
     });
   }
 
-  void showTimeTable(Map map, DateTime date){
+  void showTimeTable(Map map, DateTime date, bool parentSelf){
 
     showModalBottomSheet<void>(
       context: context,
@@ -1644,7 +1648,7 @@ class _ParentPlan extends State<ParentPlan> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder:
             (BuildContext context, StateSetter setState){
-          return TimeTable(map: map, dateTime: date, isParent: true);
+          return TimeTable(map: map, dateTime: date, isParent: true, parentSelf:  parentSelf,);
 
         }
         );

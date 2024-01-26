@@ -346,7 +346,7 @@ class _PaymentInfo extends State<PaymentInfo> {
                                           ),
                                           padding: EdgeInsets.symmetric(horizontal: 16),
                                           child: Text(
-                                            map["usePaymentAlarm"]??false ? "알림 있음" : "알림 없음", style: MainTheme.body5(MainTheme.gray7),
+                                            map["usePaymentAlarm"]??false ? "당일오전9시" : "알림 없음", style: MainTheme.body5(MainTheme.gray7),
                                           )
                                       ))
                                       )

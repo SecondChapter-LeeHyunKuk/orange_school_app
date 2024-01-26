@@ -196,7 +196,7 @@ class _RegisterPlan extends State<RegisterPlan> {
 
 
       if(widget.map!["cycleDays"] != null) {
-        if(widget.map!["cycleDays"].length > 1) {
+        if(widget.map!["cycleDays"].length >= 1) {
           List<String> resultList = widget.map!["cycleDays"].split(',');
           for (String day in resultList) {
             repeatDaysFlag[int.parse(day) - 1] = true;
@@ -1598,7 +1598,7 @@ class _RegisterPlan extends State<RegisterPlan> {
                             SizedBox(width: 9,),
                             Container(
                                 margin:EdgeInsets.only(top: 22),
-                                child: Material(color: Colors.transparent, child: Text("찾으시는 학원이\n없으신가요?", style: MainTheme.body4(MainTheme.gray7),))
+                                child: Material(color: Colors.transparent, child: Text("찾으시는 학원이없나요?", style: MainTheme.body4(MainTheme.gray7),))
                             )
 
                           ],
