@@ -496,9 +496,13 @@ class _ParentPayment extends State<ParentPayment> {
                                           },
                                         ).then((value){
                                           if(value != null){
+
+                                          }
+                                          setState(() {
                                             paymentFuture = getPayment();
                                             getChart();
-                                          }
+                                          });
+
 
 
                                         });
@@ -598,9 +602,12 @@ class _ParentPayment extends State<ParentPayment> {
                     return PaymentInfo(scheduleId: value, calendarId : 0);
                   },
                 ).then((value){
+                  setState(() {
+                    paymentFuture = getPayment();
+                    getChart();
+                  });
                 });
-                paymentFuture = getPayment();
-                getChart();
+
               }
             });
 

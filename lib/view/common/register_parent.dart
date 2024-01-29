@@ -1303,7 +1303,7 @@ class _RegisterParent extends State<RegisterParent> {
       formMap["memberType"] = "PARENT";
       formMap["email"] = te_email.text;
       formMap["password"] = te_password.text;
-      formMap["gender"] = te_sex.text.isEmpty ? "" : te_sex.text.substring(0,1);
+      formMap["gender"] = te_sex.text.isEmpty ? "0" : te_sex.text.substring(0,1);
       formMap["name"] = te_name.text;
       formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
       formMap["address"] = te_address.text;

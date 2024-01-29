@@ -410,7 +410,6 @@ class _ParentPlan extends State<ParentPlan> {
                                   selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
                                 }
                               });
-                              print("select:"  + selectDay.toString());
                               setWeeks();
                               getWeek();
                               getWeekSchedule();
@@ -2105,7 +2104,9 @@ class _ParentPlan extends State<ParentPlan> {
   DateTime exMonth(){
     DateTime nextMonth = DateTime(selectDay.year, selectDay.month + 1, 1);
     DateTime lastDayOfMonth = nextMonth.subtract(Duration(days: 1));
-    if(lastDayOfMonth.day - selectDay.day > 6){
+    // print(selectDay);
+    // print(lastDayOfMonth);
+    if(lastDayOfMonth.day - selectDay.day >=6 ){
       return selectDay;
     }else{
       return nextMonth;

@@ -1354,13 +1354,13 @@ class _RegisterPlan extends State<RegisterPlan> {
                                               items: [
                                                 DropdownMenuItem<bool>(
                                                     child: Text(
-                                                      "없음",
+                                                      "알림없음",
                                                       style: MainTheme.body5(MainTheme.gray7),
                                                     ),
                                                     value: false),
                                                 DropdownMenuItem<bool>(
                                                     child: Text(
-                                                      "있음",
+                                                      "당일오전9시",
                                                       style: MainTheme.body5(MainTheme.gray7),
                                                     ),
                                                     value: true),
@@ -1718,7 +1718,7 @@ class _RegisterPlan extends State<RegisterPlan> {
 
   void searchAcademy() async {
     index = 0;
-    var response = await apiRequestGet(urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text});
+    var response = await apiRequestGet(urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text, "sort" : ["academyName,ASC"]});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
         academy = (body["data"]["content"]);
@@ -1728,7 +1728,7 @@ class _RegisterPlan extends State<RegisterPlan> {
   }
 
   void scroll() async {
-    var response = await apiRequestGet(urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text});
+    var response = await apiRequestGet(urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text,"sort" : ["academyName,ASC"]});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
