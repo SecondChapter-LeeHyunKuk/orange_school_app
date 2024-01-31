@@ -155,7 +155,7 @@ class _ParentBoard extends State<ParentBoard> {
   }
 
   Future<Response> getFirst() async {
-    var response = await apiRequestGet(urlSearch,  {"size" : "20","sort" : ["number,ASC"],"pickType" : "PARENT"});
+    var response = await apiRequestGet(urlSearch,  {"size" : "20","sort" : ["number,DESC"],"pickType" : "PARENT"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -167,7 +167,7 @@ class _ParentBoard extends State<ParentBoard> {
   }
 
   Future<void> scroll() async {
-    var response = await apiRequestGet(urlSearch,  {"size" : "20", "sort" : ["number,ASC"], "page" : (index + 1).toString(),"pickType" : "PARENT"});
+    var response = await apiRequestGet(urlSearch,  {"size" : "20", "sort" : ["number,DESC"], "page" : (index + 1).toString(),"pickType" : "PARENT"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
