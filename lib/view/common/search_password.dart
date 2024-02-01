@@ -383,14 +383,13 @@ class _SearchPassword extends State<SearchPassword> {
 
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
-    var response = await apiRequestPost(urlCheckPhone,request);
+    var response = await apiRequestPost(context, urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(MainTheme.snackBar(body["data"]["randomNumber"]));
       te_auth.clear();
       authNum = body["data"]["randomNumber"];
-      print(authNum);
       authFocusNode.unfocus();
       _startTimer();
     } else if(response.statusCode == 409){
@@ -422,7 +421,7 @@ class _SearchPassword extends State<SearchPassword> {
 
 
   Future<void> search() async {
-    var response = await apiRequestGet(urlSearch,  {"name" :te_name.text, "phoneNumber" : te_phone.text.replaceAll("-", "")});
+    var response = await apiRequestGet(context, urlSearch,  {"name" :te_name.text, "phoneNumber" : te_phone.text.replaceAll("-", "")});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(body["data"]["emailList"].length >0){

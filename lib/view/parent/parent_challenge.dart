@@ -917,7 +917,7 @@ class _ParentChallenge extends State<ParentChallenge> {
   Future<http.Response> getChildren() async {
 
 
-    var response = await apiRequestGet(urlChildren,  {});
+    var response = await apiRequestGet(context, urlChildren,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -942,7 +942,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
   Future<http.Response> getOngoing() async {
     ongoingChallenge = null;
-    var response = await apiRequestGet(urlChallenges + "/" + children[selectedChildIndex]["id"].toString(),  {"challengeStatus": "PROGRESS"});
+    var response = await apiRequestGet(context, urlChallenges + "/" + children[selectedChildIndex]["id"].toString(),  {"challengeStatus": "PROGRESS"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -956,7 +956,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
   Future<void> getComplete() async {
     completeList = [];
-    var response = await apiRequestGet(urlChallenges + "/" + children[selectedChildIndex]["id"].toString(),  {"challengeStatus": "END", "sort" : ["id,DESC"],});
+    var response = await apiRequestGet(context, urlChallenges + "/" + children[selectedChildIndex]["id"].toString(),  {"challengeStatus": "END", "sort" : ["id,DESC"],});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -968,7 +968,7 @@ class _ParentChallenge extends State<ParentChallenge> {
   }
 
   Future<void> scroll() async {
-    var response = await apiRequestGet(urlChallenges + "/" + children[selectedChildIndex]["id"].toString(),  {"challengeStatus": "END", "sort" : ["id,DESC"], "page" : (index + 1).toString()});
+    var response = await apiRequestGet(context, urlChallenges + "/" + children[selectedChildIndex]["id"].toString(),  {"challengeStatus": "END", "sort" : ["id,DESC"], "page" : (index + 1).toString()});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -983,7 +983,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
   Future<void> addStamp() async {
     if(ongoingChallenge!["requiredOrangeCount"] > ongoingChallenge!["currentOrangeCount"]){
-      var response = await apiRequestPost("$urlAddStamp/${ongoingChallenge!["id"]}", {});
+      var response = await apiRequestPost(context, "$urlAddStamp/${ongoingChallenge!["id"]}", {});
       var body =jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
 
@@ -1005,7 +1005,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
   Future<void> removeStamp() async {
     if(ongoingChallenge!["requiredOrangeCount"] > ongoingChallenge!["currentOrangeCount"]){
-      var response = await apiRequestPost("$urlRemoveStamp/${ongoingChallenge!["id"]}", {});
+      var response = await apiRequestPost(context, "$urlRemoveStamp/${ongoingChallenge!["id"]}", {});
       var body =jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
 
@@ -1021,7 +1021,7 @@ class _ParentChallenge extends State<ParentChallenge> {
   }
 
   Future<void> complete() async {
-    var response = await apiRequestPost("$urlComplete/${ongoingChallenge!["id"]}", {});
+    var response = await apiRequestPost(context, "$urlComplete/${ongoingChallenge!["id"]}", {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -1035,7 +1035,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
   Future<http.Response> cancel() async {
 
-    var response = await apiRequestDelete(urlCancel + "/" + ongoingChallenge!["id"].toString(), {});
+    var response = await apiRequestDelete(context, urlCancel + "/" + ongoingChallenge!["id"].toString(), {});
     if(response.statusCode == 200){
       setState(() {
         ongoingChallenge = null;

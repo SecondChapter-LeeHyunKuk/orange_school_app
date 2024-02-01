@@ -192,7 +192,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                   Container(
                     height: 17,
                   ),
-                  Text("이메일", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("아이디", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -210,7 +210,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                           });
                         },
                         controller: te_email,
-                        decoration: MainTheme.inputTextGray("이메일을 입력하세요"),
+                        decoration: MainTheme.inputTextGray(""),
                         keyboardType:  TextInputType.emailAddress,
                         style: MainTheme.body5(MainTheme.gray4),
                       ),)
@@ -314,7 +314,7 @@ class _ChildUpdate extends State<ChildUpdate> {
                     child: TextField(
                       readOnly: true,
                       controller: te_address_detail,
-                      decoration: MainTheme.inputTextGray("상세주소를 입력하세요"),
+                      decoration: MainTheme.inputTextGray(""),
                       style: MainTheme.body5(MainTheme.gray4),
                     ),
                   ),
@@ -519,9 +519,9 @@ class _ChildUpdate extends State<ChildUpdate> {
 
     te_name.text.isEmpty ||
         (te_password.text.isEmpty && changePassword)  ||
-        (te_password.text != te_password_check.text && changePassword)||
-        te_nickname.text.isEmpty ||
-        te_intro.text.isEmpty
+        (te_password.text != te_password_check.text && changePassword)
+        // te_nickname.text.isEmpty ||
+        // te_intro.text.isEmpty
     ){
       setState(() {
         formComplete = false;
@@ -579,12 +579,12 @@ class _ChildUpdate extends State<ChildUpdate> {
     formMap["file"] = file;
     var formData = FormData.fromMap(formMap);
 
-    var response = await httpRequestMultipart(urlUpdate + "/" + childInfo!["id"].toString(), formData, false);
+    var response = await httpRequestMultipart(context, urlUpdate + "/" + childInfo!["id"].toString(), formData, false);
     if(response.statusCode == 200){
 
       //수정 성공했다면
       //프로필 이미지 다시 받음
-      var response = await apiRequestGet(urlMy,  {});
+      var response = await apiRequestGet(context, urlMy,  {});
       var body =jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
         pref.setString("profile", body["data"]["fileUrl"] ?? "");
@@ -607,7 +607,7 @@ class _ChildUpdate extends State<ChildUpdate> {
 
   }
   Future<void> getChildInfo()async {
-    var response = await apiRequestGet(urlMy,{});
+    var response = await apiRequestGet(context, urlMy,{});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       childInfo = body["data"];

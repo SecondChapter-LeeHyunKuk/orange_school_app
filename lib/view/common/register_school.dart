@@ -290,7 +290,7 @@ class _RegisterSchool extends State<RegisterSchool> {
 
     var formData = FormData.fromMap(formMap!);
 
-    var response = await httpRequestMultipart(urlRegister, formData!, true);
+    var response = await httpRequestMultipart(context, urlRegister, formData!, true);
 
     if(response.statusCode == 200){
       if(formMap!["mode"] == "NEW"){

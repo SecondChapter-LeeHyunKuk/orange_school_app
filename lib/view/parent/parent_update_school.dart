@@ -297,7 +297,7 @@ class _ParentUpdateSchool extends State<ParentUpdateSchool> {
     request["classNumber"] = te_number.text;
     request["schoolCode"] = schoolCode;
 
-    var response = await apiRequestPut("$urlUpdate/" + childInfo!["id"].toString(), request);
+    var response = await apiRequestPut(context, "$urlUpdate/" + childInfo!["id"].toString(), request);
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       ScaffoldMessenger.of(context)

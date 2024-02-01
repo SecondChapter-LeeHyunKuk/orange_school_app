@@ -99,6 +99,6 @@ class _NoticeDetail extends State<NoticeDetail> {
   }
 
   Future<void> get() async {
-    await apiRequestGet("$urlSearch/" + data["id"].toString(),  {});
+    await apiRequestGet(context, "$urlSearch/" + data["id"].toString(),  {});
   }
 }

@@ -245,7 +245,7 @@ class _ParentChallengeCreate extends State<ParentChallengeCreate> {
     request["reward"] = te_reward.text;
     request["isShow"] = exposure;
 
-    var response = await apiRequestPost(urlRegister,request);
+    var response = await apiRequestPost(context, urlRegister,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

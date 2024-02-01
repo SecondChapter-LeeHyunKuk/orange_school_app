@@ -66,7 +66,6 @@ Future<void> main() async {
 
   String? token = await FirebaseMessaging.instance.getToken();
   if (token != null) {
-    print("token=" + token!);
     pref.setString("pushToken", token!);
   }
   KakaoSdk.init(nativeAppKey: '615c25ed06f51a8b7e8125b8ddb6c2e7');
@@ -189,8 +188,6 @@ class _MyAppState extends State<MyApp> {
         '/resign': (context) => Resign(),
 
 
-        /*부모 화면*/
-        '/parent/plan': (context) => ParentPlan(),
         '/parent/challenge/update': (context) => ParentChallengeUpdate(),
         '/parent/challenge/create': (context) => ParentChallengeCreate(),
         '/parent/challenge/friends': (context) => ParentChallengeFriends(),

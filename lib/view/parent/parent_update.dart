@@ -591,7 +591,7 @@ class _ParentUpdate extends State<ParentUpdate> {
                                   }
                                 }, child :TextField(
                                 controller: te_address_detail,
-                                decoration: MainTheme.inputTextGray("상세주소를 입력하세요"),
+                                decoration: MainTheme.inputTextGray("상세주소를 입력하세요(선택 기재)"),
                                 style: MainTheme.body5(MainTheme.gray7),
                               ),
                               ),),
@@ -857,7 +857,7 @@ class _ParentUpdate extends State<ParentUpdate> {
     }
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
-    var response = await apiRequestPost(urlCheckPhone,request);
+    var response = await apiRequestPost(context, urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       // ScaffoldMessenger.of(context)
@@ -944,17 +944,16 @@ class _ParentUpdate extends State<ParentUpdate> {
     formMap["password"] = te_password.text.isEmpty ? "1q2w3e4r!" : te_password.text;
     formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
 
-    print(jsonEncode(formMap));
 
     formMap["file"] = file;
     var formData = FormData.fromMap(formMap);
 
-    var response = await httpRequestMultipart(urlUpdate, formData, false);
+    var response = await httpRequestMultipart(context, urlUpdate, formData, false);
 
     if(response.statusCode == 200){
       //수정 성공했다면
       //프로필 이미지 다시 받음
-      var response = await apiRequestGet(urlMy,  {});
+      var response = await apiRequestGet(context, urlMy,  {});
       var body =jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
         pref.setString("name", body["data"]["name"]);
@@ -978,7 +977,7 @@ class _ParentUpdate extends State<ParentUpdate> {
   }
 
   Future<http.Response> getFirst() async {
-    var response = await apiRequestGet(urlMy,  {});
+    var response = await apiRequestGet(context, urlMy,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     myInfo = body["data"];

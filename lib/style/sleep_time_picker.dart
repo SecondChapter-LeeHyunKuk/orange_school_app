@@ -238,12 +238,11 @@ class _SleepTimePicker extends State<SleepTimePicker> {
 
   }
   Future<void> save() async {
-    var response = await apiRequestPost(urlSleep+ "/" + widget.commonMemberId.toString(), {"wakeTime" : wakeup, "sleepTime" : sleep});
+    var response = await apiRequestPost(context, urlSleep+ "/" + widget.commonMemberId.toString(), {"wakeTime" : wakeup, "sleepTime" : sleep});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       Navigator.pop(context);
     }else{
-      print(body);
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar(body["message"]));
     }

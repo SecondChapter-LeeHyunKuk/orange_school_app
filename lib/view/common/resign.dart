@@ -189,7 +189,7 @@ class _Resign extends State<Resign> {
   }
   Future<void> resign() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestPost(urlResign, {"leaveType" : values[reasonIndex], "reasonDetail" : te_resonDetail.text});
+    var response = await apiRequestPost(context, urlResign, {"leaveType" : values[reasonIndex], "reasonDetail" : te_resonDetail.text});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       pref.setBool("autoLogin", false);

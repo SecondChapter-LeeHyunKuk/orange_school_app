@@ -79,7 +79,7 @@ class _Login extends State<Login> {
                           setState(() {
                             emailMessage = null;
                           });
-                        }else if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+                        }else if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text) && !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$').hasMatch(te_email.text)){
                           setState(() {
                             emailMessage = "이메일 형식이 맞지 않아요.";
                           });
@@ -209,7 +209,6 @@ class _Login extends State<Login> {
                               User user = await UserApi.instance.me();
                               socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
                             } catch (error) {
-                              print('사용자 정보 요청 실패 $error');
                             }
 
                             } catch (error) {
@@ -305,7 +304,7 @@ class _Login extends State<Login> {
       return;
     }
 
-    if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+    if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text) && !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$').hasMatch(te_email.text)){
       setState(() {
         emailMessage = "이메일 형식이 맞지 않아요.";
       });
@@ -322,7 +321,7 @@ class _Login extends State<Login> {
       request["password"] = te_password.text;
       request["pushToken"] = pref.getString("pushToken");
       print(request["pushToken"]);
-      var response = await apiRequestPost(urlLogin,request);
+      var response = await apiRequestPost(context, urlLogin,request);
       var body = jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
 
@@ -340,7 +339,7 @@ class _Login extends State<Login> {
         pref.setInt("userId",userId);
 
         //내 정보 조회
-        var response = await apiRequestGet(urlMy,{});
+        var response = await apiRequestGet(context, urlMy,{});
         body = jsonDecode(utf8.decode(response.bodyBytes));
         if(response.statusCode == 200){
           pref.setString("profile",body["data"]["fileUrl"] ?? "");
@@ -349,10 +348,10 @@ class _Login extends State<Login> {
           pref.setInt("locationCode",body["data"]["locationCode"]);
           pref.remove("selectedChildId");
           if(body["data"]["memberType"] == "PARENT"){
-            apiRequestPost(urlVisitor, {"memberType" : "PARENT"});
+            apiRequestPost(context, urlVisitor, {"memberType" : "PARENT"});
             Navigator.pushNamedAndRemoveUntil(context,'/parentTabBar', (route) => false);
           }else{
-            apiRequestPost(urlVisitor, {"memberType" : "CHILD"});
+            apiRequestPost(context, urlVisitor, {"memberType" : "CHILD"});
             Navigator.pushNamedAndRemoveUntil(context,'/childTabBar', (route) => false);
           }
 
@@ -383,7 +382,7 @@ class _Login extends State<Login> {
     request["socialToken"] = userInfo["socialToken"];
     request["pushToken"] = pref.getString("pushToken");
 
-    var response = await apiRequestPost(urlSocial,request);
+    var response = await apiRequestPost(context, urlSocial,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
 
@@ -396,7 +395,7 @@ class _Login extends State<Login> {
       pref.setInt("userId",userId);
 
       //내 정보 조회
-      var response = await apiRequestGet(urlMy,{});
+      var response = await apiRequestGet(context, urlMy,{});
       body = jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
         pref.setString("profile",body["data"]["fileUrl"] ?? "");
@@ -405,10 +404,10 @@ class _Login extends State<Login> {
         pref.setInt("locationCode",body["data"]["locationCode"]);
         pref.remove("selectedChildId");
         if(body["data"]["memberType"] == "PARENT"){
-          apiRequestPost(urlVisitor, {"memberType" : "PARENT"});
+          apiRequestPost(context, urlVisitor, {"memberType" : "PARENT"});
           Navigator.pushNamedAndRemoveUntil(context,'/parentTabBar', (route) => false);
         }else{
-          apiRequestPost(urlVisitor, {"memberType" : "CHILD"});
+          apiRequestPost(context, urlVisitor, {"memberType" : "CHILD"});
           Navigator.pushNamedAndRemoveUntil(context,'/childTabBar', (route) => false);
         }
 
@@ -464,7 +463,7 @@ class _Login extends State<Login> {
     }
     Map<String, dynamic> request = new Map<String, Object>();
     request["email"] = email;
-    var response = await apiRequestPost(urlEmailCheck,request);
+    var response = await apiRequestPost(context, urlEmailCheck,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       return true;

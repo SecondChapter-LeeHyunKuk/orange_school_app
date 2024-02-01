@@ -715,7 +715,7 @@ class _RegisterPayment extends State<RegisterPayment> {
 
   void searchAcademy() async {
     index = 0;
-    var response = await apiRequestGet(urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text});
+    var response = await apiRequestGet(context, urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
         academy = (body["data"]["content"]);
@@ -724,7 +724,7 @@ class _RegisterPayment extends State<RegisterPayment> {
   }
 
   void scroll() async {
-    var response = await apiRequestGet(urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text});
+    var response = await apiRequestGet(context, urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -737,14 +737,11 @@ class _RegisterPayment extends State<RegisterPayment> {
 
 
   Future<void> getChildren() async {
-    Random random = Random();
+    children = [];
     SharedPreferences pref = await SharedPreferences.getInstance();
-    children[0]["name"] = pref.getString("name");
-    children[0]["fileUrl"] = pref.getString("profile");
-    children[0]["id"] = pref.getInt("userId")!;
-    children[0]["profile"] = random.nextInt(3) + 1;
 
-    var response = await apiRequestGet(urlChildren,  {});
+
+    var response = await apiRequestGet(context, urlChildren,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -754,9 +751,15 @@ class _RegisterPayment extends State<RegisterPayment> {
             "name" : child["name"],
             "fileUrl" : child["fileUrl"],
             "id" : child["id"],
-            "profile" :random.nextInt(3) + 1,
           });
         }
+
+        children.add({
+          "name" : pref.getString("name"),
+          "fileUrl" : pref.getString("profile"),
+          "id" : pref.getInt("userId"),
+        });
+
         if(widget.map != null){
           for(int i = 0; i < children.length; i++){
             if(children[i]["id"] == widget.map!["commonMemberId"]){
@@ -867,10 +870,10 @@ class _RegisterPayment extends State<RegisterPayment> {
     var response ;
     var body;
     if(widget.map == null){
-      response = await apiRequestPost(urlRegister,request);
+      response = await apiRequestPost(context, urlRegister,request);
       body =jsonDecode(utf8.decode(response.bodyBytes));
     }else{
-      response = await apiRequestPut(urlUpdate +  "/" +  widget.map!["id"].toString(), request);
+      response = await apiRequestPut(context, urlUpdate +  "/" +  widget.map!["id"].toString(), request);
       body =jsonDecode(utf8.decode(response.bodyBytes));
     }
 

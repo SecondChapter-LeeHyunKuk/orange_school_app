@@ -218,12 +218,12 @@ class _RegisterParent extends State<RegisterParent> {
 
                             },
                             controller: te_birth,
-                            decoration: MainTheme.inputTextGray("YYYYMMDD(선택)"),
+                            decoration: MainTheme.inputTextGray("YYMMDD(선택)"),
                             style: MainTheme.body5(MainTheme.gray7),
                             keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly, //숫자만!
-                              LengthLimitingTextInputFormatter(8)
+                              LengthLimitingTextInputFormatter(6)
                             ],
                           ),
                         )
@@ -729,7 +729,7 @@ class _RegisterParent extends State<RegisterParent> {
                         }
                       }, child :TextField(
                       controller: te_address_detail,
-                      decoration: MainTheme.inputTextGray("상세주소를 입력하세요"),
+                      decoration: MainTheme.inputTextGray("상세주소를 입력하세요(선택 기재)"),
                       style: MainTheme.body5(MainTheme.gray7),
                     ),
                   ),),
@@ -1056,7 +1056,7 @@ class _RegisterParent extends State<RegisterParent> {
 
     Map<String, dynamic> request = new Map<String, Object>();
     request["email"] = te_email.text;
-    var response = await apiRequestPost(urlCheckEmail,request);
+    var response = await apiRequestPost(context, urlCheckEmail,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
         setState(() {
@@ -1093,7 +1093,7 @@ class _RegisterParent extends State<RegisterParent> {
 
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
-    var response = await apiRequestPost(urlCheckPhone,request);
+    var response = await apiRequestPost(context, urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       // ScaffoldMessenger.of(context)
@@ -1137,20 +1137,14 @@ class _RegisterParent extends State<RegisterParent> {
     }else{
 
       if(te_birth.text.isNotEmpty){
-        if(te_birth.text.length < 8){
+        if(te_birth.text.length < 6){
           setState(() {
             formComplete = false;
           });
           return;
         }
-        if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
-          setState(() {
-            formComplete = false;
-          });
-          return;
-        }
-        if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
-            int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
+        if(!( int.parse(te_birth.text.substring(2,4)) >= 1 && int.parse(te_birth.text.substring(2,4)) <= 12 &&
+            int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
           setState(() {
             formComplete = false;
           });
@@ -1160,19 +1154,6 @@ class _RegisterParent extends State<RegisterParent> {
 
       if(te_sex.text.isNotEmpty){
         if(int.parse(te_sex.text.substring(0,1)) >= 5){
-          setState(() {
-            formComplete = false;
-          });
-          return;
-        }
-
-        if(te_birth.text.startsWith('19') && int.parse(te_sex.text.substring(0,1)) > 2){
-          setState(() {
-            formComplete = false;
-          });
-          return;
-        }
-        if(te_birth.text.startsWith('20') && int.parse(te_sex.text.substring(0,1)) < 3){
           setState(() {
             formComplete = false;
           });
@@ -1197,21 +1178,14 @@ class _RegisterParent extends State<RegisterParent> {
 
 
     if(te_birth.text.isNotEmpty){
-      if(te_birth.text.length < 8){
+      if(te_birth.text.length < 6){
         birthMessage = "생년월일을 바르게 입력해주세요.";
         setState(() {
         });
         return;
       }
-      if(te_birth.text.substring(0,2) != "19" && te_birth.text.substring(0,2) != "20"){
-        birthMessage = "생년월일을 바르게 입력해주세요.";
-        setState(() {
-
-        });
-        return;
-      }
-      if(!( int.parse(te_birth.text.substring(4,6)) >= 1 && int.parse(te_birth.text.substring(4,6)) <= 12 &&
-          int.parse(te_birth.text.substring(6)) >= 1 && int.parse(te_birth.text.substring(6)) <= 31)){
+      if(!( int.parse(te_birth.text.substring(2,4)) >= 1 && int.parse(te_birth.text.substring(2,4)) <= 12 &&
+          int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
         birthMessage = "생년월일을 바르게 입력해주세요.";
         setState(() {
 
@@ -1223,18 +1197,6 @@ class _RegisterParent extends State<RegisterParent> {
     if(te_sex.text.isNotEmpty){
       if(int.parse(te_sex.text.substring(0,1)) >= 5){
         birthMessage = "주민번호 7번째 자리를 바르게 입력하세요.";
-        setState(() {
-        });
-        return;
-      }
-      if(te_birth.text.startsWith('19') && int.parse(te_sex.text.substring(0,1)) > 2){
-        birthMessage = "주민번호 7번째 자리를 바르게 입력하세요";
-        setState(() {
-        });
-        return;
-      }
-      if(te_birth.text.startsWith('20') && int.parse(te_sex.text.substring(0,1)) < 3){
-        birthMessage = "주민번호 7번째 자리를 바르게 입력하세요";
         setState(() {
         });
         return;
@@ -1308,7 +1270,6 @@ class _RegisterParent extends State<RegisterParent> {
       formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
       formMap["address"] = te_address.text;
       formMap["addressDetail"] = te_address_detail.text;
-      formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(0,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
       formMap["agreeToSms"] = checkValues[4];
       formMap["agreeToService"] = checkValues[5];
       formMap["agreeToAd"] = checkValues[6];
@@ -1316,7 +1277,7 @@ class _RegisterParent extends State<RegisterParent> {
 
       var formData = FormData.fromMap(formMap);
 
-      var response = await httpRequestMultipart(urlRegister, formData, true);
+      var response = await httpRequestMultipart(context, urlRegister, formData, true);
 
       if(response.statusCode == 200){
 
@@ -1329,12 +1290,12 @@ class _RegisterParent extends State<RegisterParent> {
         if(isSocialMember!){
           request["joinType"] = userInfo!["joinType"];
           request["socialToken"] = userInfo!["socialToken"];
-          loginResponse = await apiRequestPost(urlSocial,request);
+          loginResponse = await apiRequestPost(context, urlSocial,request);
           body = jsonDecode(utf8.decode(loginResponse.bodyBytes));
         }else{
           request["account"] = te_email.text;
           request["password"] = te_password.text;
-          loginResponse = await apiRequestPost(urlLogin,request);
+          loginResponse = await apiRequestPost(context, urlLogin,request);
           body = jsonDecode(utf8.decode(loginResponse.bodyBytes));
         }
 
@@ -1343,7 +1304,7 @@ class _RegisterParent extends State<RegisterParent> {
           pref.setString("accessToken",body["data"]["accessToken"]);
 
           //내 정보 조회
-          var response = await apiRequestGet(urlMy,{});
+          var response = await apiRequestGet(context, urlMy,{});
           body = jsonDecode(utf8.decode(response.bodyBytes));
           if(response.statusCode == 200){
             pref.setString("profile",body["data"]["fileUrl"] ?? "");

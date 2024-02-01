@@ -756,7 +756,7 @@ class _ParentPayment extends State<ParentPayment> {
   }
   Future<Response> getPayment() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlPayment,  {"commonMemberId" : pref.getInt("userId")!.toString(), "monthStartDate" :DateFormat('yyyy-MM-dd').format(selectMonth)});
+    var response = await apiRequestGet(context, urlPayment,  {"commonMemberId" : pref.getInt("userId")!.toString(), "monthStartDate" :DateFormat('yyyy-MM-dd').format(selectMonth)});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -770,7 +770,7 @@ class _ParentPayment extends State<ParentPayment> {
 
   Future<void> getChildren() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlChildren,  {});
+    var response = await apiRequestGet(context, urlChildren,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     children.add({"name" :pref.getString("name"), "fileUrl" :  pref.getString("profile"), "id" : pref.getInt("userId")});
     color[pref.getString("name")] = 0;
@@ -794,7 +794,7 @@ class _ParentPayment extends State<ParentPayment> {
 
     });
     int max = 0;
-    var response = await apiRequestGet(urlChart,  {"dayDate" : DateFormat("yyyy-MM-dd").format(selectMonth)});
+    var response = await apiRequestGet(context, urlChart,  {"dayDate" : DateFormat("yyyy-MM-dd").format(selectMonth)});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
 
@@ -828,7 +828,7 @@ class _ParentPayment extends State<ParentPayment> {
 
   Future<Response> getBanner() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlBanner + "/" + pref.getInt("locationCode").toString(),  {});
+    var response = await apiRequestGet(context, urlBanner + "/" + pref.getInt("locationCode").toString(),  {});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       images = body["data"];

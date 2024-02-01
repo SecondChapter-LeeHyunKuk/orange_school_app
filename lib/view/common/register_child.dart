@@ -224,7 +224,7 @@ class _RegisterChild extends State<RegisterChild> {
                     height: 17,
 
                   ),
-                  Text("이메일", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("아이디", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -245,17 +245,20 @@ class _RegisterChild extends State<RegisterChild> {
                                   emailChecked = false;
                                   if(value.isEmpty){
                                     emailMessage = null;
-                                  }else if(RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+                                  }else if(value.length >= 6 && value.length <= 12 &&RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$').hasMatch(te_email.text)){
                                     emailMessage = null;
                                   }else{
-                                    emailMessage = "이메일 형식이 맞지 않아요.";
+                                    emailMessage = "아이디 조합이 맞지 않아요.";
                                   }
                                 });
                               },
                               controller: te_email,
-                              decoration: MainTheme.inputTextGray("이메일을 입력하세요"),
+                              decoration: MainTheme.inputTextGray("6-12자리의 영문, 숫자 조합"),
                               keyboardType:  TextInputType.emailAddress,
                               style: MainTheme.body5(MainTheme.gray7),
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(12)
+                              ],
                             ),)
                         )
                         ),
@@ -267,11 +270,11 @@ class _RegisterChild extends State<RegisterChild> {
                             child: ElevatedButton(
                               onPressed: (){
                                 if(te_email.text == ""){
-                                  emailMessage = "이메일을 입력해주세요.";
-                                }else if(RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text)){
+                                  emailMessage = "아이디를 입력해주세요.";
+                                }else if(te_email.text.length >= 6 && te_email.text.length <= 12 && RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$').hasMatch(te_email.text)){
                                   checkEmail();
                                 }else{
-                                  emailMessage = "이메일 형식이 맞지 않아요.";
+                                  emailMessage = "아이디 조합이 맞지 않아요.";
                                 }
                                 checkFormComplete();
                               },
@@ -288,7 +291,7 @@ class _RegisterChild extends State<RegisterChild> {
                       SizedBox(
                         height: 4,
                       ),
-                      Text("사용 가능한 이메일입니다.", style: MainTheme.caption2(Color(0xff547cf1)),),
+                      Text("사용 가능한 아이디 입니다.", style: MainTheme.caption2(Color(0xff547cf1)),),
                     ],
                   ): SizedBox.shrink(),
 
@@ -420,14 +423,14 @@ class _RegisterChild extends State<RegisterChild> {
                     child: TextField(
                       readOnly: true,
                       controller: te_address_detail,
-                      decoration: MainTheme.inputTextGray("상세주소를 입력하세요"),
+                      decoration: MainTheme.inputTextGray(""),
                       style: MainTheme.body5(MainTheme.gray7),
                     ),
                   ),
                   Container(
                     height: 17,
                   ),
-                  Text("프로필 이미지 등록", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("프로필 이미지 등록(선택)", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -594,7 +597,7 @@ class _RegisterChild extends State<RegisterChild> {
                   Container(
                     height: 17,
                   ),
-                  Text("아이 닉네임", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("아이 닉네임(선택)", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -605,6 +608,12 @@ class _RegisterChild extends State<RegisterChild> {
                             checkFormComplete();
                           }
                         }, child :TextField(
+
+                        onChanged: (value){
+                          setState(() {
+                            nickNameMessage = null;
+                          });
+                        },
                         controller: te_nickname,
                         decoration: MainTheme.inputTextGray("닉네임을 입력하세요 (제한 10자)"),
                         style: MainTheme.body5(MainTheme.gray7),
@@ -633,6 +642,11 @@ class _RegisterChild extends State<RegisterChild> {
                             checkFormComplete();
                           }
                         }, child :TextField(
+                        onChanged: (value){
+                          setState(() {
+                            introMessage = null;
+                          });
+                        },
                         controller: te_intro,
                         decoration: MainTheme.inputTextGray("소개글을 입력하세요 (제한 50자)"),
                         style: MainTheme.body5(MainTheme.gray7),
@@ -673,8 +687,8 @@ class _RegisterChild extends State<RegisterChild> {
 
                         Navigator.of(context).pushReplacementNamed('/registerComplete');
                       },
-                          style: MainTheme.primaryButton(MainTheme.gray4),
-                          child: Text("아이 등록 나중에하기", style: MainTheme.body4(Colors.white),))
+                          style: MainTheme.hollowButton(MainTheme.gray3),
+                          child: Text("아이 등록 나중에하기", style: MainTheme.body4(MainTheme.gray4),))
                   )
                   ),
                   Container(
@@ -692,10 +706,10 @@ class _RegisterChild extends State<RegisterChild> {
                                 nameMessage = "이름을 입력해주세요.";
                               }
                               if(te_email.text.isEmpty){
-                                emailMessage = "이메일을 입력해주세요.";
+                                emailMessage = "아이디를 입력해주세요.";
                               }
                               if(!emailChecked){
-                                emailMessage = "이메일 중복확인을 해주세요.";
+                                emailMessage = "아이디 중복확인을 해주세요.";
                               }
                               if(te_password.text.isEmpty){
                                 passwordMessage = "비밀번호를 입력해주세요.";
@@ -703,12 +717,12 @@ class _RegisterChild extends State<RegisterChild> {
                               if(te_password_check.text.isEmpty){
                                 passwordCheckMessage = "비밀번호를 다시 입력하세요.";
                               }
-                              if(te_nickname.text.isEmpty){
-                                nickNameMessage = "닉네임을 입력해주세요";
-                              }
-                              if(te_intro.text.isEmpty){
-                                introMessage = "소개글을 입력해주세요.";
-                              }
+                              // if(te_nickname.text.isEmpty){
+                              //   nickNameMessage = "닉네임을 입력해주세요";
+                              // }
+                              // if(te_intro.text.isEmpty){
+                              //   introMessage = "소개글을 입력해주세요.";
+                              // }
                             });
 
 
@@ -733,7 +747,8 @@ class _RegisterChild extends State<RegisterChild> {
     emailMessage = null;
     Map<String, dynamic> request = new Map<String, Object>();
     request["email"] = te_email.text;
-    var response = await apiRequestPost(urlCheckEmail,request);
+    var response = await apiRequestPost(context, urlCheckEmail,request);
+    print(response.statusCode);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -755,8 +770,8 @@ class _RegisterChild extends State<RegisterChild> {
         !emailChecked ||
         te_password.text.isEmpty ||
         te_password.text != te_password_check.text ||
-        te_nickname.text.isEmpty ||
-        te_intro.text.isEmpty ||
+        // te_nickname.text.isEmpty ||
+        // te_intro.text.isEmpty ||
 
         !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_])', caseSensitive: false).hasMatch(te_password.text)
     ){

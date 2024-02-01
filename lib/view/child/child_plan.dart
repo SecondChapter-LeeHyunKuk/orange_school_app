@@ -1515,7 +1515,7 @@ class _ChildPlan extends State<ChildPlan> {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
 
-    var responseResult = await apiRequestGet("https://api.openweathermap.org/data/2.5/weather",  {"lat" :position.latitude.toString(), "lon": position.longitude.toString(), "appid": weatherKey});
+    var responseResult = await apiRequestGet(context, "https://api.openweathermap.org/data/2.5/weather",  {"lat" :position.latitude.toString(), "lon": position.longitude.toString(), "appid": weatherKey});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
 
     if(response["cod"] == 200){
@@ -1654,7 +1654,7 @@ class _ChildPlan extends State<ChildPlan> {
     children[0]["id"] = pref.getInt("userId")!;
 
     //내 정보 조회
-    var response = await apiRequestGet(urlMy,{});
+    var response = await apiRequestGet(context, urlMy,{});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       children[0]["schoolCode"] = body["data"]["schoolCode"];
@@ -1674,14 +1674,14 @@ class _ChildPlan extends State<ChildPlan> {
     List<String> idList = [];
     idList.add(children[selectedChildIndex]["id"].toString());
 
-    var response = await apiRequestGet(urlMonthly,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","),  "monthStartDate" : DateFormat('yyyy-MM-dd').format(selectMonth())});
+    var response = await apiRequestGet(context, urlMonthly,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","),  "monthStartDate" : DateFormat('yyyy-MM-dd').format(selectMonth())});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       monthSchedule = body["data"];
     }
 
     //휴일정보 받아옴
-    var holidayResponse = await openApiRequestGet(urlHoliday,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
+    var holidayResponse = await openapiRequestGet(context, urlHoliday,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
     if(holidayResponse.statusCode == 200){
       var holidayBody = XmlDocument.parse(utf8.decode(holidayResponse.bodyBytes));
 
@@ -1699,7 +1699,7 @@ class _ChildPlan extends State<ChildPlan> {
     }
 
     //절기정보 받아옴
-    holidayResponse = await openApiRequestGet(urlJulgi,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
+    holidayResponse = await openapiRequestGet(context, urlJulgi,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
     if(holidayResponse.statusCode == 200){
       var holidayBody = XmlDocument.parse(utf8.decode(holidayResponse.bodyBytes));
 
@@ -1723,7 +1723,7 @@ class _ChildPlan extends State<ChildPlan> {
     String payOnly = "false";
     List<String> idList = [];
     idList.add(children[selectedChildIndex]["id"].toString());
-    var response = await apiRequestGet(urlDaily,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","), "dayDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
+    var response = await apiRequestGet(context, urlDaily,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","), "dayDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       List allDay = [];
@@ -1747,7 +1747,7 @@ class _ChildPlan extends State<ChildPlan> {
   Future<void> getWeek() async {
 
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlWeek,  {"commonMemberIdList" : children[selectedChildIndex]["id"].toString(), "commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
+    var response = await apiRequestGet(context, urlWeek,  {"commonMemberIdList" : children[selectedChildIndex]["id"].toString(), "commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       List temp = [];
@@ -1779,7 +1779,7 @@ class _ChildPlan extends State<ChildPlan> {
         if(children[selectedChildIndex]["schoolCode"] != null){
           String schoolCode = children[selectedChildIndex]["schoolCode"];
           if(children[selectedChildIndex]["schoolCode"].contains(":")){
-            var schoolTimeResponse = await apiRequestGet(urlSchoolTime,{
+            var schoolTimeResponse = await apiRequestGet(context, urlSchoolTime,{
               "ATPT_OFCDC_SC_CODE" : schoolCode.split(":")[0],
               "SD_SCHUL_CODE" :schoolCode.split(":")[1],
               "KEY": schoolKey,
@@ -1829,7 +1829,7 @@ class _ChildPlan extends State<ChildPlan> {
   }
   Future<void> getWeekSchedule() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlWeekSchedule,  {"commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
+    var response = await apiRequestGet(context, urlWeekSchedule,  {"commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       List temp = [];

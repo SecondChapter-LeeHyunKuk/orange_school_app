@@ -184,7 +184,7 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
     index = 1;
     data = [];
     nowKeyword =  textEditingController.text;
-    var responseResult = await apiRequestGet(url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword, "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
+    var responseResult = await apiRequestGet(context, url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword, "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
     if(responseResult.statusCode == 200){
       if(response["schoolInfo"] != null){
@@ -197,7 +197,7 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
   }
 
   void scroll() async {
-    var responseResult =  await apiRequestGet(url,{"Type" : "json", "pIndex" : (index + 1).toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword , "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
+    var responseResult =  await apiRequestGet(context, url,{"Type" : "json", "pIndex" : (index + 1).toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword , "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
     if(response["schoolInfo"][0]["head"][1]["RESULT"]["CODE"] == "INFO-000"){
 

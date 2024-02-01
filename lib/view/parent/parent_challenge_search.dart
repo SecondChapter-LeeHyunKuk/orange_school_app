@@ -222,7 +222,7 @@ class _ParentChallengeSearch extends State<ParentChallengeSearch> {
     index = -1;
     list = [];
     currentText = te_search.text;
-    var response = await apiRequestGet(urlSearch + "/" + childId.toString(),  {"keyword": te_search.text,"size" : "20","sort" : ["id,DESC"],});
+    var response = await apiRequestGet(context, urlSearch + "/" + childId.toString(),  {"keyword": te_search.text,"size" : "20","sort" : ["id,DESC"],});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -234,7 +234,7 @@ class _ParentChallengeSearch extends State<ParentChallengeSearch> {
   }
 
   Future<void> scroll() async {
-    var response = await apiRequestGet(urlSearch + "/" + childId.toString(),  {"keyword": currentText, "size" : "20", "sort" : ["id,DESC"], "page" : (index + 1).toString()});
+    var response = await apiRequestGet(context, urlSearch + "/" + childId.toString(),  {"keyword": currentText, "size" : "20", "sort" : ["id,DESC"], "page" : (index + 1).toString()});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -249,7 +249,7 @@ class _ParentChallengeSearch extends State<ParentChallengeSearch> {
 
   Future<void> follow(int index) async {
     Map request = {};
-    var response = await apiRequestPost(urlFollow + "/" + childId.toString() + "/" + list[index]["id"].toString(),request);
+    var response = await apiRequestPost(context, urlFollow + "/" + childId.toString() + "/" + list[index]["id"].toString(),request);
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

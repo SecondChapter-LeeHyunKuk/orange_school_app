@@ -166,7 +166,7 @@ class _Notice extends State<Notice> {
     );
   }
   Future<Response> getFirst() async {
-    var response = await apiRequestGet(urlSearch,  {"size" : "20","sort" : ["id,DESC"],});
+    var response = await apiRequestGet(context, urlSearch,  {"size" : "20","sort" : ["id,DESC"],});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -178,7 +178,7 @@ class _Notice extends State<Notice> {
   }
 
   Future<void> scroll() async {
-    var response = await apiRequestGet(urlSearch,  {"size" : "20", "sort" : ["id,DESC"], "page" : (index + 1).toString()});
+    var response = await apiRequestGet(context, urlSearch,  {"size" : "20", "sort" : ["id,DESC"], "page" : (index + 1).toString()});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

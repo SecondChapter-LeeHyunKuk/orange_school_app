@@ -119,7 +119,7 @@ class _AlarmSetting extends State<AlarmSetting> {
   }
 
   Future<Response> getFirst() async {
-    var response = await apiRequestGet(urlMy,  {});
+    var response = await apiRequestGet(context, urlMy,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -133,7 +133,7 @@ class _AlarmSetting extends State<AlarmSetting> {
 
   Future<Response> update(int type, bool to) async {
 
-    var response = await apiRequestPut(urlUpdate,  { "agreeToSchedule" : type == 0 ? to : plan, "agreeToService" : type == 1 ? to : service, "agreeToAd" : type == 2 ? to : ad  });
+    var response = await apiRequestPut(context, urlUpdate,  { "agreeToSchedule" : type == 0 ? to : plan, "agreeToService" : type == 1 ? to : service, "agreeToAd" : type == 2 ? to : ad  });
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {

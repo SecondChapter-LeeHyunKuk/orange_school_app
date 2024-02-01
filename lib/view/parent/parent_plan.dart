@@ -21,21 +21,10 @@ import 'package:orange_school/util/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart';
 import '../../style/date_picker.dart';
+import '../../style/schedule_info_child.dart';
 import '../../style/time_picker.dart';
 import '../../style/time_table.dart';
 
-const Map highTimes ={
-  "1" : "08:00",
-  "2" : "09:00",
-  "3" : "10:00",
-  "4" : "11:00",
-  "5" : "13:00",
-  "6" : "14:00",
-  "7" : "15:00",
-  "8" : "16:00",
-  "9" : "17:00",
-  "10" : "18:00",
-};
 
 const Map eleTimes ={
   "1-1" : "09:00",
@@ -95,7 +84,10 @@ String urlHoliday = "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoSer
 String urlJulgi = "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/get24DivisionsInfo";
 String urlSchoolTime = "https://open.neis.go.kr/hub/elsTimetable";
 String schoolKey = "${dotenv.env['SCHOOL_KEY']}";
+String urlMy = "${dotenv.env['BASE_URL']}user/commonMember";
 class ParentPlan extends StatefulWidget {
+  final bool isParent;
+  const ParentPlan ({ Key? key, required this.isParent }): super(key: key);
   @override
   State<ParentPlan> createState() => _ParentPlan();
 }
@@ -293,49 +285,86 @@ class _ParentPlan extends State<ParentPlan> {
                         GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: (){
+                              if(widget.isParent){
+                                if(screenIndex == 1){
+                                  scrollController.jumpTo(0);
+                                  children = monthChildren;
+                                  selectedChildIndex++;
 
-                              if(screenIndex == 1){
-                                scrollController.jumpTo(0);
-                                children = monthChildren;
-                                selectedChildIndex++;
+                                  DateTime today = DateTime.now();
+                                  if(!DateTime(selectDay.year, selectDay.month, selectDay.day).isAfter(DateTime(
+                                      today.year, today.month, today.day
+                                  ))){
+                                    if(DateTime(today.year, today.month, today.day).difference(DateTime(
+                                        selectDay.year, selectDay.month, selectDay.day
+                                    )).inDays <= 6){
+                                      selectDay = DateTime.now();
+                                    }
 
-                                DateTime today = DateTime.now();
-                                if(!DateTime(selectDay.year, selectDay.month, selectDay.day).isAfter(DateTime(
-                                    today.year, today.month, today.day
-                                ))){
-                                  if(DateTime(today.year, today.month, today.day).difference(DateTime(
-                                      selectDay.year, selectDay.month, selectDay.day
-                                  )).inDays <= 6){
-                                    selectDay = DateTime.now();
                                   }
 
-                                }
-
-                                changeMonth();
-                                getMonthly();
-                                getDaily();
-                                setState(() {
-                                  screenIndex = 0;
-                                });
-                              }else{
-                                scrollController.jumpTo(535);
-                                children = weekChildren;
-                                if(selectedChildIndex == 0 || selectedChildIndex == monthChildren.length-1){
-                                  selectedChildIndex = 0;
+                                  changeMonth();
+                                  getMonthly();
+                                  getDaily();
+                                  setState(() {
+                                    screenIndex = 0;
+                                  });
                                 }else{
-                                  selectedChildIndex--;
-                                }
+                                  scrollController.jumpTo(535);
+                                  children = weekChildren;
+                                  if(selectedChildIndex == 0 || selectedChildIndex == monthChildren.length-1){
+                                    selectedChildIndex = 0;
+                                  }else{
+                                    selectedChildIndex--;
+                                  }
 
-                                if(selectDay.weekday != 7){
-                                  selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
+                                  if(selectDay.weekday != 7){
+                                    selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
+                                  }
+                                  setWeeks();
+                                  getWeek();
+                                  getWeekSchedule();
+                                  setState(() {
+                                    screenIndex = 1;
+                                  });
                                 }
-                                setWeeks();
-                                getWeek();
-                                getWeekSchedule();
-                                setState(() {
-                                  screenIndex = 1;
-                                });
+                              }else{
+                                if(screenIndex == 1){
+                                  scrollController.jumpTo(0);
+                                  DateTime today = DateTime.now();
+                                  if(!DateTime(selectDay.year, selectDay.month, selectDay.day).isAfter(DateTime(
+                                      today.year, today.month, today.day
+                                  ))){
+                                    if(DateTime(today.year, today.month, today.day).difference(DateTime(
+                                        selectDay.year, selectDay.month, selectDay.day
+                                    )).inDays <= 6){
+                                      selectDay = DateTime.now();
+                                    }
+
+                                  }
+
+
+                                  changeMonth();
+                                  getMonthly();
+                                  getDaily();
+                                  setState(() {
+                                    screenIndex = 0;
+                                  });
+                                }else{
+                                  scrollController.jumpTo(535);
+                                  if(selectDay.weekday != 7){
+                                    selectDay = selectDay.subtract(Duration(days: selectDay.weekday));
+                                  }
+                                  setWeeks();
+                                  getWeek();
+                                  getWeekSchedule();
+                                  setState(() {
+                                    screenIndex = 1;
+                                  });
+                                }
                               }
+
+
 
                             },
                             child:
@@ -453,7 +482,7 @@ class _ParentPlan extends State<ParentPlan> {
                           padding: EdgeInsets.only(right: 4),
 
                           child:
-                          selectedChildIndex == 0 ? SizedBox.shrink():
+                          widget.isParent && (selectedChildIndex == (children.length-1)) ? SizedBox.shrink():
 
                           GestureDetector(
                             behavior: HitTestBehavior.translucent,
@@ -523,9 +552,11 @@ class _ParentPlan extends State<ParentPlan> {
                                       GestureDetector(
                                           behavior: HitTestBehavior.translucent,
                                           onTap: (){
-                                            //if(selectedChildIndex != 0){
-                                              showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"], selectedChildIndex == 0);
-                                            //}
+                                            if(widget.isParent){
+                                              showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"], selectedChildIndex == (children.length-1));
+                                            }else{
+                                              showTimeTable(children[selectedChildIndex], weeks[index][dayIndex]["date"], false);
+                                            }
                                           },
                                           child:Container(
                                             height: 94,
@@ -589,7 +620,9 @@ class _ParentPlan extends State<ParentPlan> {
                                     ...List.generate(7, (index) =>
                                         GestureDetector(
                                             onTap: (){
-                                              showRegister(index);
+                                              if(widget.isParent){
+                                                showRegister(index);
+                                              }
                                             },
                                             behavior: HitTestBehavior.translucent,
                                             child:
@@ -1043,7 +1076,14 @@ class _ParentPlan extends State<ParentPlan> {
 
                                       GestureDetector(
                                         behavior: HitTestBehavior.translucent,
-                                        onTap: (){showScheduleInfo(daySchedule[index]["scheduleId"], daySchedule[index]["id"]);},
+                                        onTap: (){
+                                          if(widget.isParent){
+                                            showScheduleInfo(daySchedule[index]["scheduleId"], daySchedule[index]["id"]);
+                                          }else{
+                                            showTimeTable(children[selectedChildIndex], selectDay, false);
+                                          }
+
+                                          },
                                         child: Container(
                                           width: double.infinity,
                                           height: 48,
@@ -1318,36 +1358,43 @@ class _ParentPlan extends State<ParentPlan> {
                                                           ...List.generate(24, (colIndex) =>
                                                               GestureDetector(
                                                                 onTap: (){
-                                                                  showModalBottomSheet<Map>(
-                                                                    useSafeArea: true,
-                                                                    context: context,
-                                                                    isScrollControlled: true,
-                                                                    builder: (BuildContext context) {
-                                                                      int hour = colIndex;
-                                                                      DateTime date = selectDay.add(Duration(days: index));
-                                                                      return RegisterPlan(initTime:DateTime(date.year,date.month, date.day, hour, 0, 0),childId: children[selectedChildIndex]["id"],);
-                                                                    },
-                                                                  ).then((value){
-                                                                    if(value != null){
-                                                                      if(screenIndex == 0){
-                                                                        selectedChildIndex = value["index"] + 1;
-                                                                      }else{
-                                                                        selectedChildIndex = value["index"];
+
+                                                                  if(widget.isParent){
+                                                                    showModalBottomSheet<Map>(
+                                                                      useSafeArea: true,
+                                                                      context: context,
+                                                                      isScrollControlled: true,
+                                                                      builder: (BuildContext context) {
+                                                                        int hour = colIndex;
+                                                                        DateTime date = selectDay.add(Duration(days: index));
+                                                                        return RegisterPlan(initTime:DateTime(date.year,date.month, date.day, hour, 0, 0),childId: children[selectedChildIndex]["id"],);
+                                                                      },
+                                                                    ).then((value) async {
+                                                                      if(value != null){
+                                                                        if(screenIndex == 0){
+                                                                          selectedChildIndex = value["index"] + 1;
+                                                                        }else{
+                                                                          selectedChildIndex = value["index"];
+                                                                        }
+                                                                        SharedPreferences pref = await SharedPreferences.getInstance();
+                                                                        pref.setInt("selectedChildId", children[selectedChildIndex]["id"]);
                                                                       }
-                                                                    }
 
-                                                                    if(screenIndex == 0){
-                                                                      getMonthly();
-                                                                    }else{
-                                                                      getWeek();
-                                                                      getWeekSchedule();
-                                                                    }
+                                                                      if(screenIndex == 0){
+                                                                        getMonthly();
+                                                                      }else{
+                                                                        getWeek();
+                                                                        getWeekSchedule();
+                                                                      }
 
-                                                                    if(value != null){
-                                                                      showScheduleInfo(value["id"], 0);
-                                                                    }
+                                                                      if(value != null){
+                                                                        showScheduleInfo(value["id"], 0);
+                                                                      }
 
-                                                                  });
+                                                                    });
+                                                                  }
+
+
 
                                                                 },
                                                                 behavior: HitTestBehavior.translucent,
@@ -1483,7 +1530,7 @@ class _ParentPlan extends State<ParentPlan> {
 
         ),
         floatingActionButton:
-        screenIndex == 0 ? GestureDetector(
+        (screenIndex == 0 && widget.isParent) ? GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: (){
             showModalBottomSheet<Map>(
@@ -1495,13 +1542,16 @@ class _ParentPlan extends State<ParentPlan> {
                   childId: children[selectedChildIndex]["id"],
                 );
               },
-            ).then((value){
+            ).then((value) async {
               if(value != null){
                 if(screenIndex == 0){
                   selectedChildIndex = value["index"] + 1;
                 }else{
                   selectedChildIndex = value["index"];
                 }
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                pref.setInt("selectedChildId", children[selectedChildIndex]["id"]);
+
               }
 
               if(screenIndex == 0){
@@ -1614,29 +1664,47 @@ class _ParentPlan extends State<ParentPlan> {
 
 
   void showScheduleInfo(int scheduleId, int calendarId){
+    if(widget.isParent){
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder:
+              (BuildContext context, StateSetter setState){
+            return ScheduleInfo(scheduleId: scheduleId, calendarId:  calendarId,);
 
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder:
-            (BuildContext context, StateSetter setState){
-          return ScheduleInfo(scheduleId: scheduleId, calendarId:  calendarId,);
+          }
+          );
 
+
+        },
+      ).then((value){
+        if(screenIndex == 0){
+          getMonthly();
+          getDaily();
+        }else{
+          getWeek();
+          getWeekSchedule();
         }
-        );
+      });
+    }else{
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder:
+              (BuildContext context, StateSetter setState){
+            return ScheduleInfoChild(scheduleId: scheduleId, calendarId:  calendarId,);
+
+          }
+          );
 
 
-      },
-    ).then((value){
-      if(screenIndex == 0){
-        getMonthly();
-        getDaily();
-      }else{
-        getWeek();
-        getWeekSchedule();
-      }
-    });
+        },
+      );
+    }
+
+
   }
 
   void showTimeTable(Map map, DateTime date, bool parentSelf){
@@ -1647,7 +1715,7 @@ class _ParentPlan extends State<ParentPlan> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder:
             (BuildContext context, StateSetter setState){
-          return TimeTable(map: map, dateTime: date, isParent: true, parentSelf:  parentSelf,);
+          return TimeTable(map: map, dateTime: date, isParent: widget.isParent, parentSelf:  parentSelf,);
 
         }
         );
@@ -1667,7 +1735,7 @@ class _ParentPlan extends State<ParentPlan> {
   Future<void> getWeather() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    var responseResult = await apiRequestGet("https://api.openweathermap.org/data/2.5/weather",  {"lat" :position.latitude.toString(), "lon": position.longitude.toString(), "appid": weatherKey});
+    var responseResult = await apiRequestGet(context, "https://api.openweathermap.org/data/2.5/weather",  {"lat" :position.latitude.toString(), "lon": position.longitude.toString(), "appid": weatherKey});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
 
     if(response["cod"] == 200){
@@ -1809,75 +1877,100 @@ class _ParentPlan extends State<ParentPlan> {
 
 
   Future<void> getChildren() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
+    if(widget.isParent){
 
-    int? selectedChildId = pref.getInt("selectedChildId");
+      weekChildren = [];
+      monthChildren = [];
+      SharedPreferences pref = await SharedPreferences.getInstance();
 
-    //월별일정 자식 목록 채우기
-    monthChildren[0] = {"name" :"전체", "fileUrl" :  "", "id" : 0};
-    monthChildren.add({"name" :pref.getString("name"), "fileUrl" :  pref.getString("profile"), "id" : pref.getInt("userId")});
-    weekChildren[0] = {"name" :pref.getString("name"), "fileUrl" :  pref.getString("profile"), "id" : pref.getInt("userId")};
+      int? selectedChildId = pref.getInt("selectedChildId");
 
-    var response = await apiRequestGet(urlChildren,  {});
-    var body =jsonDecode(utf8.decode(response.bodyBytes));
-
-    if(response.statusCode == 200){
-      for(var child in body["data"]){
-        weekChildren.add({
-          "name" : child["name"],
-          "fileUrl" : child["fileUrl"],
-          "id" : child["id"],
-          "schoolCode" : child["schoolCode"],
-          "grade": child["grade"],
-          "schoolClass": child["schoolClass"],
-        });
-        monthChildren.add({
-          "name" : child["name"],
-          "fileUrl" : child["fileUrl"],
-          "id" : child["id"],
-          "schoolCode" : child["schoolCode"],
-          "grade": child["grade"],
-          "schoolClass": child["schoolClass"],
-        });
-      }
-    }
-
-    monthChildren.add({
-      "name" : "결제일",
-      "fileUrl" : "",
-      "id" : -1
-    });
-
-    children = weekChildren;
+      //월별일정 자식 목록 채우기
+      monthChildren.add({"name" :"전체", "fileUrl" :  "", "id" : 0});
 
 
-    //다른페이지에 갔다왔을 때 저장
-    if(selectedChildId != null){
-      for(int i = 0 ; i < children.length; i++){
-        if(children[i]["id"] == selectedChildId){
-          print(i);
-          setState(() {
-            selectedChildIndex = i;
+      var response = await apiRequestGet(context, urlChildren,  {});
+      var body =jsonDecode(utf8.decode(response.bodyBytes));
+
+      if(response.statusCode == 200){
+        for(var child in body["data"]){
+          weekChildren.add({
+            "name" : child["name"],
+            "fileUrl" : child["fileUrl"],
+            "id" : child["id"],
+            "schoolCode" : child["schoolCode"],
+            "grade": child["grade"],
+            "schoolClass": child["schoolClass"],
+          });
+          monthChildren.add({
+            "name" : child["name"],
+            "fileUrl" : child["fileUrl"],
+            "id" : child["id"],
+            "schoolCode" : child["schoolCode"],
+            "grade": child["grade"],
+            "schoolClass": child["schoolClass"],
           });
         }
       }
+      monthChildren.add({"name" :pref.getString("name"), "fileUrl" :  pref.getString("profile"), "id" : pref.getInt("userId")});
+      weekChildren.add({"name" :pref.getString("name"), "fileUrl" :  pref.getString("profile"), "id" : pref.getInt("userId")});
+      monthChildren.add({
+        "name" : "결제일",
+        "fileUrl" : "",
+        "id" : -1
+      });
+
+      children = weekChildren;
+
+
+      //다른페이지에 갔다왔을 때 저장
+      if(selectedChildId != null){
+        for(int i = 0 ; i < children.length; i++){
+          if(children[i]["id"] == selectedChildId){
+            setState(() {
+              selectedChildIndex = i;
+            });
+          }
+        }
+      }
+
+
+      setWeeks();
+      getWeek();
+      getWeekSchedule();
+
+
+
+      scrollController.jumpTo(535);
+    }else{
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      children[0]["name"] = pref.getString("name");
+      children[0]["fileUrl"] = pref.getString("profile");
+      children[0]["id"] = pref.getInt("userId")!;
+
+      //내 정보 조회
+      var response = await apiRequestGet(context, urlMy,{});
+      var body = jsonDecode(utf8.decode(response.bodyBytes));
+      if(response.statusCode == 200){
+        children[0]["schoolCode"] = body["data"]["schoolCode"];
+        children[0]["grade"] = body["data"]["grade"];
+        children[0]["schoolClass"] = body["data"]["schoolClass"];
+      }
+
+      setWeeks();
+      getWeek();
+      getWeekSchedule();
+      scrollController.jumpTo(535);
     }
 
 
-    setWeeks();
-    getWeek();
-    getWeekSchedule();
-
-
-
-    scrollController.jumpTo(535);
   }
 
   Future<void> getMonthly() async {
     holidays = {};
     String payOnly = "false";
     List<String> idList = [];
-    if(screenIndex == 0){
+    if(widget.isParent && screenIndex == 0){
       if(selectedChildIndex == 0 || selectedChildIndex == monthChildren.length-1){
         for(int i = 1; i < monthChildren.length-1 ; i++){
           idList.add(children[i]["id"].toString());
@@ -1892,7 +1985,7 @@ class _ParentPlan extends State<ParentPlan> {
       idList.add(children[selectedChildIndex]["id"].toString());
     }
 
-    var response = await apiRequestGet(urlMonthly,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","),  "monthStartDate" : DateFormat('yyyy-MM-dd').format(selectMonth())});
+    var response = await apiRequestGet(context, urlMonthly,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","),  "monthStartDate" : DateFormat('yyyy-MM-dd').format(selectMonth())});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       monthSchedule = body["data"];
@@ -1902,16 +1995,9 @@ class _ParentPlan extends State<ParentPlan> {
     var holidayResponse = await openApiXmlRequestGet(urlHoliday,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
     if(holidayResponse.statusCode == 200){
       var holidayBody = XmlDocument.parse(utf8.decode(holidayResponse.bodyBytes));
-      print(holidayBody == null);
-      print(holidayBody.lastChild == null);
-      print(holidayBody.lastChild?.lastChild == null);
-      print(holidayBody.lastChild?.lastChild?.firstChild == null);
-      print(holidayBody == null);
       var itemList = holidayBody.lastChild?.lastChild?.firstChild?.childElements;
-      print(itemList == null);
       if(itemList != null){
         for(int i = 0; i< itemList!.length; i++){
-          print(itemList?.elementAt(i).findElements("locdate").single.innerText);
           if(holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] == null){
             holidays[itemList?.elementAt(i).findElements("locdate").single.innerText] = {"isHoliday" : false, "list" : []};
           }
@@ -1923,7 +2009,7 @@ class _ParentPlan extends State<ParentPlan> {
     }
 
     //절기정보 받아옴
-    holidayResponse = await openApiRequestGet(urlJulgi,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
+    holidayResponse = await openapiRequestGet(context, urlJulgi,  {"ServiceKey" : holidayKey, "solYear" : selectDay.year.toString(),  "solMonth" : (selectDay.month < 10 ? "0" : "") + selectDay.month.toString()});
     if(holidayResponse.statusCode == 200){
       var holidayBody = XmlDocument.parse(utf8.decode(holidayResponse.bodyBytes));
 
@@ -1947,7 +2033,7 @@ class _ParentPlan extends State<ParentPlan> {
   Future<void> getDaily() async {
     String payOnly = "false";
     List<String> idList = [];
-    if(screenIndex == 0){
+    if(widget.isParent && screenIndex == 0){
       if(selectedChildIndex == 0 || selectedChildIndex == monthChildren.length-1){
         for(int i = 1; i < monthChildren.length-1 ; i++){
           idList.add(children[i]["id"].toString());
@@ -1961,7 +2047,7 @@ class _ParentPlan extends State<ParentPlan> {
     }else{
       idList.add(children[selectedChildIndex]["id"].toString());
     }
-    var response = await apiRequestGet(urlDaily,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","), "dayDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
+    var response = await apiRequestGet(context, urlDaily,  {"payOnly" : payOnly, "commonMemberIdList" : idList.join(","), "dayDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       List allDay = [];
@@ -1985,7 +2071,7 @@ class _ParentPlan extends State<ParentPlan> {
   Future<void> getWeek() async {
 
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlWeek,  {"commonMemberIdList" : children[selectedChildIndex]["id"].toString(), "commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
+    var response = await apiRequestGet(context, urlWeek,  {"commonMemberIdList" : children[selectedChildIndex]["id"].toString(), "commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       List temp = [];
@@ -2017,7 +2103,7 @@ class _ParentPlan extends State<ParentPlan> {
         if(children[selectedChildIndex]["schoolCode"] != null){
           String schoolCode = children[selectedChildIndex]["schoolCode"];
           if(children[selectedChildIndex]["schoolCode"].contains(":")){
-            var schoolTimeResponse = await apiRequestGet(urlSchoolTime,{
+            var schoolTimeResponse = await apiRequestGet(context, urlSchoolTime,{
               "ATPT_OFCDC_SC_CODE" : schoolCode.split(":")[0],
               "SD_SCHUL_CODE" :schoolCode.split(":")[1],
               "KEY": schoolKey,
@@ -2067,7 +2153,7 @@ class _ParentPlan extends State<ParentPlan> {
   }
   Future<void> getWeekSchedule() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var response = await apiRequestGet(urlWeekSchedule,  {"commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
+    var response = await apiRequestGet(context, urlWeekSchedule,  {"commonMemberId" : children[selectedChildIndex]["id"].toString(), "weekStartDate" :DateFormat('yyyy-MM-dd').format(selectDay)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       List temp = [];
@@ -2102,14 +2188,12 @@ class _ParentPlan extends State<ParentPlan> {
   }
 
   DateTime exMonth(){
-    DateTime nextMonth = DateTime(selectDay.year, selectDay.month + 1, 1);
-    DateTime lastDayOfMonth = nextMonth.subtract(Duration(days: 1));
-    // print(selectDay);
-    // print(lastDayOfMonth);
-    if(lastDayOfMonth.day - selectDay.day >=6 ){
-      return selectDay;
+    DateTime now = DateTime.now();
+    int dif =DateTime(now.year, now.month, now.day).difference(DateTime(selectDay.year, selectDay.month, selectDay.day)).inDays;
+    if(dif <= 6 && dif >=0){
+      return DateTime.now();
     }else{
-      return nextMonth;
+      return selectDay;
     }
   }
 
@@ -2121,13 +2205,16 @@ class _ParentPlan extends State<ParentPlan> {
       builder: (BuildContext context) {
         return RegisterPlan(initTime:selectDay.add(Duration(days: index)),childId: children[selectedChildIndex]["id"],onday: true,);
       },
-    ).then((value){
+    ).then((value) async {
       if(value != null){
         if(screenIndex == 0){
           selectedChildIndex = value["index"] + 1;
         }else{
           selectedChildIndex = value["index"];
         }
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        pref.setInt("selectedChildId", children[selectedChildIndex]["id"]);
+
       }
 
       if(screenIndex == 0){

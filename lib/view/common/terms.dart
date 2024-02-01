@@ -82,7 +82,7 @@ class _Terms extends State<Terms> {
   Future<void> getTerms()async {
 
     await loadingArgs;
-    var response = await apiRequestGet(urlTerms + (termsId!).toString(), {});
+    var response = await apiRequestGet(context, urlTerms + (termsId!).toString(), {});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
         setState(() {

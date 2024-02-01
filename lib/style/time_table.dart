@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:orange_school/style/register_plan.dart';
 import 'package:orange_school/style/sleep_time_picker.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 
@@ -63,552 +64,619 @@ class _TimeTable extends State<TimeTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height:MediaQuery.of(context).size.height * 0.9,
-      decoration: const BoxDecoration(
-          color: Color(0xffF6F7F9),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ) ),
+    return
 
-      child:Column(
+      Stack(
         children: [
-          Container(height: 50,
-            width: double.infinity,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
+          Container(
+            height:MediaQuery.of(context).size.height * 0.9,
+            decoration: const BoxDecoration(
+                color: Color(0xffF6F7F9),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ) ),
 
-
-                  GestureDetector(
-                    onTap: (){Navigator.pop(context);},
-                    behavior: HitTestBehavior.translucent,
-                    child:
-                    SvgPicture.asset("assets/icons/close.svg",width: 30, height: 30,),
-                  ),
-                  SizedBox(width: 16,)
-
-                ]
-            ),
-
-          ),
-          Expanded(child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child:
-              Container(
-                width: double.infinity,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-
-                    widget.isParent && !widget.parentSelf?
-                    Positioned(
-                        top: 410,
-                        right: 20,
-                        child:
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () async {
-                                await showModalBottomSheet<DateTime>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return SleepTimePicker( commonMemberId:  widget.map["id"], wakeup: wakeup, sleep:  sleep,);
-                                  },
-                                ).then((value) => getSleep());
-                              },
-                              child:  Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  color: MainTheme.gray3,
-                                ),
-                                width: 87,
-                                height: 32,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SizedBox(width: 6,),
-                                    SvgPicture.asset("assets/icons/ic_moon.svg",width: 24, height: 24,),
-                                    SizedBox(width: 2,),
-                                    Text("취침설정", style: MainTheme.caption2(MainTheme.gray5),)
-                                  ],
-
-                                ),
-
-                              ),
-                            )
-
-                    ): SizedBox.shrink(),
-
-
-
-                    Positioned(child:
-                    SimpleShadow(
-                      child:SvgPicture.asset('assets/images/chart_bg.svg',
-                          width: 329,
-                          height: 363),
-                      opacity: 0.05,         // Default: 0.5
-                      color: Colors.black,   // Default: Black
-                      offset: Offset(0, 0), // Default: Offset(2, 2)
-                      sigma: 20,             // Deffault: 2
-                    )
-                      ,top: 53,),
-                    //취침시간 파이차트
-                    Positioned(
-                        top: 118,
-                        width: 266,
-                        height: 266,
-                        child:
-                        PieChart(
-                          PieChartData(
-                              startDegreeOffset: degree ?? 0,
-                              sectionsSpace: 6,
-                              centerSpaceRadius: 0,
-                              sections: [
-                                PieChartSectionData(
-                                    color: Color(0xffFAF8C2),
-                                    value: sleepMin,
-                                    title:
-                                    "취침",
-                                    radius: 133,
-                                    titlePositionPercentageOffset : 0.7,
-                                    titleStyle: MainTheme.caption1(Color(0xffb3af3e))
-                                ),
-                                PieChartSectionData(
-                                    color: Colors.white,
-                                    value: 1440-sleepMin,
-                                    title:
-                                    "",
-                                    radius: 133,
-                                    titlePositionPercentageOffset : 0.7,
-                                    titleStyle: MainTheme.caption1(Colors.white)
-                                )
-                              ]
-                          ),
-                        )
-                    ),
-                    Positioned(
-                      top: 118,
-                      width: 266,
-                      height: 266,
-                      child:
-                      CompositedTransformTarget(
-                        link: _layerLink,
-                      child:
-                      PieChart(
-                        PieChartData(
-                            pieTouchData: PieTouchData(
-                              touchCallback: (FlTouchEvent event, PieTouchResponse? touchResponse) {
-                                if(touchResponse != null){
-                                  if(touchResponse.touchedSection!.touchedSectionIndex >= 0 && chartList[touchResponse.touchedSection!.touchedSectionIndex]["color"] != null){
-                                    if (_overlayEntry != null) {
-                                      _removeOverlay();
-                                      if(_timer != null){
-                                        _timer!.cancel();
-                                      }
-                                    }
-                                    if (_overlayEntry == null) {
-                                      _overlayEntry = _titleInfo(event.localPosition!.dx, event.localPosition!.dy, touchResponse.touchedSection!.touchedSectionIndex);
-                                      Overlay.of(context)?.insert(_overlayEntry!);
-                                      _startTimer();
-                                    }
-                                  }
-                                }
-
-
-                              },
-                            ),
-                            startDegreeOffset: 270,
-                            sectionsSpace: 6,
-                            centerSpaceRadius: 0,
-                            sections: [
-                              ...List.generate(chartList.length, (index) =>
-
-                                  PieChartSectionData(
-                                      color: chartList[index]["color"] == null ? Colors.transparent : MainTheme.planBgColor[int.parse(chartList[index]["color"])],
-                                      value: chartList[index]["min"] * 1.0,
-                                      title:
-                                          //빈시간은 표시 안함
-                                      chartList[index]["color"] == null ? "" :
-                                          //1시간 이하 표시 안함
-                                      chartList[index]["min"] * 1.0 < 60 ? "" :
-                                      chartList[index]["min"] * 1.0 <= 180 ? chartList[index]["title"].length > 4 ? chartList[index]["title"].substring(0,4) + ".." : chartList[index]["title"] :
-                                      chartList[index]["title"].length > 9 ? chartList[index]["title"].substring(0,5) + "\n" + chartList[index]["title"].substring(5, 9) + "..." :
-                                      chartList[index]["title"].length == 9 ? chartList[index]["title"].substring(0,5) + "\n" + chartList[index]["title"].substring(5, 9) :
-                                      chartList[index]["title"],
-                                      radius: 133,
-                                      titlePositionPercentageOffset : 0.7,
-                                      titleStyle: MainTheme.caption1(chartList[index]["color"] == null ? Color(0xffed6a6a) : MainTheme.planColor[int.parse(chartList[index]["color"])])
-                                  )
-
-                              )
-                            ]
-                        ),
-                      ),)
-                    ),
-                    Column(
+            child:Column(
+              children: [
+                Container(height: 50,
+                  width: double.infinity,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          height: 463,
+
+
+                        GestureDetector(
+                          onTap: (){Navigator.pop(context);},
+                          behavior: HitTestBehavior.translucent,
+                          child:
+                          SvgPicture.asset("assets/icons/close.svg",width: 30, height: 30,),
                         ),
+                        SizedBox(width: 16,)
 
+                      ]
+                  ),
 
+                ),
+                Expanded(child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child:
+                    Container(
+                      width: double.infinity,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
 
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16),
-                            child:Column(
-                              children: [
-                                !widget.parentSelf ?
-                                Column(
-                                  children: [
-                                    Container(
-                                        height: 79,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(width: 1, color: MainTheme.gray3)
-                                        ),
-                                        child:
-
-                                        Stack(
-                                          children: [
-                                            Positioned(
-                                              top:15,
-                                              left: 18,
-                                              child: Text("부모님 메모", style : MainTheme.body8(MainTheme.gray6)),),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(width: 18,),
-                                                Expanded(child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(height: 25,),
-                                                    SizedBox(height: 4,),
-                                                    Container(
-                                                      height: 40,
-                                                      child: TextField(
-
-                                                        readOnly: parentReadOnly,
-                                                        controller: te_parentMemo,
-                                                        decoration: InputDecoration(
-                                                          isDense: true,
-                                                          focusedBorder: InputBorder.none,
-                                                          enabledBorder: InputBorder.none,
-                                                          border: InputBorder.none,
-                                                          hintText: "메모가 없어요",
-                                                          hintStyle: MainTheme.body5(MainTheme.gray4),
-                                                        ),
-                                                        style: MainTheme.body5(MainTheme.gray7),
-                                                      ),
-
-                                                    )
-                                                  ],
-                                                )),
-                                                widget.isParent ? GestureDetector(
-                                                  behavior: HitTestBehavior.translucent,
-                                                  onTap: (){
-                                                    if(!parentReadOnly){
-                                                      saveMemo();
-                                                    }
-                                                    setState(() {
-                                                      parentReadOnly = !parentReadOnly;
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    width: 36,
-                                                    height: 36,
-                                                    margin: EdgeInsets.only(top: 13, right: 13),
-                                                    decoration: BoxDecoration(
-                                                        color: MainTheme.gray1,
-                                                        shape: BoxShape.circle
-                                                    ),
-                                                    alignment: Alignment.center,
-                                                    child : parentReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
-                                                  ),
-                                                ) : SizedBox.shrink()
-
-                                              ],
-                                            ),
-                                          ],
-
-                                        )
-
-                                    ),
-                                    SizedBox(height: 12,),
-                                    Container(
-                                        height: 79,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(width: 1, color: MainTheme.gray3)
-                                        ),
-                                        child:
-
-                                        Stack(
-                                          children: [
-                                            Positioned(
-                                              top:15,
-                                              left: 18,
-                                              child: Text("아이 메모", style : MainTheme.body8(MainTheme.gray6)),),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(width: 18,),
-                                                Expanded(child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(height: 25,),
-                                                    SizedBox(height: 4,),
-                                                    Container(
-                                                      height: 40,
-                                                      child:TextField(
-                                                        controller: te_ChildMemo,
-                                                        readOnly: childReadOnly,
-                                                        decoration: InputDecoration(
-                                                          isDense: true,
-                                                          focusedBorder: InputBorder.none,
-                                                          enabledBorder: InputBorder.none,
-                                                          border: InputBorder.none,
-                                                          hintText: "메모가 없어요",
-                                                          hintStyle: MainTheme.body5(MainTheme.gray4),
-                                                        ),
-                                                        style: MainTheme.body5(MainTheme.gray7),
-                                                      ),
-
-                                                    )
-                                                  ],
-                                                )),
-                                                !widget.isParent ?
-                                                GestureDetector(
-                                                  behavior: HitTestBehavior.translucent,
-                                                  onTap: (){
-                                                    if(!childReadOnly){
-                                                      saveMemo();
-                                                    }
-                                                    setState(() {
-                                                      childReadOnly = !childReadOnly;
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    width: 36,
-                                                    height: 36,
-                                                    margin: EdgeInsets.only(top: 13, right: 13),
-                                                    decoration: BoxDecoration(
-                                                        color: MainTheme.gray1,
-                                                        shape: BoxShape.circle
-                                                    ),
-                                                    alignment: Alignment.center,
-                                                    child : childReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
-                                                  ),
-                                                ) : SizedBox.shrink()
-
-                                              ],
-                                            ),
-                                          ],
-
-                                        )
-
-                                    ),
-                                    Container(height: 8,),
-                                  ],
-                                ) : SizedBox.shrink(),
-
-                                daySchedule.length == 0 ?
-
-                                Container(
-                                  height: 100,
-                                  width: double.infinity,
-                                  child: MainTheme.ErrorPage(context, "일정이 없어요"),
-                                ):
-
-                                Container(
-                                  child: Column(
+                          widget.isParent && !widget.parentSelf?
+                          Positioned(
+                              top: 410,
+                              right: 20,
+                              child:
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () async {
+                                  await showModalBottomSheet<DateTime>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SleepTimePicker( commonMemberId:  widget.map["id"], wakeup: wakeup, sleep:  sleep,);
+                                    },
+                                  ).then((value) => getSleep());
+                                },
+                                child:  Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: MainTheme.gray3,
+                                  ),
+                                  width: 87,
+                                  height: 32,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      ...List.generate(daySchedule.length, (index) =>
+                                      SizedBox(width: 6,),
+                                      SvgPicture.asset("assets/icons/ic_moon.svg",width: 24, height: 24,),
+                                      SizedBox(width: 2,),
+                                      Text("취침설정", style: MainTheme.caption2(MainTheme.gray5),)
+                                    ],
 
+                                  ),
+
+                                ),
+                              )
+
+                          ): SizedBox.shrink(),
+
+
+
+                          Positioned(child:
+                          SimpleShadow(
+                            child:SvgPicture.asset('assets/images/chart_bg.svg',
+                                width: 329,
+                                height: 363),
+                            opacity: 0.05,         // Default: 0.5
+                            color: Colors.black,   // Default: Black
+                            offset: Offset(0, 0), // Default: Offset(2, 2)
+                            sigma: 20,             // Deffault: 2
+                          )
+                            ,top: 53,),
+                          //취침시간 파이차트
+                          Positioned(
+                              top: 118,
+                              width: 266,
+                              height: 266,
+                              child:
+                              degree == null ? SizedBox.shrink() :
+                              PieChart(
+                                PieChartData(
+                                    startDegreeOffset: degree ?? 0,
+                                    sectionsSpace: 6,
+                                    centerSpaceRadius: 0,
+                                    sections: [
+                                      PieChartSectionData(
+                                          color: Color(0xffFAF8C2),
+                                          value: sleepMin,
+                                          title:
+                                          "취침",
+                                          radius: 133,
+                                          titlePositionPercentageOffset : 0.7,
+                                          titleStyle: MainTheme.caption1(Color(0xffb3af3e))
+                                      ),
+                                      PieChartSectionData(
+                                          color: Colors.white,
+                                          value: 1440-sleepMin,
+                                          title:
+                                          "",
+                                          radius: 133,
+                                          titlePositionPercentageOffset : 0.7,
+                                          titleStyle: MainTheme.caption1(Colors.white)
+                                      )
+                                    ]
+                                ),
+                              )
+                          ),
+                          Positioned(
+                              top: 118,
+                              width: 266,
+                              height: 266,
+                              child:
+                              CompositedTransformTarget(
+                                link: _layerLink,
+                                child:
+                                PieChart(
+                                  PieChartData(
+                                      pieTouchData: PieTouchData(
+                                        touchCallback: (FlTouchEvent event, PieTouchResponse? touchResponse) {
+                                          if(touchResponse != null){
+                                            if(touchResponse.touchedSection!.touchedSectionIndex >= 0 && chartList[touchResponse.touchedSection!.touchedSectionIndex]["color"] != null){
+                                              if (_overlayEntry != null) {
+                                                _removeOverlay();
+                                                if(_timer != null){
+                                                  _timer!.cancel();
+                                                }
+                                              }
+                                              if (_overlayEntry == null) {
+                                                _overlayEntry = _titleInfo(event.localPosition!.dx, event.localPosition!.dy, touchResponse.touchedSection!.touchedSectionIndex);
+                                                Overlay.of(context)?.insert(_overlayEntry!);
+                                                _startTimer();
+                                              }
+                                            }
+                                          }
+
+
+                                        },
+                                      ),
+                                      startDegreeOffset: 270,
+                                      sectionsSpace: 6,
+                                      centerSpaceRadius: 0,
+                                      sections: [
+                                        ...List.generate(chartList.length, (index) =>
+
+                                            PieChartSectionData(
+                                                color: chartList[index]["color"] == null ? Colors.transparent : MainTheme.planBgColor[int.parse(chartList[index]["color"])],
+                                                value: chartList[index]["min"] * 1.0,
+                                                title:
+                                                //빈시간은 표시 안함
+                                                chartList[index]["color"] == null ? "" :
+                                                //1시간 이하 표시 안함
+                                                chartList[index]["min"] * 1.0 < 60 ? "" :
+                                                chartList[index]["min"] * 1.0 <= 180 ? chartList[index]["title"].length > 4 ? chartList[index]["title"].substring(0,4) + ".." : chartList[index]["title"] :
+                                                chartList[index]["title"].length > 9 ? chartList[index]["title"].substring(0,5) + "\n" + chartList[index]["title"].substring(5, 9) + "..." :
+                                                chartList[index]["title"].length == 9 ? chartList[index]["title"].substring(0,5) + "\n" + chartList[index]["title"].substring(5, 9) :
+                                                chartList[index]["title"],
+                                                radius: 133,
+                                                titlePositionPercentageOffset : 0.7,
+                                                titleStyle: MainTheme.caption1(chartList[index]["color"] == null ? Color(0xffed6a6a) : MainTheme.planColor[int.parse(chartList[index]["color"])])
+                                            )
+
+                                        )
+                                      ]
+                                  ),
+                                ),)
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                height: 463,
+                              ),
+
+
+
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child:Column(
+                                    children: [
+                                      !widget.parentSelf ?
+                                      Column(
+                                        children: [
                                           Container(
-                                            width: double.infinity,
-                                            height: 48,
-                                            margin: EdgeInsets.only(bottom: index == daySchedule.length? 0: 10),
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8),
-                                                color: Colors.white
-                                            ),
-                                            padding: EdgeInsets.symmetric(horizontal: 20),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Container(width: 83,
-                                                    alignment: Alignment.centerLeft,
+                                              height: 79,
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(16),
+                                                  border: Border.all(width: 1, color: MainTheme.gray3)
+                                              ),
+                                              child:
 
-                                                    child:
+                                              Stack(
+                                                children: [
+                                                  Positioned(
+                                                    top:15,
+                                                    left: 18,
+                                                    child: Text("부모님 메모", style : MainTheme.body8(MainTheme.gray6)),),
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      SizedBox(width: 18,),
+                                                      Expanded(child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(height: 25,),
+                                                          SizedBox(height: 4,),
+                                                          Container(
+                                                            height: 40,
+                                                            child: TextField(
 
-                                                    daySchedule[index]["isAllDay"]?
-                                                    Text("종일", style: MainTheme.body8(MainTheme.gray7),) :
+                                                              readOnly: parentReadOnly,
+                                                              controller: te_parentMemo,
+                                                              decoration: InputDecoration(
+                                                                isDense: true,
+                                                                focusedBorder: InputBorder.none,
+                                                                enabledBorder: InputBorder.none,
+                                                                border: InputBorder.none,
+                                                                hintText: "메모가 없어요",
+                                                                hintStyle: MainTheme.body5(MainTheme.gray4),
+                                                              ),
+                                                              style: MainTheme.body5(MainTheme.gray7),
+                                                            ),
 
-                                                    daySchedule[index]["startTime"] == "00:00:00"|| daySchedule[index]["endTime"] == "00:00:00"?
-
-                                                    //시작시간, 종료시간이 자정일 경우 == 한줄만 표시
-
-                                                    Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Text(DateFormat("aa", 'ko_KR').format(DateTime
-                                                            .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
-                                                        daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.caption4(MainTheme.gray4),),
-                                                        Container(width: 2,),
-                                                        Text(DateFormat("hh:mm").format(DateTime
-                                                            .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
-                                                        daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
-                                                      ],
-                                                    )
-
-                                                        :
-
-                                                    Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-
-                                                      children: [
-                                                        Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
-                                                            Container(width: 2,),
-                                                            Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
-
-                                                          ],
+                                                          )
+                                                        ],
+                                                      )),
+                                                      widget.isParent ? GestureDetector(
+                                                        behavior: HitTestBehavior.translucent,
+                                                        onTap: (){
+                                                          if(!parentReadOnly){
+                                                            saveMemo();
+                                                          }
+                                                          setState(() {
+                                                            parentReadOnly = !parentReadOnly;
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          width: 36,
+                                                          height: 36,
+                                                          margin: EdgeInsets.only(top: 13, right: 13),
+                                                          decoration: BoxDecoration(
+                                                              color: MainTheme.gray1,
+                                                              shape: BoxShape.circle
+                                                          ),
+                                                          alignment: Alignment.center,
+                                                          child : parentReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
                                                         ),
-                                                        Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
-                                                            Container(width: 2,),
-                                                            Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption4(MainTheme.gray4),)
+                                                      ) : SizedBox.shrink()
 
-                                                          ],
-                                                        )
-
-                                                      ],
-                                                    )
-                                                ),
-                                                daySchedule[index]["scheduleType"] == "PAY" ? SizedBox.shrink() :
-                                                SvgPicture.asset("assets/icons/${daySchedule[index]["scheduleType"]}_GRAY.svg",width: 24, height: 24,),
-                                                SizedBox(width: 8,),
-                                                Container(
-                                                  width: 7,
-                                                  height: 7,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(2),
-                                                      color: MainTheme.planColor[int.parse( daySchedule[index]["color"])]
+                                                    ],
                                                   ),
-                                                ),
-                                                Container(
-                                                  width: 6,
-                                                ),
-                                                Text("${daySchedule[index]["title"]}", style: MainTheme.body8(MainTheme.gray7), overflow: TextOverflow.ellipsis,)
-                                              ],
-                                            ),
+                                                ],
+
+                                              )
 
                                           ),
-                                      )
+                                          SizedBox(height: 12,),
+                                          Container(
+                                              height: 79,
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(16),
+                                                  border: Border.all(width: 1, color: MainTheme.gray3)
+                                              ),
+                                              child:
+
+                                              Stack(
+                                                children: [
+                                                  Positioned(
+                                                    top:15,
+                                                    left: 18,
+                                                    child: Text("아이 메모", style : MainTheme.body8(MainTheme.gray6)),),
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      SizedBox(width: 18,),
+                                                      Expanded(child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(height: 25,),
+                                                          SizedBox(height: 4,),
+                                                          Container(
+                                                            height: 40,
+                                                            child:TextField(
+                                                              controller: te_ChildMemo,
+                                                              readOnly: childReadOnly,
+                                                              decoration: InputDecoration(
+                                                                isDense: true,
+                                                                focusedBorder: InputBorder.none,
+                                                                enabledBorder: InputBorder.none,
+                                                                border: InputBorder.none,
+                                                                hintText: "메모가 없어요",
+                                                                hintStyle: MainTheme.body5(MainTheme.gray4),
+                                                              ),
+                                                              style: MainTheme.body5(MainTheme.gray7),
+                                                            ),
+
+                                                          )
+                                                        ],
+                                                      )),
+                                                      !widget.isParent ?
+                                                      GestureDetector(
+                                                        behavior: HitTestBehavior.translucent,
+                                                        onTap: (){
+                                                          if(!childReadOnly){
+                                                            saveMemo();
+                                                          }
+                                                          setState(() {
+                                                            childReadOnly = !childReadOnly;
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          width: 36,
+                                                          height: 36,
+                                                          margin: EdgeInsets.only(top: 13, right: 13),
+                                                          decoration: BoxDecoration(
+                                                              color: MainTheme.gray1,
+                                                              shape: BoxShape.circle
+                                                          ),
+                                                          alignment: Alignment.center,
+                                                          child : childReadOnly ? SvgPicture.asset('assets/icons/ic_16_edit.svg', width: 16, height: 16) : Icon(Icons.check, size: 16, color:MainTheme.gray7),
+                                                        ),
+                                                      ) : SizedBox.shrink()
+
+                                                    ],
+                                                  ),
+                                                ],
+
+                                              )
+
+                                          ),
+                                          Container(height: 8,),
+                                        ],
+                                      ) : SizedBox.shrink(),
+
+                                      daySchedule.length == 0 ?
+
+                                      Container(
+                                        height: 100,
+                                        width: double.infinity,
+                                        child: MainTheme.ErrorPage(context, "일정이 없어요"),
+                                      ):
+
+                                      Container(
+                                        child: Column(
+                                          children: [
+                                            ...List.generate(daySchedule.length, (index) =>
+
+                                                Container(
+                                                  width: double.infinity,
+                                                  height: 48,
+                                                  margin: EdgeInsets.only(bottom: index == daySchedule.length? 0: 10),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      color: Colors.white
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Container(width: 83,
+                                                          alignment: Alignment.centerLeft,
+
+                                                          child:
+
+                                                          daySchedule[index]["isAllDay"]?
+                                                          Text("종일", style: MainTheme.body8(MainTheme.gray7),) :
+
+                                                          daySchedule[index]["startTime"] == "00:00:00"|| daySchedule[index]["endTime"] == "00:00:00"?
+
+                                                          //시작시간, 종료시간이 자정일 경우 == 한줄만 표시
+
+                                                          Row(
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              Text(DateFormat("aa", 'ko_KR').format(DateTime
+                                                                  .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
+                                                              daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.caption4(MainTheme.gray4),),
+                                                              Container(width: 2,),
+                                                              Text(DateFormat("hh:mm").format(DateTime
+                                                                  .parse('${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endDate"] :
+                                                              daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"] == "00:00:00" ? daySchedule[index]["endTime"] : daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
+                                                            ],
+                                                          )
+
+                                                              :
+
+                                                          Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+
+                                                            children: [
+                                                              Row(
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
+                                                                  Container(width: 2,),
+                                                                  Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["startDate"]} ${daySchedule[index]["startTime"]}')), style: MainTheme.body4(MainTheme.gray7),)
+
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  Text(DateFormat("aa", 'ko_KR').format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption6(MainTheme.gray4),),
+                                                                  Container(width: 2,),
+                                                                  Text(DateFormat("hh:mm").format(DateTime.parse('${daySchedule[index]["endDate"]} ${daySchedule[index]["endTime"]}')), style: MainTheme.caption4(MainTheme.gray4),)
+
+                                                                ],
+                                                              )
+
+                                                            ],
+                                                          )
+                                                      ),
+                                                      daySchedule[index]["scheduleType"] == "PAY" ? SizedBox.shrink() :
+                                                      SvgPicture.asset("assets/icons/${daySchedule[index]["scheduleType"]}_GRAY.svg",width: 24, height: 24,),
+                                                      SizedBox(width: 8,),
+                                                      Container(
+                                                        width: 7,
+                                                        height: 7,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(2),
+                                                            color: MainTheme.planColor[int.parse( daySchedule[index]["color"])]
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        width: 6,
+                                                      ),
+                                                      Text("${daySchedule[index]["title"]}", style: MainTheme.body8(MainTheme.gray7), overflow: TextOverflow.ellipsis,)
+                                                    ],
+                                                  ),
+
+                                                ),
+                                            )
+
+                                          ],
+                                        ),
+                                      ),
 
                                     ],
+                                  )
+                              ),
+                              SizedBox(height: 18,),
+
+
+                            ],
+                          ),
+
+
+
+                          Positioned(
+                            top: 1,
+                            child: Container(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 36,
+                                    height: 36,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(300.0),
+                                      child:
+                                      CachedNetworkImage(imageUrl:
+                                      widget.map["fileUrl"] ?? "",
+                                        width : 30,
+                                        height: 30,
+                                        fit: BoxFit.cover,
+                                        errorWidget: (context, url, error) {
+                                          return SvgPicture.asset("assets/icons/profile_${(widget.map["id"]%3) + 1}.svg",width: 30, height: 30, );
+                                        },
+                                      ),
+
+                                    ),
                                   ),
-                                ),
 
-                              ],
-                            )
-                        ),
-                        SizedBox(height: 18,),
-
-
-                      ],
-                    ),
-
-
-
-                    Positioned(
-                      top: 1,
-                      child: Container(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle
+                                  Container(width: 11,),
+                                  Text(widget.map["name"],style: MainTheme.body5(MainTheme.gray7),)
+                                ],
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(300.0),
-                                child:
-                                CachedNetworkImage(imageUrl:
-                                  widget.map["fileUrl"] ?? "",
-                                  width : 30,
-                                  height: 30,
-                                  fit: BoxFit.cover,
-                                  errorWidget: (context, url, error) {
-                                    return SvgPicture.asset("assets/icons/profile_${(widget.map["id"]%3) + 1}.svg",width: 30, height: 30, );
-                                  },
-                                ),
 
-                              ),
                             ),
+                          ),
+                          Positioned(
+                            top: 45,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: MainTheme.mainColor.withOpacity(0.1)
+                              ),
+                              padding: EdgeInsets.fromLTRB(7,3,7,3),
 
-                            Container(width: 11,),
-                            Text(widget.map["name"],style: MainTheme.body5(MainTheme.gray7),)
-                          ],
-                        ),
 
+                              child:Text(DateFormat('yyyy.MM.dd.E', 'ko').format(widget.dateTime),style: MainTheme.caption1(MainTheme.mainColor),),
+
+                            ),
+                          ),
+
+
+                        ],
                       ),
-                    ),
-                    Positioned(
-                      top: 45,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: MainTheme.mainColor.withOpacity(0.1)
-                        ),
-                        padding: EdgeInsets.fromLTRB(7,3,7,3),
+
+                    )
 
 
-                        child:Text(DateFormat('yyyy.MM.dd.E', 'ko').format(widget.dateTime),style: MainTheme.caption1(MainTheme.mainColor),),
 
+                ),),
+
+
+                SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom,
+                )
+              ],
+            )
+
+
+            ,
+
+          ),
+          widget.isParent?
+          Positioned(
+              right: 16,
+              bottom: 20,
+              child :  GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: (){
+                  showModalBottomSheet<Map>(
+                    useSafeArea: true,
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return RegisterPlan(initTime:DateTime(widget.dateTime.year, widget.dateTime.month, widget.dateTime.day, widget.dateTime.hour + 1, 0, 0),
+                        childId: widget.map["id"],
+                      );
+                    },
+                  ).then((value) async {
+                    if(value != null){
+                      setState(() {
+                        getFuture = getChart();
+                      });
+                    }
+                  });
+
+                },
+                child: Container(
+                  width: 105,
+                  height: 51,
+                  decoration: BoxDecoration(
+                    color: MainTheme.gray7,
+                    borderRadius: BorderRadius.circular(25.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 6,
+                        offset: Offset(0, 4), // changes position of shadow
                       ),
-                    ),
-
-
-                  ],
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child:
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset("assets/icons/ic_16_edit_white.svg",width: 16, height: 16, ),
+                      Container(width: 5,),
+                      Text("일정 추가", style : MainTheme.body4(Colors.white))
+                    ],
+                  )
+                  ,
                 ),
-
               )
 
 
 
-          ),),
-
-
-          SizedBox(
-            height: MediaQuery.of(context).viewInsets.bottom,
-          )
+          ) : SizedBox.shrink()
         ],
-      )
+      );
 
 
-      ,
-
-    );
 
   }
 
 
   Future<http.Response> getChart() async {
-    var response = await apiRequestGet(urlChart,{"commonMemberId" : widget.map["id"].toString(), "dayDate" : DateFormat("yyyy-MM-dd").format(widget.dateTime)});
+    var response = await apiRequestGet(context, urlChart,{"commonMemberId" : widget.map["id"].toString(), "dayDate" : DateFormat("yyyy-MM-dd").format(widget.dateTime)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       chartList = body["data"];
@@ -695,7 +763,7 @@ class _TimeTable extends State<TimeTable> {
 
   Future<void> getMemo() async {
 
-    var response = await apiRequestGet(urlMemo + "/" + widget.map["id"].toString(),{"dayDate" : DateFormat('yyyy-MM-dd').format(widget.dateTime)});
+    var response = await apiRequestGet(context, urlMemo + "/" + widget.map["id"].toString(),{"dayDate" : DateFormat('yyyy-MM-dd').format(widget.dateTime)});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -715,7 +783,7 @@ class _TimeTable extends State<TimeTable> {
     request["memberType"] = widget.isParent ? "PARENT" : "CHILD";
     request["parentMessage"] = te_parentMemo.text == "" ? null : te_parentMemo.text;
     request["childMessage"] =  te_ChildMemo.text == "" ? null : te_ChildMemo.text;
-    var response = await apiRequestPost(urlMemo + "/" + widget.map["id"].toString(),request);
+    var response = await apiRequestPost(context, urlMemo + "/" + widget.map["id"].toString(),request);
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       Fluttertoast.showToast(
@@ -822,7 +890,7 @@ class _TimeTable extends State<TimeTable> {
 
   Future<void> getSleep() async {
 
-    var response = await apiRequestGet(urlSleep + "/" + widget.map["id"].toString(),{});
+    var response = await apiRequestGet(context, urlSleep + "/" + widget.map["id"].toString(),{});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       if(body["data"]["wakeTime"] != null && body["data"]["sleepTime"] != null) {

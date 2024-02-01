@@ -201,7 +201,7 @@ class _RegisterAcademy extends State<RegisterAcademy> {
     request["addressDetail"] = te_address_detail.text;
 
 
-    var response = await apiRequestPost(urlRegister,request);
+    var response = await apiRequestPost(context, urlRegister,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       Navigator.of(context).pop({"academyId" : body["data"], "academyName" : te_name.text});

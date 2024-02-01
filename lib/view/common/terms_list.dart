@@ -189,7 +189,7 @@ class _TermsList extends State<TermsList> {
     );
   }
   Future<void> getAlarm() async {
-      var response = await apiRequestGet(urlBaseInfo, {});
+      var response = await apiRequestGet(context, urlBaseInfo, {});
       var body =jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
         setState(() {
@@ -205,7 +205,7 @@ class _TermsList extends State<TermsList> {
   }
 
   Future<void> getTerms() async {
-    var response = await apiRequestGet(urlTerms, {"size" : "100"});
+    var response = await apiRequestGet(context, urlTerms, {"size" : "100"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {

@@ -500,7 +500,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
     );
   }
   Future<Response> getProfile() async {
-    var response = await apiRequestGet(urlProfile + "/" + childId.toString(),  {});
+    var response = await apiRequestGet(context, urlProfile + "/" + childId.toString(),  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -511,7 +511,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
   }
 
   Future<Response> getTop() async {
-    var response = await apiRequestGet(urlTop + "/" + childId.toString(),  {});
+    var response = await apiRequestGet(context, urlTop + "/" + childId.toString(),  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -524,7 +524,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
   Future<Response> getFriend() async {
     index = -1;
     friendList = [];
-    var response = await apiRequestGet(urlFriend + "/" + childId.toString(),  {"size" : "20"});
+    var response = await apiRequestGet(context, urlFriend + "/" + childId.toString(),  {"size" : "20"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -536,7 +536,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
   }
 
   Future<void> scroll() async {
-    var response = await apiRequestGet(urlFriend + "/" + childId.toString(),  {"size" : "20","page" : (index + 1).toString()});
+    var response = await apiRequestGet(context, urlFriend + "/" + childId.toString(),  {"size" : "20","page" : (index + 1).toString()});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -552,7 +552,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
   Future<Response> updateFollow(String type, int index) async {
     int objectId = type == "TOP" ? topList[index]["id"] : friendList[index]["id"];
     bool nowStatus = type == "TOP" ? topList[index]["isFollow"] : friendList[index]["isFollow"];
-    var response = await apiRequestGet(urlGetFollow + "/" + childId.toString() + "/" + objectId.toString(),  {});
+    var response = await apiRequestGet(context, urlGetFollow + "/" + childId.toString() + "/" + objectId.toString(),  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -593,7 +593,7 @@ class _ParentChallengeFriends extends State<ParentChallengeFriends> {
     int objectId = type == "TOP" ? topList[index]["id"] : friendList[index]["id"];
 
     Map request = {};
-    var response = await apiRequestPost(urlFollow + "/" + childId.toString() + "/" + objectId.toString(), request);
+    var response = await apiRequestPost(context, urlFollow + "/" + childId.toString() + "/" + objectId.toString(), request);
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

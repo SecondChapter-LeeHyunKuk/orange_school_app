@@ -170,7 +170,7 @@ class _CheerList extends State<CheerList> {
   }
 
   Future<Response> get() async {
-    var response = await apiRequestGet(urlCheerList + "/" + widget.commonMemberId.toString(),{"size" : "20"});
+    var response = await apiRequestGet(context, urlCheerList + "/" + widget.commonMemberId.toString(),{"size" : "20"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -183,7 +183,7 @@ class _CheerList extends State<CheerList> {
   }
 
   void scroll() async {
-    var response = await apiRequestGet(urlCheerList + "/" + widget.commonMemberId.toString(),{"size" : "20" , "page" : "${index+1}"});
+    var response = await apiRequestGet(context, urlCheerList + "/" + widget.commonMemberId.toString(),{"size" : "20" , "page" : "${index+1}"});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       if(body["data"]["content"].length > 0){

@@ -170,7 +170,7 @@ class _ParentChallengeUpdate extends State<ParentChallengeUpdate> {
     request["mission"] = te_mission.text;
     request["isShow"] = exposure;
 
-    var response = await apiRequestPut(urlUpdate + "/" + challenge!["id"].toString() ,request);
+    var response = await apiRequestPut(context, urlUpdate + "/" + challenge!["id"].toString() ,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

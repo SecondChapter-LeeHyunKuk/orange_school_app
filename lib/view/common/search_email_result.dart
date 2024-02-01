@@ -117,7 +117,6 @@ class _SearchEmailResult extends State<SearchEmailResult> {
   String replaceAtSymbol(String input) {
     int atIndex = input.indexOf('@');
 
-    print(atIndex);
     if (atIndex != -1 && atIndex >= 4) {
       // @ 앞의 3문자를 %로 치환
       String replacedString = input.replaceRange(atIndex - 3, atIndex, '●●●');

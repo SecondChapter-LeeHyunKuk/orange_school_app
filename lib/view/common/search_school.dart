@@ -138,7 +138,7 @@ class _SearchSchool extends State<SearchSchool> {
   void searchSchool() async {
     index = 1;
     data = [];
-    var responseResult = await apiRequestGet(url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 10.toString(), "SCHUL_NM" : textEditingController.text , "key" : "8a3319b07614480db9a06c4906426c52"});
+    var responseResult = await apiRequestGet(context, url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 10.toString(), "SCHUL_NM" : textEditingController.text , "key" : "8a3319b07614480db9a06c4906426c52"});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
     if(response["schoolInfo"][0]["head"][1]["RESULT"]["CODE"] == "INFO-000"){
       setState(() {
@@ -149,7 +149,7 @@ class _SearchSchool extends State<SearchSchool> {
   }
 
   void scroll() async {
-    var responseResult =  await apiRequestGet(url,{"Type" : "json", "pIndex" : (index + 1).toString(), "pSize": 10.toString(), "SCHUL_NM" : textEditingController.text , "key" : "8a3319b07614480db9a06c4906426c52"});
+    var responseResult =  await apiRequestGet(context, url,{"Type" : "json", "pIndex" : (index + 1).toString(), "pSize": 10.toString(), "SCHUL_NM" : textEditingController.text , "key" : "8a3319b07614480db9a06c4906426c52"});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
     if(response["schoolInfo"][0]["head"][1]["RESULT"]["CODE"] == "INFO-000"){
 

@@ -52,7 +52,7 @@ class _ParentTabBar extends State<ParentTabBar>
             TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [
-                ParentPlan(),
+                ParentPlan(isParent:  true,),
                 ParentChallenge(),
                 ParentPayment(),
                 ParentBoard(),
@@ -147,7 +147,7 @@ bottomNavigationBar: Container(
     });
 
 
-    var response = await apiRequestGet(urlPopup, {});
+    var response = await apiRequestGet(context, urlPopup, {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     List popups = body["data"];

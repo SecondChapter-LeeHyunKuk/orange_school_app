@@ -384,7 +384,7 @@ class _SearchEmail extends State<SearchEmail> {
     phoneMessage = null;
     Map<String, dynamic> request = new Map<String, Object>();
     request["phoneNumber"] = te_phone.text.replaceAll("-", "");
-    var response = await apiRequestPost(urlCheckPhone,request);
+    var response = await apiRequestPost(context, urlCheckPhone,request);
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       // ScaffoldMessenger.of(context)
@@ -422,7 +422,7 @@ class _SearchEmail extends State<SearchEmail> {
 
 
   Future<void> search() async {
-    var response = await apiRequestGet(urlSearch,  {"name" :te_name.text, "phoneNumber" : te_phone.text.replaceAll("-", "")});
+    var response = await apiRequestGet(context, urlSearch,  {"name" :te_name.text, "phoneNumber" : te_phone.text.replaceAll("-", "")});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(body["data"]["emailList"].length >0){

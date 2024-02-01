@@ -212,7 +212,7 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
                   Container(
                     height: 17,
                   ),
-                  Text("이메일", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("아이디", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -230,7 +230,7 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
                           });
                         },
                         controller: te_email,
-                        decoration: MainTheme.inputTextGray("이메일을 입력하세요"),
+                        decoration: MainTheme.inputTextGray(""),
                         keyboardType:  TextInputType.emailAddress,
                         style: MainTheme.body5(MainTheme.gray4),
                       ),)
@@ -334,7 +334,7 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
                     child: TextField(
                       readOnly: true,
                       controller: te_address_detail,
-                      decoration: MainTheme.inputTextGray("상세주소를 입력하세요"),
+                      decoration: MainTheme.inputTextGray(""),
                       style: MainTheme.body5(MainTheme.gray4),
                     ),
                   ),
@@ -538,9 +538,9 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
     if(
     te_name.text.isEmpty ||
         (te_password.text.isEmpty && changePassword)  ||
-        (te_password.text != te_password_check.text && changePassword)||
-        te_nickname.text.isEmpty ||
-        te_intro.text.isEmpty
+        (te_password.text != te_password_check.text && changePassword)
+        // te_nickname.text.isEmpty ||
+        // te_intro.text.isEmpty
     ){
       setState(() {
         formComplete = false;
@@ -597,7 +597,7 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
     formMap["file"] = file;
     var formData = FormData.fromMap(formMap);
 
-    var response = await httpRequestMultipart(urlUpdate + "/" + childInfo!["id"].toString(), formData, false);
+    var response = await httpRequestMultipart(context, urlUpdate + "/" + childInfo!["id"].toString(), formData, false);
     if(response.statusCode == 200){
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar("자녀 계정정보를 수정했습니다."));

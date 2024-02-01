@@ -876,7 +876,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
   }
 
   Future<Response> get() async {
-    var response = await apiRequestGet(urlGet + "/" + widget.scheduleId.toString(),{});
+    var response = await apiRequestGet(context, urlGet + "/" + widget.scheduleId.toString(),{});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       map = body["data"];
@@ -889,7 +889,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
     children[0]["fileUrl"] = pref.getString("profile");
     children[0]["id"] = pref.getInt("userId")!;
 
-    var response = await apiRequestGet(urlChildren,  {});
+    var response = await apiRequestGet(context, urlChildren,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){
@@ -918,7 +918,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
   }
   Future<void> delete() async {
     _removeOverlay();
-    var response = await apiRequestDelete(urlDelete + "/" + widget.calendarId.toString(), {});
+    var response = await apiRequestDelete(context, urlDelete + "/" + widget.calendarId.toString(), {});
     if(response.statusCode == 200){
       Fluttertoast.showToast(
           msg: "삭제되었습니다.",
@@ -935,7 +935,7 @@ class _ScheduleInfo extends State<ScheduleInfo> {
 
   Future<void> deleteAll() async {
     _removeOverlay();
-    var response = await apiRequestDelete(urlDeleteAll + "/" + widget.scheduleId.toString(), {});
+    var response = await apiRequestDelete(context, urlDeleteAll + "/" + widget.scheduleId.toString(), {});
     if(response.statusCode == 200){
       Fluttertoast.showToast(
           msg: "삭제되었습니다.",

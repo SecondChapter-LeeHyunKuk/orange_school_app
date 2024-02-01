@@ -8,7 +8,7 @@
 
 
     <application
-        android:label="오렌지 스쿨"
+        android:label="오렌지스쿨"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"

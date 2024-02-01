@@ -313,7 +313,7 @@ class _ChallengeDetail extends State<ChallengeDetail> {
   }
 
   Future<Response> getFirst() async {
-    var response = await apiRequestGet(urlProfile + "/" + widget.childId.toString() + "/" + widget.commonMemberId.toString(),  {});
+    var response = await apiRequestGet(context, urlProfile + "/" + widget.childId.toString() + "/" + widget.commonMemberId.toString(),  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       setState(() {
@@ -328,7 +328,7 @@ class _ChallengeDetail extends State<ChallengeDetail> {
     if(pref.getInt("id") != widget.commonMemberId){
       Map request = {};
       request["cheeringMessage"] = "CHEERING${cheerType}";
-      var response = await apiRequestPost(urlCheer + "/" + widget.commonMemberId.toString(),  request);
+      var response = await apiRequestPost(context, urlCheer + "/" + widget.commonMemberId.toString(),  request);
       var body =jsonDecode(utf8.decode(response.bodyBytes));
       if(response.statusCode == 200){
 
@@ -343,7 +343,7 @@ class _ChallengeDetail extends State<ChallengeDetail> {
   }
 
   Future<void> follow() async {
-    var response = await apiRequestPost(urlFollow + "/" + widget.childId.toString() + "/" + widget.commonMemberId.toString(),{});
+    var response = await apiRequestPost(context, urlFollow + "/" + widget.childId.toString() + "/" + widget.commonMemberId.toString(),{});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
 
     if(response.statusCode == 200){

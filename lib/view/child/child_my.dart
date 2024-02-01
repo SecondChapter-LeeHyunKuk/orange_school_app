@@ -171,7 +171,7 @@ class _ChildMy extends State<ChildMy> {
     );
   }
   Future<void> getAlarm() async {
-    var response = await apiRequestGet(urlAlarm,  {});
+    var response = await apiRequestGet(context, urlAlarm,  {});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     setState(() {
       alarm = body["data"];

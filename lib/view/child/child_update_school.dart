@@ -287,7 +287,7 @@ class _ChildUpdateSchool extends State<ChildUpdateSchool> {
     request["schoolClass"] = te_class.text;
     request["classNumber"] = te_number.text;
     request["schoolCode"] = schoolCode;
-    var response = await apiRequestPut("$urlUpdate/" + childInfo!["id"].toString(), request);
+    var response = await apiRequestPut(context, "$urlUpdate/" + childInfo!["id"].toString(), request);
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       ScaffoldMessenger.of(context)
@@ -301,7 +301,7 @@ class _ChildUpdateSchool extends State<ChildUpdateSchool> {
   }
 
   Future<void> getChildInfo()async {
-    var response = await apiRequestGet(urlMy,{});
+    var response = await apiRequestGet(context, urlMy,{});
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
         childInfo = body["data"];

@@ -97,6 +97,6 @@ class _AlarmDetail extends State<AlarmDetail> {
   }
 
   Future<void> get() async {
-    await apiRequestGet("$urlSearch/" + data["id"].toString(),  {});
+    await apiRequestGet(context, "$urlSearch/" + data["id"].toString(),  {});
   }
 }

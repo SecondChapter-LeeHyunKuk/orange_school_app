@@ -222,7 +222,7 @@ class _ChangePassword extends State<ChangePassword> {
 
   Future<void> changePassword() async {
     final emailList = ModalRoute.of(context)?.settings.arguments as List;
-    var response = await apiRequestPost(urlReset,  {"email" : emailList[0], "password" : te_password.text});
+    var response = await apiRequestPost(context, urlReset,  {"email" : emailList[0], "password" : te_password.text});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
       ScaffoldMessenger.of(context)
