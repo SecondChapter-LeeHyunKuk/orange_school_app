@@ -218,7 +218,7 @@ class _RegisterParent extends State<RegisterParent> {
 
                             },
                             controller: te_birth,
-                            decoration: MainTheme.inputTextGray("YYMMDD(선택)"),
+                            decoration: MainTheme.inputTextGray("YYMMDD"),
                             style: MainTheme.body5(MainTheme.gray7),
                             keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                             inputFormatters: [
@@ -254,7 +254,7 @@ class _RegisterParent extends State<RegisterParent> {
                             TextSelection.fromPosition(TextPosition(offset: 1));
                             }
                           },
-                          decoration: MainTheme.inputTextGray("성별(선택)"),
+                          decoration: MainTheme.inputTextGray("N●●●●●●"),
                           style: MainTheme.body5(MainTheme.gray7),
                           keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                           inputFormatters: [
@@ -1136,7 +1136,7 @@ class _RegisterParent extends State<RegisterParent> {
       });
     }else{
 
-      if(te_birth.text.isNotEmpty){
+      if(te_birth.text.isNotEmpty || te_sex.text.isNotEmpty){
         if(te_birth.text.length < 6){
           setState(() {
             formComplete = false;
@@ -1150,15 +1150,19 @@ class _RegisterParent extends State<RegisterParent> {
           });
           return;
         }
-      }
-
-      if(te_sex.text.isNotEmpty){
-        if(int.parse(te_sex.text.substring(0,1)) >= 5){
+        if(te_sex.text.isEmpty){
           setState(() {
             formComplete = false;
           });
           return;
         }
+        if(int.parse(te_sex.text.substring(0,1)) >= 5 || int.parse(te_sex.text.substring(0,1)) < 1){
+          setState(() {
+            formComplete = false;
+          });
+          return;
+        }
+
       }
 
       setState(() {
@@ -1173,11 +1177,7 @@ class _RegisterParent extends State<RegisterParent> {
       setState(() {
       });
       return;
-    }
-
-
-
-    if(te_birth.text.isNotEmpty){
+    }else{
       if(te_birth.text.length < 6){
         birthMessage = "생년월일을 바르게 입력해주세요.";
         setState(() {
@@ -1188,24 +1188,22 @@ class _RegisterParent extends State<RegisterParent> {
           int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
         birthMessage = "생년월일을 바르게 입력해주세요.";
         setState(() {
-
         });
         return;
       }
-    }
-
-    if(te_sex.text.isNotEmpty){
-      if(int.parse(te_sex.text.substring(0,1)) >= 5){
+      if(te_sex.text.isEmpty){
+        birthMessage = "주민번호 7번째 자리를 바르게 입력하세요.";
+        setState(() {
+        });
+        return;
+      }
+      if(int.parse(te_sex.text.substring(0,1)) >= 5 || int.parse(te_sex.text.substring(0,1)) < 1){
         birthMessage = "주민번호 7번째 자리를 바르게 입력하세요.";
         setState(() {
         });
         return;
       }
     }
-
-
-
-
 
     birthMessage = null;
     setState(() {
@@ -1214,25 +1212,6 @@ class _RegisterParent extends State<RegisterParent> {
   }
 
   Future<void> register() async {
-
-    // if(!( int.parse(te_birth.text.substring(2,4)) >= 1 && int.parse(te_birth.text.substring(2,4)) <= 12 &&
-    //     int.parse(te_birth.text.substring(4)) >= 1 && int.parse(te_birth.text.substring(4)) <= 31)){
-    //
-    //   ScaffoldMessenger.of(context)
-    //       .showSnackBar(MainTheme.snackBar("올바르지 않은 생년월일입니다."));
-    //
-    //   return;
-    //
-    // }
-
-
-
-    // if(apiProcess){
-    //   return;
-    // }else{
-    //   apiProcess = true;
-    // }
-
 
     SharedPreferences pref = await SharedPreferences.getInstance();
 
@@ -1257,6 +1236,16 @@ class _RegisterParent extends State<RegisterParent> {
                 .last);
       }
     }
+      var birth = te_birth.text;
+      if(birth.isNotEmpty){
+        var gender = int.parse(te_sex.text.substring(0,1));
+        if(gender < 3){
+          birth = "19$birth";
+        }else{
+          birth = "20$birth";
+        }
+      }
+
 
       Map<String, dynamic> formMap = Map<String, dynamic>();
       formMap["file"] = file;
@@ -1268,6 +1257,7 @@ class _RegisterParent extends State<RegisterParent> {
       formMap["gender"] = te_sex.text.isEmpty ? "0" : te_sex.text.substring(0,1);
       formMap["name"] = te_name.text;
       formMap["phoneNumber"] = te_phone.text.replaceAll("-", "");
+      formMap["birth"] = birth.isEmpty ? "" : "${birth.substring(0,4)}/${birth.substring(4,6)}/${birth.substring(6)}";
       formMap["address"] = te_address.text;
       formMap["addressDetail"] = te_address_detail.text;
       formMap["agreeToSms"] = checkValues[4];

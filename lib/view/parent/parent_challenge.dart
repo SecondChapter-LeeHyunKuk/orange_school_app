@@ -782,7 +782,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
                 );
               }else{
-                return MainTheme.ErrorPage(context,"먼저 자식을 등록해 주세요");
+                return MainTheme.ErrorPage(context,"아이를 등록하면 (이렇게) 챌린지를 활용할 수 있어요");
               }
             }else{
               return MainTheme.ErrorPage(context, jsonDecode(utf8.decode(snapshot.data.bodyBytes))["message"]);

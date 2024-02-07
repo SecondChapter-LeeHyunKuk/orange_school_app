@@ -938,7 +938,7 @@ class _ParentUpdate extends State<ParentUpdate> {
     formMap["email"] = te_email.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
-    formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(0,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
+    formMap["birth"] = myInfo!["birth"];
     formMap["deleteFileFlag"] = deleteFile;
     formMap["changePassword"] = changePassword;
     formMap["password"] = te_password.text.isEmpty ? "1q2w3e4r!" : te_password.text;
@@ -983,7 +983,7 @@ class _ParentUpdate extends State<ParentUpdate> {
     myInfo = body["data"];
 
     te_name.text = myInfo!["name"];
-    te_birth.text = myInfo!["birth"].replaceAll("/", "");
+    te_birth.text = myInfo!["birth"].isEmpty ? "" : myInfo!["birth"].substring(2).replaceAll("/", "");
     te_sex.text = myInfo!["gender"] == 5 ? "" : "${myInfo!["gender"]}●●●●●●";
     te_email.text = myInfo!["email"];
     te_address.text = myInfo!["address"];

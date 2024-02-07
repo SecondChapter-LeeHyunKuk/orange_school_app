@@ -71,7 +71,7 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
       te_name.text = childInfo!["name"];
 
 
-      te_birth.text = childInfo!["birth"].replaceAll("/", "");
+      te_birth.text = childInfo!["birth"].isEmpty ? "" : childInfo!["birth"].substring(2).replaceAll("/", "");
       te_sex.text = childInfo!["gender"] == 5? "" : "${childInfo!["gender"]}●●●●●●";
       te_email.text = childInfo!["email"];
       te_address.text = childInfo!["address"];
@@ -587,7 +587,7 @@ class _ParentChildUpdate extends State<ParentChildUpdate> {
     formMap["email"] = te_email.text;
     formMap["address"] = te_address.text;
     formMap["addressDetail"] = te_address_detail.text;
-    formMap["birth"] = te_birth.text.isEmpty ? "" : "${te_birth.text.substring(0,4)}/${te_birth.text.substring(4,6)}/${te_birth.text.substring(6)}";
+    formMap["birth"] = childInfo!["birth"];
     formMap["deleteFileFlag"] = deleteFile;
     formMap["nickName"] = te_nickname.text;
     formMap["intro"] = te_intro.text;
