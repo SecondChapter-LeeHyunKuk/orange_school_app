@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:orange_school/util/api.dart';
 import 'package:path_provider/path_provider.dart';
@@ -1317,20 +1318,46 @@ class _RegisterParent extends State<RegisterParent> {
   }
 
   void setSocialInfo(){
+
     setState(() {
-      te_password.text = "1q2w3e4r!@#";
-      te_password_check.text = "1q2w3e4r!@#";
-      if(userInfo!["email"]!= null){
-        te_email.text = userInfo!["email"];
-        te_email_enalbed = false;
-        emailChecked = true;
-      }
-      if(userInfo!["profile"] != null){
-        images.add({"network" : true, "url" : userInfo!["profile"], "id" : null});
-      }
+      te_password.text = "39vk&#@48cl";
+      te_password_check.text = "39vk&#@48cl";
+
       if(userInfo!["name"]!= null){
         te_name.text = userInfo!["name"];
-        nameEnabled = false;
+      }
+
+      if(userInfo!["birth"] != null){
+        DateTime birth =  userInfo!["birth"];
+        te_birth.text = DateFormat('yyMMdd').format(userInfo!["birth"]);
+        if(userInfo!["gender"] != null){
+          if(userInfo!["gender"]){
+            if(birth.year >= 2000){te_sex.text = '3●●●●●●';}else{te_sex.text ='1●●●●●●';}
+          }else{
+            if(birth.year >= 2000){te_sex.text = '4●●●●●●';}else{te_sex.text ='2●●●●●●';}
+          }
+        }
+      }
+
+      if(userInfo!["email"]!= null){
+        te_email.text = userInfo!["email"];
+      }
+
+      if(userInfo!["phoneNumber"]!= null){
+        String phoneNumber = userInfo!["phoneNumber"];
+        if(phoneNumber.isNotEmpty){
+          phoneNumber = phoneNumber.replaceAll("+82 ", "0");
+          if(!phoneNumber.contains('-')){
+            te_phone.text = formatPhoneNumber(phoneNumber);
+          }else{
+            te_phone.text = phoneNumber;
+          }
+        }
+
+      }
+
+      if(userInfo!["profile"] != null){
+        images.add({"network" : true, "url" : userInfo!["profile"], "id" : null});
       }
     });
 
@@ -1356,5 +1383,9 @@ class _RegisterParent extends State<RegisterParent> {
     await imageFile.writeAsBytes(bytes);
 
     return imageFile;
+  }
+  String formatPhoneNumber(String phoneNumber) {
+    String formatted = phoneNumber.substring(0, 3) + '-' + phoneNumber.substring(3, 7) + '-' + phoneNumber.substring(7);
+    return formatted;
   }
 }

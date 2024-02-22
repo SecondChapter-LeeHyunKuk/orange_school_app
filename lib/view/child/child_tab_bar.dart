@@ -55,7 +55,7 @@ class _ChildTabBar extends State<ChildTabBar>
             TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [
-                ParentPlan(isParent: false),
+                ParentPlan(isParent: false, monthEvent: (){},),
                 ChildChallenge(),
                 ChildBoard(),
                 ChildMy(),

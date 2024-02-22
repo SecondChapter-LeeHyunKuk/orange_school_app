@@ -215,10 +215,12 @@ class _RegisterPlan extends State<RegisterPlan> {
         }
       }
 
-      planTypeValue = widget.map!["scheduleType"];
+
       if(widget.map!["academy"] != null){
         te_Academy.text = widget.map!["academy"]["academyName"];
         academyId =  widget.map!["academy"]["id"];
+      }else{
+        te_Academy.text = widget.map!["academyName"];
       }
 
       colorIndex = int.parse(widget.map!["color"]);
@@ -1594,61 +1596,83 @@ class _RegisterPlan extends State<RegisterPlan> {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 84,
+                    height: 105,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)),
                       color: MainTheme.mainColor.withOpacity(0.1),
                     ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child:
+                    Column(
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(width: 20,),
-                            Container(
-                              margin:EdgeInsets.only(top: 27),
-                              child: SvgPicture.asset('assets/icons/info.svg', width: 20, height: 20),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 20,),
+                                Container(
+                                  margin:EdgeInsets.only(top: 27),
+                                  child: SvgPicture.asset('assets/icons/info.svg', width: 20, height: 20),
+                                ),
+
+                                SizedBox(width: 9,),
+                                Container(
+                                    margin:EdgeInsets.only(top: 22),
+                                    child: Material(color: Colors.transparent, child: Text("찾으시는 학원이\n없나요?", style: MainTheme.body4(MainTheme.gray7),))
+                                )
+
+                              ],
                             ),
-
-                            SizedBox(width: 9,),
                             Container(
-                                margin:EdgeInsets.only(top: 22),
-                                child: Material(color: Colors.transparent, child: Text("찾으시는 학원이없나요?", style: MainTheme.body4(MainTheme.gray7),))
-                            )
-
+                              margin:const EdgeInsets.only(right: 20, top: 24),
+                              width: 88,
+                              height: 35,
+                              child: ElevatedButton(
+                                style: MainTheme.miniButton(MainTheme.mainColor),
+                                onPressed: () async {
+                                  final Map result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RegisterAcademy(),
+                                    ),
+                                  );
+                                  if(result != null){
+                                    if(te_title.text == ""){
+                                      te_title.text = result["academyName"];
+                                    }
+                                    academyId = result["academyId"];
+                                    te_Academy.text = result["academyName"];
+                                  }
+                                  checkFormComplete();
+                                },
+                                child: Text(
+                                  "직접 추가", style: MainTheme.caption1(Colors.white),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        Container(
-                          margin:const EdgeInsets.only(right: 20, top: 24),
-                          width: 88,
-                          height: 35,
-                          child: ElevatedButton(
-                            style: MainTheme.miniButton(MainTheme.mainColor),
-                            onPressed: () async {
-                              final Map result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterAcademy(),
-                                ),
-                              );
-                              if(result != null){
-                                if(te_title.text == ""){
-                                  te_title.text = result["academyName"];
-                                }
-                                academyId = result["academyId"];
-                                te_Academy.text = result["academyName"];
-                              }
-                              checkFormComplete();
-                            },
-                            child: Text(
-                              "직접 추가", style: MainTheme.caption1(Colors.white),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 49,),
+                                Container(
+                                    child: Material(color: Colors.transparent, child: Text("학원을 등록해 두시면 시간표 완성이 간편해요!", style: MainTheme.caption3(MainTheme.gray6),))
+                                )
+
+                              ],
                             ),
-                          ),
+                          ],
                         ),
                       ],
-                    ),
+                    )
+
                   ),
                   Expanded(child:
                   Container(
@@ -1781,6 +1805,7 @@ class _RegisterPlan extends State<RegisterPlan> {
         "fileUrl" : pref.getString("profile"),
         "id" :  pref.getInt("userId")!
       });
+
       if(widget.childId != null){
         if(widget.childId != 0){
           for(int i = 0; i < children.length; i++){
@@ -1792,16 +1817,15 @@ class _RegisterPlan extends State<RegisterPlan> {
           }
         }
       }
+
       if(widget.map != null){
         for(int i = 0; i < children.length; i++){
           if(children[i]["id"] == widget.map!["commonMemberId"]){
-            var child = children[i];
-            children = [];
-            children.add(child);
-            profileIndex = 0;
+            profileIndex = i;
             break;
           }
         }
+        planTypeValue = widget.map!["scheduleType"];
       } });
     }
   }
@@ -1853,12 +1877,12 @@ class _RegisterPlan extends State<RegisterPlan> {
       return;
     }
 
-    if(planTypeValue == "ACADEMY" && academyId == null){
-      MainTheme.toast("학원 목록에서 학원을 선택해주세요.");
+    if(planTypeValue == "ACADEMY" && te_Academy.text.isEmpty){
+      MainTheme.toast("학원명을 직접 입력하거나 목록에서 학원을 선택해주세요.");
       return;
     }
-    if(planTypeValue == "VEHICLE" && academyId == null){
-      MainTheme.toast("학원 목록에서 학원을 선택해주세요.");
+    if(planTypeValue == "VEHICLE" && te_Academy.text.isEmpty){
+      MainTheme.toast("학원명을 직접 입력하거나  목록에서 학원을 선택해주세요.");
       return;
     }
 
@@ -1934,9 +1958,10 @@ class _RegisterPlan extends State<RegisterPlan> {
     request["endTime"] =  DateFormat('HH:mm:ss').format(endTime);
     request["isAllDay"] = onday;
     request["scheduleType"] = planTypeValue;
-    if(planTypeValue == "ACADEMY"){
+    if((planTypeValue == "ACADEMY" || planTypeValue == "VEHICLE") && academyId != null){
       request["academyId"] = academyId;
     }
+    request["academyName"] = te_Academy.text;
 
     request["color"] = colorIndex.toString();
     request["memo"] = te_note.text;
@@ -1955,7 +1980,6 @@ class _RegisterPlan extends State<RegisterPlan> {
     request["scheduleAlarmType"] = (alarmIndex??"") == "" ? "NONE" : alarmIndex;
     request["usePaymentAlarm"] = payAlarmIndex;
 
-    print(jsonEncode(request));
     var response;
     var body;
     if(widget.map == null){

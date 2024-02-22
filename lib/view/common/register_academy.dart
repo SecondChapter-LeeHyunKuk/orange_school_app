@@ -64,7 +64,7 @@ class _RegisterAcademy extends State<RegisterAcademy> {
                   Container(
                     height: 6,
                   ),
-                  Text("정확한 정보를 입력해주시고, 오탈자에 주의해주세요!", style: MainTheme.body9(MainTheme.gray6)),
+                  Text("정확한 정보를 입력해 주시고, 오탈자에 주의해 주세요!", style: MainTheme.body9(MainTheme.gray6)),
                   Container(
                     height: 49,
                   ),

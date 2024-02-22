@@ -29,12 +29,15 @@ String urlComplete = "${dotenv.env['BASE_URL']}user/challenge/complete";
 String urlCancel = "${dotenv.env['BASE_URL']}user/challenge";
 
 class ParentChallenge extends StatefulWidget {
+
+  final VoidCallback challengeEvent;
+  const ParentChallenge ({ Key? key, required this.challengeEvent }): super(key: key);
   @override
   State<ParentChallenge> createState() => _ParentChallenge();
 }
 
 class _ParentChallenge extends State<ParentChallenge> {
-  ScrollController _scrollController = ScrollController(initialScrollOffset: 10.0);
+  ScrollController _scrollController = ScrollController(initialScrollOffset: 0);
   int index = -1;
   bool ongoing = true;
   bool show = true;
@@ -59,6 +62,7 @@ class _ParentChallenge extends State<ParentChallenge> {
   @override
   void initState() {
 
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent && index > -1 && !ongoing) {
@@ -66,13 +70,16 @@ class _ParentChallenge extends State<ParentChallenge> {
       }
     });
     getChildrenResult = getChildren();
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => showCoach());
   }
 
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor:MainTheme.backgroundGray, statusBarIconBrightness: Brightness.dark));
     double orangeGap = (MediaQuery.of(context).size.width-(16*4) - (56*5)) / 4.0; //오렌지 사이 갭
-    //int orangeRowCount = orangeObject==null?  0 : (orangeObject ~/ 5) +1;
     return Scaffold(
         extendBody: true,
         backgroundColor: MainTheme.backgroundGray,
@@ -190,7 +197,7 @@ class _ParentChallenge extends State<ParentChallenge> {
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Text("동네친구들 보기",style: MainTheme.body8(MainTheme.gray6)),
+                                    child: Text("동네 친구들 보기",style: MainTheme.body8(MainTheme.gray6)),
                                   ),
                                 )
                               ],
@@ -782,7 +789,7 @@ class _ParentChallenge extends State<ParentChallenge> {
 
                 );
               }else{
-                return MainTheme.ErrorPage(context,"아이를 등록하면 (이렇게) 챌린지를 활용할 수 있어요");
+                return MainTheme.ErrorPage(context,"아이를 등록하면 챌린지를 활용할 수 있어요");
               }
             }else{
               return MainTheme.ErrorPage(context, jsonDecode(utf8.decode(snapshot.data.bodyBytes))["message"]);
@@ -1042,6 +1049,13 @@ class _ParentChallenge extends State<ParentChallenge> {
       });
     }
     return response;
+  }
+
+  Future<void> showCoach()async {
+    await getChildrenResult;
+    if(children.length > 0){
+      widget.challengeEvent();
+    }
   }
 }
 

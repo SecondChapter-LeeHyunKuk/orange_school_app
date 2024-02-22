@@ -87,7 +87,8 @@ String schoolKey = "${dotenv.env['SCHOOL_KEY']}";
 String urlMy = "${dotenv.env['BASE_URL']}user/commonMember";
 class ParentPlan extends StatefulWidget {
   final bool isParent;
-  const ParentPlan ({ Key? key, required this.isParent }): super(key: key);
+  final VoidCallback monthEvent;
+  const ParentPlan ({ Key? key, required this.isParent,  required this.monthEvent }): super(key: key);
   @override
   State<ParentPlan> createState() => _ParentPlan();
 }
@@ -285,6 +286,8 @@ class _ParentPlan extends State<ParentPlan> {
                         GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: (){
+
+
                               if(widget.isParent){
                                 if(screenIndex == 1){
                                   scrollController.jumpTo(0);
@@ -309,6 +312,8 @@ class _ParentPlan extends State<ParentPlan> {
                                   setState(() {
                                     screenIndex = 0;
                                   });
+
+                                  widget.monthEvent();
                                 }else{
                                   scrollController.jumpTo(535);
                                   children = weekChildren;
@@ -480,7 +485,6 @@ class _ParentPlan extends State<ParentPlan> {
                       Container(width: 42,
                           alignment: Alignment.centerRight,
                           padding: EdgeInsets.only(right: 4),
-
                           child:
                           widget.isParent && (selectedChildIndex == (children.length-1)) ? SizedBox.shrink():
 

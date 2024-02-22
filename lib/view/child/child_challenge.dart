@@ -180,7 +180,7 @@ class _ChildChallenge extends State<ChildChallenge> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text("동네친구들 보기",style: MainTheme.body8(MainTheme.gray6)),
+                              child: Text("동네 친구들 보기",style: MainTheme.body8(MainTheme.gray6)),
                             ),
                           )
                         ],

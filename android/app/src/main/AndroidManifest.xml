@@ -24,7 +24,10 @@
             android:value="@string/client_name" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
+            android:resource="@drawable/ic_neo" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

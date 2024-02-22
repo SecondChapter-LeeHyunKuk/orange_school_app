@@ -194,7 +194,18 @@ class _Login extends State<Login> {
                         GestureDetector(onTap: () async {
 
                           NaverLoginResult _result = await FlutterNaverLogin.logIn();
-                          socialLogin({"joinType" : "NAVER", "email" : null, "socialToken" : _result.account.id, "profile" : null, "name" : _result.account.name});
+                          socialLogin(
+                            {
+                              "joinType" : "NAVER",
+                              "name" : _result.account.name,
+                              "birth" : _result.account.birthyear.isNotEmpty && _result.account.birthday.isNotEmpty?
+                                  DateTime.parse('${_result.account.birthyear}-${_result.account.birthday}') : null,
+                              "phoneNumber" : _result.account.mobile,
+                              "email" : _result.account.email,
+                              "socialToken" : _result.account.id,
+                              "gender" : _result.account.gender == "F" ? false : _result.account.gender == "M" ? true : null
+                            }
+                          );
 
 
 
@@ -207,7 +218,18 @@ class _Login extends State<Login> {
                             await UserApi.instance.loginWithKakaoTalk();
                             try {
                               User user = await UserApi.instance.me();
-                              socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
+                              socialLogin(
+                              {
+                                "joinType" : "KAKAO",
+                                "name" : user.kakaoAccount?.name,
+                                "birth" : user.kakaoAccount?.birthyear != null && user.kakaoAccount?.birthday != null?
+                                DateTime.parse('${user.kakaoAccount?.birthyear}-${user.kakaoAccount!.birthday!.substring(0,2)}-${user.kakaoAccount!.birthday!.substring(2)}') : null,
+                                "phoneNumber" : user.kakaoAccount?.phoneNumber,
+                                "email" : user.kakaoAccount?.email,
+                                "socialToken" : user.id.toString(),
+                                "gender" : user.kakaoAccount?.gender == Gender.male ? true : user.kakaoAccount?.gender == Gender.female ? false : null,
+                              }
+                              );
                             } catch (error) {
                             }
 
@@ -247,11 +269,17 @@ class _Login extends State<Login> {
                               case AuthorizationStatus.authorized:
 
                                 (result.credential!.fullName == null);
-                                socialLogin({"joinType" : "APPLE",
-                                  "socialToken" : result.credential!.user,
-                                  "profile" : null,
+                                socialLogin({
+                                  "joinType" : "APPLE",
+                                  "name" : result.credential!.fullName?.familyName == null ? null : "${result.credential!.fullName!.familyName}${result.credential!.fullName!.givenName}",
+                                  "birth" : null,
+                                  "phoneNumber" : null,
                                   "email" : result.credential!.email,
-                                  "name" : result.credential!.fullName?.familyName == null ? null : "${result.credential!.fullName!.familyName}${result.credential!.fullName!.givenName}"});
+                                  "socialToken" : result.credential!.user,
+                                  "gender" : null
+                                });
+
+
                               break;
                               // 3-2. 오류가 발생한 경우
                               case AuthorizationStatus.error:
@@ -413,13 +441,14 @@ class _Login extends State<Login> {
 
       }
     }else if(response.statusCode == 404){
-      bool usable =  await checkEmail(userInfo["email"]);
-      if(usable){
-        Navigator.of(context).pushNamed('/registerParent',arguments: userInfo);
-      }else{
-        ScaffoldMessenger.of(context)
-            .showSnackBar(MainTheme.snackBar("해당 이메일은 이미 가입되어있습니다."));
-      }
+      Navigator.of(context).pushNamed('/registerParent',arguments: userInfo);
+      // bool usable =  await checkEmail(userInfo["email"]);
+      // if(usable){
+      //   Navigator.of(context).pushNamed('/registerParent',arguments: userInfo);
+      // }else{
+      //   ScaffoldMessenger.of(context)
+      //       .showSnackBar(MainTheme.snackBar("해당 이메일은 이미 가입되어있습니다."));
+      // }
     } else{
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar(body["message"]));

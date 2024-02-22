@@ -304,6 +304,18 @@ class _RegisterChild extends State<RegisterChild> {
                     ],
                   ) :
                   SizedBox.shrink(),
+                  Padding(
+                      padding: EdgeInsets.only(top:4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset("assets/icons/info_green.svg", width: 14,height: 14,),
+                          Container(width: 4,),
+                          Text("아이 ID로 로그인하면 아이용 모드로 접속됩니다", style: MainTheme.caption2(MainTheme.subColor),)
+                        ],
+                      )
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

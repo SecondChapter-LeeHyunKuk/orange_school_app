@@ -183,7 +183,7 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
   Future<Response> searchSchool() async {
     index = 1;
     data = [];
-    nowKeyword =  textEditingController.text;
+    nowKeyword =  textEditingController.text.replaceAll(' ', '');
     var responseResult = await apiRequestGet(context, url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword, "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
     if(responseResult.statusCode == 200){

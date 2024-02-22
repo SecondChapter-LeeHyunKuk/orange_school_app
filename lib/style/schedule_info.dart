@@ -375,13 +375,22 @@ class _ScheduleInfo extends State<ScheduleInfo> {
                                           child:
                                           Container(
                                               alignment: Alignment.centerLeft,
-                                              height: 51,
+                                              height: map["scheduleType"] == "ACADEMY" || map["scheduleType"] == "VEHICLE" ? 73 :  51,
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius: BorderRadius.circular(12)
                                               ),
                                               padding: EdgeInsets.symmetric(horizontal: 16),
-                                              child: Text(map["scheduleTypeTitle"], style: MainTheme.body8(MainTheme.gray7),)
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(map["scheduleTypeTitle"], style: MainTheme.body8(MainTheme.gray7),),
+                                                  map["scheduleType"] == "ACADEMY" || map["scheduleType"] == "VEHICLE" ?
+                                                    Text((map["academyName"]?? "") == "" ? map["academy"]["academyName"] : map["academyName"],  style: MainTheme.body8(MainTheme.gray5),)
+                                                      :SizedBox.shrink()
+                                                ],
+                                              )
                                           ))
                                       )
 

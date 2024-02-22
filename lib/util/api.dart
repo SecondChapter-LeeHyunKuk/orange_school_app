@@ -91,7 +91,7 @@ Future<http.Response> apiRequestPost(BuildContext context,String url, Map param)
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    //log(url + " response =" + response.statusCode.toString());
+    log(url + " response =" + response.statusCode.toString());
 
     if(response.statusCode == 403){
       ScaffoldMessenger.of(context)
@@ -113,7 +113,7 @@ Future<http.Response> apiRequestPut(BuildContext context,String url, Map param) 
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    //log(url + " response =" + response.statusCode.toString());
+    log(url + " response =" + response.statusCode.toString());
     if(response.statusCode == 403){
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar('로그인이 만료되었습니다.'));

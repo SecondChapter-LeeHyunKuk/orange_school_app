@@ -92,7 +92,7 @@ class _ParentChallengeSearch extends State<ParentChallengeSearch> {
                       borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       borderSide: BorderSide(color: MainTheme.gray2)),
                   border: InputBorder.none,
-                  hintText: "이름, 이메일 또는 닉네임으로 검색하세요",
+                  hintText: "이름, 아이디 또는 닉네임으로 검색하세요",
                   hintStyle: MainTheme.body6(MainTheme.gray4),
                 ),
                 style: MainTheme.body5(MainTheme.gray7),
