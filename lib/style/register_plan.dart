@@ -1687,36 +1687,48 @@ class _RegisterPlan extends State<RegisterPlan> {
                           padding: EdgeInsets.only(top: 8, right: 7),
                           controller: academyScrollController,//여기도 전달
                           itemCount: academy.length,
-                          itemBuilder: (context, index) =>
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  if (te_title.text == "") {
+                                    te_title.text =
+                                    academy[index]["academyName"];
+                                  }
+                                  te_Academy.text =
+                                  academy[index]["academyName"];
+                                  academyId = academy[index]["id"];
+                                  _searchFocusNode.unfocus();
+                                  _removeSearchOverlay();
+                                  checkFormComplete();
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 14, right: 12),
+                                  height: 68,
+                                  padding: EdgeInsets.fromLTRB(6, 11, 6, 11),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      Material(color: Colors.transparent,
+                                          child: Text(
+                                            academy[index]["academyName"],
+                                            style: MainTheme.body4(
+                                                MainTheme.gray7),
+                                            overflow: TextOverflow.ellipsis,)),
+                                      Material(color: Colors.transparent,
+                                          child: Text(academy[index]["address"],
+                                            style: MainTheme.caption2(
+                                                MainTheme.gray5),
+                                            overflow: TextOverflow.ellipsis,))
+                                    ],
+                                  ),
 
-                          GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: (){
-                              if(te_title.text == ""){
-                                te_title.text = academy[index]["academyName"];
-                              }
-                              te_Academy.text = academy[index]["academyName"] ;
-                              academyId = academy[index]["id"];
-                              _searchFocusNode.unfocus();
-                              _removeSearchOverlay();
-                              checkFormComplete();
-                            },
-                            child:Container(
-                              margin: EdgeInsets.only(left: 14,right: 12),
-                              height: 68,
-                              padding: EdgeInsets.fromLTRB(6,11,6,11),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Material(color: Colors.transparent, child: Text(academy[index]["academyName"], style: MainTheme.body4(MainTheme.gray7),overflow: TextOverflow.ellipsis,)),
-                                  Material(color: Colors.transparent, child: Text(academy[index]["address"], style: MainTheme.caption2(MainTheme.gray5),overflow: TextOverflow.ellipsis,))
-                                ],
-                              ),
-
-                            )
-                          )
-
+                                )
+                            );
+                          }
                       ),
                     ),
                   )
@@ -1763,6 +1775,8 @@ class _RegisterPlan extends State<RegisterPlan> {
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
         academy = (body["data"]["content"]);
+
+        index = 1;
       _overlayEntry!.markNeedsBuild();
 
     }
@@ -1772,9 +1786,11 @@ class _RegisterPlan extends State<RegisterPlan> {
     var response = await apiRequestGet(context, urlAcademy,{"page" : index.toString(), "keyword" : te_Academy.text,"sort" : ["academyName,ASC"]});
     var body =jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
+
       setState(() {
         index ++;
         academy.addAll(body["data"]["content"]);
+        _overlayEntry!.markNeedsBuild();
       });
 
     }
