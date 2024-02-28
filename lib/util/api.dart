@@ -18,7 +18,7 @@ Future<http.Response> openapiRequestGet(context, String url, Map<String, dynamic
         Uri.parse(url + "?" + Uri(queryParameters: param).query),
         headers: {
         }).timeout(const Duration(seconds: 10));
-    log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
+    //log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
     return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크
@@ -33,7 +33,7 @@ Future<http.Response> openApiXmlRequestGet(String url, Map<String, dynamic> para
         headers: {
           'Content-Type': 'text/xml',
         }).timeout(const Duration(seconds: 10));
-    log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
+    //log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
     return response;
   }on TimeoutException {
     return http.Response('{"message" : "server is not responding."}' , 408); //timeout 체크
@@ -49,8 +49,8 @@ Future<http.Response> apiRequestGet(BuildContext context, String url, Map<String
           'Authorization': pref.getString("accessToken") == null ? "" : pref
               .getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
-    log(jsonEncode(jsonDecode(utf8.decode(response.bodyBytes))));
+    //log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
+    //log(jsonEncode(jsonDecode(utf8.decode(response.bodyBytes))));
     if(response.statusCode == 403){
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar('로그인이 만료되었습니다.'));
@@ -91,7 +91,7 @@ Future<http.Response> apiRequestPost(BuildContext context,String url, Map param)
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    log(url + " response =" + response.statusCode.toString());
+    //log(url + " response =" + response.statusCode.toString());
 
     if(response.statusCode == 403){
       ScaffoldMessenger.of(context)
@@ -113,7 +113,7 @@ Future<http.Response> apiRequestPut(BuildContext context,String url, Map param) 
           'Content-Type': 'application/json',
           'Authorization': pref.getString("accessToken") == null ? "" :  pref.getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    log(url + " response =" + response.statusCode.toString());
+    //log(url + " response =" + response.statusCode.toString());
     if(response.statusCode == 403){
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar('로그인이 만료되었습니다.'));

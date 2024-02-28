@@ -150,7 +150,7 @@ class _ParentTabBar extends State<ParentTabBar>
                 items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_home'+(screenIndex == 0 ? "_on" : "")+'.svg', width: 24, height: 24), label: '일정'),
                   BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_challenge'+(screenIndex == 1 ? "_on" : "")+'.svg', width: 24, height: 24), label: '챌린지'),
-                  BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_money'+(screenIndex == 2 ? "_on" : "")+'.svg', width: 24, height: 24), label: '지출관리'),
+                  BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_money'+(screenIndex == 2 ? "_on" : "")+'.svg', width: 24, height: 24), label: '지출 관리'),
                   BottomNavigationBarItem(icon: SvgPicture.asset('assets/icons/nv_post'+(screenIndex == 3 ? "_on" : "")+'.svg', width: 24, height: 24), label: "O’s pick"),
                   BottomNavigationBarItem(icon: ClipRRect(borderRadius : BorderRadius.circular(12), child: CachedNetworkImage(imageUrl:fileUrl ?? "", width: 24, height: 24,fit: BoxFit.cover,
                       errorWidget: (context, url, error) {
@@ -422,13 +422,13 @@ class _ParentTabBar extends State<ParentTabBar>
               style: MainTheme.caption2(MainTheme.gray4),))),
             Positioned(
               left: 11,
-              top : 184,
+              top : statusBarHeight! + 159,
               child: Container( width:  MediaQuery.of(context).size.width - 22, height:  131,
                 decoration: BoxDecoration(border: Border.all(color: MainTheme.mainColor, width: 2,), borderRadius: BorderRadius.circular(7)),),
             ),
             Positioned(
               left: 61,
-              top : 184 + 131,
+              top : statusBarHeight! + 159 + 131,
               child: SvgPicture.asset('assets/lines/line10.svg', width: 31, height: 150),
             ),
             Positioned(left: 105 , top : 445,child:
@@ -657,9 +657,9 @@ class ChallengePainter extends CustomPainter {
               Radius.circular(7)))
           ..addRRect(RRect.fromLTRBR(
               11,
-              184,
+              statusBarHeight! + 158.5,
               11 + size.width - 22,
-              184 + 131,
+              statusBarHeight! + 158.5 + 131,
               Radius.circular(7)))
           ..close(),
       ),
