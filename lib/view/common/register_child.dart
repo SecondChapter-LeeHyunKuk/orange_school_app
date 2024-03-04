@@ -166,7 +166,7 @@ class _RegisterChild extends State<RegisterChild> {
                                 keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly, //숫자만!
-                                  LengthLimitingTextInputFormatter(8)
+                                  LengthLimitingTextInputFormatter(6)
                                 ],
                               ),
                             )

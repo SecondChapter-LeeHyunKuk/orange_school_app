@@ -261,7 +261,8 @@ class _RegisterSchool extends State<RegisterSchool> {
     if(
 
     te_schoolName.text.isEmpty ||
-        te_grade.text.isEmpty
+        te_grade.text.isEmpty ||
+        te_class.text.isEmpty
     ){
       setState(() {
         formComplete = false;

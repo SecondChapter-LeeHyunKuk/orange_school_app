@@ -422,13 +422,13 @@ class _ParentTabBar extends State<ParentTabBar>
               style: MainTheme.caption2(MainTheme.gray4),))),
             Positioned(
               left: 11,
-              top : statusBarHeight! + 159,
+              top : statusBarHeight! + 158.5,
               child: Container( width:  MediaQuery.of(context).size.width - 22, height:  131,
                 decoration: BoxDecoration(border: Border.all(color: MainTheme.mainColor, width: 2,), borderRadius: BorderRadius.circular(7)),),
             ),
             Positioned(
               left: 61,
-              top : statusBarHeight! + 159 + 131,
+              top : statusBarHeight! + 158.5 + 131,
               child: SvgPicture.asset('assets/lines/line10.svg', width: 31, height: 150),
             ),
             Positioned(left: 105 , top : 445,child:
@@ -612,9 +612,9 @@ class MonthPainter extends CustomPainter {
               statusBarHeight! + 77 + 48,
               Radius.circular(7)))
           ..addRRect(RRect.fromLTRBR(
-              size.width - 126.5,
+              size.width - 128.5,
               size.height - bottomNavHeight! - 127,
-              size.width - 126.5 + 116,
+              size.width - 128.5 + 116,
               size.height - bottomNavHeight! - 127 + 59,
               Radius.circular(7)))
           ..close(),

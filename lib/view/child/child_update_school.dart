@@ -259,8 +259,7 @@ class _ChildUpdateSchool extends State<ChildUpdateSchool> {
 
     te_schoolName.text.isEmpty ||
         te_grade.text.isEmpty ||
-        te_class.text.isEmpty ||
-        te_number.text.isEmpty
+        te_class.text.isEmpty
     ){
       setState(() {
         formComplete = false;

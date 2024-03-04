@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -491,9 +492,17 @@ class _ParentPlan extends State<ParentPlan> {
                           GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: (){
-                              setState(() {
-                                school = !school;
-                                getWeek();
+                              setState(() async {
+                                print(children[selectedChildIndex]["schoolClass"]);
+                                if (!school && children[selectedChildIndex]["schoolClass"] == ""){
+                                  MainTheme.toast("반을 입력해주세요");
+                                }else{
+                                  SharedPreferences pref = await SharedPreferences.getInstance();
+                                  pref.setBool("schoolTime", !school);
+
+                                  school = !school;
+                                  getWeek();
+                                }
                               });
                             },
                             child: Column(
@@ -508,9 +517,17 @@ class _ParentPlan extends State<ParentPlan> {
                                   child: FittedBox(
                                     fit: BoxFit.contain,
                                     child: CupertinoSwitch(value: school,activeColor: MainTheme.mainColor, trackColor: Color(0xffBEC5CC),onChanged: (bool value){
-                                      setState(() {
-                                        school = !school;
-                                        getWeek();
+                                      setState(() async {
+
+                                        if (!school && children[selectedChildIndex]["schoolClass"] == ""){
+                                          MainTheme.toast("반을 입력해주세요");
+                                        }else{
+                                          SharedPreferences pref = await SharedPreferences.getInstance();
+                                          pref.setBool("schoolTime", !school);
+
+                                          school = !school;
+                                          getWeek();
+                                        }
                                       });
                                     }),
                                   ),
@@ -1888,7 +1905,7 @@ class _ParentPlan extends State<ParentPlan> {
       SharedPreferences pref = await SharedPreferences.getInstance();
 
       int? selectedChildId = pref.getInt("selectedChildId");
-
+      bool? schoolTime = pref.getBool("schoolTime");
       //월별일정 자식 목록 채우기
       monthChildren.add({"name" :"전체", "fileUrl" :  "", "id" : 0});
 
@@ -1935,6 +1952,12 @@ class _ParentPlan extends State<ParentPlan> {
               selectedChildIndex = i;
             });
           }
+        }
+      }
+
+      if(schoolTime != null){
+        if(schoolTime){
+          school = true;
         }
       }
 

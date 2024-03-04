@@ -49,8 +49,8 @@ Future<http.Response> apiRequestGet(BuildContext context, String url, Map<String
           'Authorization': pref.getString("accessToken") == null ? "" : pref
               .getString("accessToken")!
         }).timeout(const Duration(seconds: 10));
-    //log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
-    //log(jsonEncode(jsonDecode(utf8.decode(response.bodyBytes))));
+    log(Uri.parse(url + "?" + Uri(queryParameters: param).query).toString() + " response =" + response.statusCode.toString());
+    log(jsonEncode(jsonDecode(utf8.decode(response.bodyBytes))));
     if(response.statusCode == 403){
       ScaffoldMessenger.of(context)
           .showSnackBar(MainTheme.snackBar('로그인이 만료되었습니다.'));
