@@ -186,7 +186,7 @@ class _ParentMy extends State<ParentMy> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
       name = pref.getString("name")!;
-      email = pref.getString("email")!;
+      email = pref.getString("myEmail")!;
     });
 
   }

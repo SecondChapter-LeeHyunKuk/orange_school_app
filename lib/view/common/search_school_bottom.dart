@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -144,12 +145,12 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
                           itemBuilder: (context, index) => GestureDetector(
                             onTap: () {
                               Navigator.pop(context,
-                                  {"schoolNm": data[index]["SCHUL_NM"], "schoolCode": data[index]["SCHUL_KND_SC_NM"] == "초등학교"? data[index]["ATPT_OFCDC_SC_CODE"] + ":" + data[index]["SD_SCHUL_CODE"] : null}
+                                  {"schoolNm": data[index]["SCHUL_NM"], "schoolCode": data[index]["ATPT_OFCDC_SC_CODE"] + ":" + data[index]["SD_SCHUL_CODE"]}
                               );
                             },
                             child: Container(
-                              child: Text(data[index]["SCHUL_NM"],style: MainTheme.body5(MainTheme.gray7),),
                               padding: EdgeInsets.only(bottom: 28),
+                              child: Text(data[index]["SCHUL_NM"] + "("+extractUntilSecondSpace(data[index]["ORG_RDNMA"])+")",style: MainTheme.body5(MainTheme.gray7),overflow: TextOverflow.ellipsis,),
                             ),
                           )
                       ),
@@ -184,7 +185,7 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
     index = 1;
     data = [];
     nowKeyword =  textEditingController.text.replaceAll(' ', '');
-    var responseResult = await apiRequestGet(context, url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword, "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
+    var responseResult = await apiRequestGet(context, url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword, "key" : schoolKey, "SCHUL_KND_SC_NM" : "각종학교(초)"});
     var response =jsonDecode(utf8.decode(responseResult.bodyBytes));
     if(responseResult.statusCode == 200){
       if(response["schoolInfo"] != null){
@@ -193,6 +194,16 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
         });
       }
     }
+    responseResult = await apiRequestGet(context, url,{"Type" : "json", "pIndex" : 1.toString(), "pSize": 20.toString(), "SCHUL_NM" : nowKeyword, "key" : schoolKey, "SCHUL_KND_SC_NM" : "초등학교"});
+    response =jsonDecode(utf8.decode(responseResult.bodyBytes));
+    if(responseResult.statusCode == 200){
+      if(response["schoolInfo"] != null){
+        setState(() {
+          data.addAll(response["schoolInfo"][1]["row"]);
+        });
+      }
+    }
+    log(data.toString());
     return responseResult;
   }
 
@@ -209,4 +220,15 @@ class _SearchSchoolBottom extends State<SearchSchoolBottom> {
       }
     }
   }
+  String extractUntilSecondSpace(String input) {
+    int firstSpaceIndex = input.indexOf(' ');
+    if (firstSpaceIndex != -1) {
+      int secondSpaceIndex = input.indexOf(' ', firstSpaceIndex + 1);
+      if (secondSpaceIndex != -1) {
+        return input.substring(0, secondSpaceIndex);
+      }
+    }
+    return input;
+  }
+
 }

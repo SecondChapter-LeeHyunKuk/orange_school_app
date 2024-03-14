@@ -182,7 +182,7 @@ class _ChildMy extends State<ChildMy> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
       name = pref.getString("name")!;
-      email = pref.getString("email")!;
+      email = pref.getString("myEmail")!;
     });
 
   }

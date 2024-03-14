@@ -754,7 +754,7 @@ class _ParentPlan extends State<ParentPlan> {
                                         ),
                                         child:
 
-                                        Text(onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
+                                        Text((onDaySchedules[index]["scheduleType"] == "PAY" ? "₩" : "") + onDaySchedules[index]["title"], style: TextStyle(letterSpacing: 0,fontSize: 11, height: 14/11, fontWeight: FontWeight.w700, fontFamily: "SUIT", color:MainTheme.planColor[int.parse(onDaySchedules[index]["color"])]),
                                             overflow: TextOverflow.ellipsis, maxLines:1
                                         ),
                                       )),

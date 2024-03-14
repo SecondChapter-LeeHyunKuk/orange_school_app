@@ -68,7 +68,7 @@ class _Login extends State<Login> {
                     child: Text("우리 아이와 함께하는 일상", style: MainTheme.body8(MainTheme.gray6)),
                   ),
                   SizedBox(height: 34,),
-                  Text("이메일", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("이메일/ID", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),
@@ -81,7 +81,7 @@ class _Login extends State<Login> {
                           });
                         }else if(!RegExp(r'^[^@].*?@.*[^@]$').hasMatch(te_email.text) && !RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$').hasMatch(te_email.text)){
                           setState(() {
-                            emailMessage = "이메일 형식이 맞지 않아요.";
+                            emailMessage = "이메일/ID 형식이 맞지 않아요.";
                           });
                         }else{
                           setState(() {
@@ -91,7 +91,7 @@ class _Login extends State<Login> {
 
 
                       },
-                      decoration: MainTheme.inputTextGray("아이디를 입력해주세요"),
+                      decoration: MainTheme.inputTextGray("이메일/ID를 입력해주세요"),
                       controller: te_email,
                       keyboardType:  TextInputType.emailAddress,
                       style: MainTheme.body5(MainTheme.gray7),
@@ -193,19 +193,7 @@ class _Login extends State<Login> {
                       children: [
                         GestureDetector(onTap: () async {
 
-                          NaverLoginResult _result = await FlutterNaverLogin.logIn();
-                          socialLogin(
-                            {
-                              "joinType" : "NAVER",
-                              "name" : _result.account.name,
-                              "birth" : _result.account.birthyear.isNotEmpty && _result.account.birthday.isNotEmpty?
-                                  DateTime.parse('${_result.account.birthyear}-${_result.account.birthday}') : null,
-                              "phoneNumber" : _result.account.mobile,
-                              "email" : _result.account.email,
-                              "socialToken" : _result.account.id,
-                              "gender" : _result.account.gender == "F" ? false : _result.account.gender == "M" ? true : null
-                            }
-                          );
+                          naverLogin();
 
 
 
@@ -213,41 +201,7 @@ class _Login extends State<Login> {
                         Container(width: 11,),
                         GestureDetector(onTap: () async {
 
-                          if (await isKakaoTalkInstalled()) {
-                            try {
-                            await UserApi.instance.loginWithKakaoTalk();
-                            try {
-                              User user = await UserApi.instance.me();
-                              socialLogin(
-                              {
-                                "joinType" : "KAKAO",
-                                "name" : user.kakaoAccount?.name,
-                                "birth" : user.kakaoAccount?.birthyear != null && user.kakaoAccount?.birthday != null?
-                                DateTime.parse('${user.kakaoAccount?.birthyear}-${user.kakaoAccount!.birthday!.substring(0,2)}-${user.kakaoAccount!.birthday!.substring(2)}') : null,
-                                "phoneNumber" : user.kakaoAccount?.phoneNumber,
-                                "email" : user.kakaoAccount?.email,
-                                "socialToken" : user.id.toString(),
-                                "gender" : user.kakaoAccount?.gender == Gender.male ? true : user.kakaoAccount?.gender == Gender.female ? false : null,
-                              }
-                              );
-                            } catch (error) {
-                            }
-
-                            } catch (error) {
-                            }
-                          }else {
-                            try {
-                              await UserApi.instance.loginWithKakaoAccount();
-                              try {
-                                User user = await UserApi.instance.me();
-                                socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
-                              } catch (error) {
-                                print('사용자 정보 요청 실패 $error');
-                              }
-                            } catch (error) {
-                              print('카카오계정으로 로그인 실패 $error');
-                            }
-                          }
+                          kakaoLogin();
 
 
                         }, child:  SvgPicture.asset("assets/icons/kakao.svg",width: 64, height: 64,),),
@@ -257,42 +211,7 @@ class _Login extends State<Login> {
                             Container(width: 11,),
                             GestureDetector(onTap: () async {
 
-                              if(await TheAppleSignIn.isAvailable()) {
-                              // 2. 로그인 수행(FaceId 또는 Password 입력)
-                              final AuthorizationResult result = await TheAppleSignIn.performRequests([
-                              const AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
-                              ]);
-
-                              // 3. 로그인 권한 여부 체크
-                              switch(result.status) {
-                              // 3-1. 로그인 권한을 부여받은 경우
-                              case AuthorizationStatus.authorized:
-
-                                (result.credential!.fullName == null);
-                                socialLogin({
-                                  "joinType" : "APPLE",
-                                  "name" : result.credential!.fullName?.familyName == null ? null : "${result.credential!.fullName!.familyName}${result.credential!.fullName!.givenName}",
-                                  "birth" : null,
-                                  "phoneNumber" : null,
-                                  "email" : result.credential!.email,
-                                  "socialToken" : result.credential!.user,
-                                  "gender" : null
-                                });
-
-
-                              break;
-                              // 3-2. 오류가 발생한 경우
-                              case AuthorizationStatus.error:
-                              print('애플 로그인 오류 : ${result.error!.localizedDescription}');
-                              break;
-                              // 3-3. 유저가 직접 취소한 경우
-                              case AuthorizationStatus.cancelled:
-                              print("취소!!!");
-                              break;
-                              }
-                              } else {
-                              print('애플 로그인을 지원하지 않는 기기입니다.');
-                              }
+                              appleLogin();
 
                             }, child:  SvgPicture.asset("assets/icons/apple.svg",width: 64, height: 64,),),
                           ],
@@ -372,7 +291,7 @@ class _Login extends State<Login> {
         if(response.statusCode == 200){
           pref.setString("profile",body["data"]["fileUrl"] ?? "");
           pref.setString("name",body["data"]["name"]);
-          pref.setString("email",body["data"]["email"]);
+          pref.setString("myEmail",body["data"]["email"]);
           pref.setInt("locationCode",body["data"]["locationCode"]);
           pref.remove("selectedChildId");
           if(body["data"]["memberType"] == "PARENT"){
@@ -414,7 +333,12 @@ class _Login extends State<Login> {
     var body = jsonDecode(utf8.decode(response.bodyBytes));
     if(response.statusCode == 200){
 
-      pref.setBool("autoLogin", false);
+      pref.setBool("autoLogin", autoLogin);
+
+      if(autoLogin){
+        pref.setString("email",userInfo["joinType"]);
+        pref.setString("password","");
+      }
 
       //로그인 성공 시 로그인 정보 저장
       String accessToken = body["data"]["accessToken"];
@@ -428,7 +352,7 @@ class _Login extends State<Login> {
       if(response.statusCode == 200){
         pref.setString("profile",body["data"]["fileUrl"] ?? "");
         pref.setString("name",body["data"]["name"]);
-        pref.setString("email",body["data"]["email"]);
+        pref.setString("myEmail",body["data"]["email"]);
         pref.setInt("locationCode",body["data"]["locationCode"]);
         pref.remove("selectedChildId");
         if(body["data"]["memberType"] == "PARENT"){
@@ -464,10 +388,23 @@ class _Login extends State<Login> {
         autoLogin = pref.getBool("autoLogin")!;
       });
     }
+    String? email = pref.getString("email");
     if (autoLogin) {
-      te_email.text = pref.getString("email")!;
-      te_password.text = pref.getString("password")!;
-      login();
+      switch (email) {
+        case 'NAVER':
+          naverLogin();
+          break;
+        case 'KAKAO':
+          kakaoLogin();
+          break;
+        case 'APPLE':
+          appleLogin();
+          break;
+        default:
+          te_email.text = pref.getString("email")!;
+          te_password.text = pref.getString("password")!;
+          login();
+      }
     }
 
   }
@@ -500,4 +437,99 @@ class _Login extends State<Login> {
       return false;
     }
   }
+
+  Future<void> naverLogin() async {
+    NaverLoginResult _result = await FlutterNaverLogin.logIn();
+    socialLogin(
+        {
+          "joinType" : "NAVER",
+          "name" : _result.account.name,
+          "birth" : _result.account.birthyear.isNotEmpty && _result.account.birthday.isNotEmpty?
+          DateTime.parse('${_result.account.birthyear}-${_result.account.birthday}') : null,
+          "phoneNumber" : _result.account.mobile,
+          "email" : _result.account.email,
+          "socialToken" : _result.account.id,
+          "gender" : _result.account.gender == "F" ? false : _result.account.gender == "M" ? true : null
+        }
+    );
+
+  }
+
+  Future<void> kakaoLogin() async {
+    if (await isKakaoTalkInstalled()) {
+      try {
+        await UserApi.instance.loginWithKakaoTalk();
+      try {
+        User user = await UserApi.instance.me();
+    socialLogin(
+      {
+    "joinType" : "KAKAO",
+    "name" : user.kakaoAccount?.name,
+    "birth" : user.kakaoAccount?.birthyear != null && user.kakaoAccount?.birthday != null?
+    DateTime.parse('${user.kakaoAccount?.birthyear}-${user.kakaoAccount!.birthday!.substring(0,2)}-${user.kakaoAccount!.birthday!.substring(2)}') : null,
+    "phoneNumber" : user.kakaoAccount?.phoneNumber,
+    "email" : user.kakaoAccount?.email,
+    "socialToken" : user.id.toString(),
+    "gender" : user.kakaoAccount?.gender == Gender.male ? true : user.kakaoAccount?.gender == Gender.female ? false : null,
+    }
+    );
+    } catch (error) {
+    }
+
+    } catch (error) {
+    }
+    }else {
+    try {
+    await UserApi.instance.loginWithKakaoAccount();
+    try {
+    User user = await UserApi.instance.me();
+    socialLogin({"joinType" : "KAKAO", "socialToken" : user.id.toString(), "profile" : user.kakaoAccount?.profile?.profileImageUrl});
+    } catch (error) {
+    print('사용자 정보 요청 실패 $error');
+    }
+    } catch (error) {
+    print('카카오계정으로 로그인 실패 $error');
+    }
+    }
+  }
+
+  Future<void> appleLogin() async {
+    if(await TheAppleSignIn.isAvailable()) {
+    // 2. 로그인 수행(FaceId 또는 Password 입력)
+    final AuthorizationResult result = await TheAppleSignIn.performRequests([
+    const AppleIdRequest(requestedScopes: [apple.Scope.email, apple.Scope.fullName])
+    ]);
+
+    // 3. 로그인 권한 여부 체크
+    switch(result.status) {
+    // 3-1. 로그인 권한을 부여받은 경우
+    case AuthorizationStatus.authorized:
+
+    (result.credential!.fullName == null);
+    socialLogin({
+    "joinType" : "APPLE",
+    "name" : result.credential!.fullName?.familyName == null ? null : "${result.credential!.fullName!.familyName}${result.credential!.fullName!.givenName}",
+    "birth" : null,
+    "phoneNumber" : null,
+    "email" : result.credential!.email,
+    "socialToken" : result.credential!.user,
+    "gender" : null
+    });
+
+
+    break;
+    // 3-2. 오류가 발생한 경우
+    case AuthorizationStatus.error:
+    print('애플 로그인 오류 : ${result.error!.localizedDescription}');
+    break;
+    // 3-3. 유저가 직접 취소한 경우
+    case AuthorizationStatus.cancelled:
+    print("취소!!!");
+    break;
+    }
+    } else {
+    print('애플 로그인을 지원하지 않는 기기입니다.');
+    }
+  }
+
 }

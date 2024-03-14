@@ -71,6 +71,9 @@ class _ChildUpdateSchool extends State<ChildUpdateSchool> {
                     margin: EdgeInsets.only(left: 4),
                     child: Text("학교 등록하기", style: MainTheme.heading1(MainTheme.gray7)),
                   ),
+                  Padding(padding: EdgeInsets.only(left: 4),
+                    child: Text("학교 수업 정보 확인을 위해 등록합니다.", style: MainTheme.body8(MainTheme.gray6)),
+                  ),
                   Container(
                     height: 49,
                   ),
@@ -212,7 +215,7 @@ class _ChildUpdateSchool extends State<ChildUpdateSchool> {
                   Container(
                     height: 17,
                   ),
-                  Text("번호", style: MainTheme.caption1(MainTheme.gray5)),
+                  Text("번호(선택)", style: MainTheme.caption1(MainTheme.gray5)),
                   Container(
                     height: 4,
                   ),

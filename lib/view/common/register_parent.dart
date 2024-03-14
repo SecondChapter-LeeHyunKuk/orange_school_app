@@ -1300,7 +1300,7 @@ class _RegisterParent extends State<RegisterParent> {
           if(response.statusCode == 200){
             pref.setString("profile",body["data"]["fileUrl"] ?? "");
             pref.setString("name",body["data"]["name"]);
-            pref.setString("email",body["data"]["email"]);
+            pref.setString("myEmail",body["data"]["email"]);
             pref.setInt("locationCode",body["data"]["locationCode"]);
           }
         }
