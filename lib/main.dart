@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -124,9 +125,14 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     return MaterialApp(
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ],
         builder: (context, child) {
           final MediaQueryData data = MediaQuery.of(context);
+
           return MediaQuery(
             data: data.copyWith(textScaler: TextScaler.noScaling),
             child: child!,
@@ -134,17 +140,6 @@ class _MyAppState extends State<MyApp> {
         },
       debugShowCheckedModeBanner: false,
       title: 'Orange School',
-      // themeMode: ThemeMode.light,
-      // theme: ThemeData(
-      //   brightness: Brightness.light,
-      //   fontFamily: 'SUIT',
-      //   scaffoldBackgroundColor: Colors.white,
-      //   textSelectionTheme: TextSelectionThemeData(
-      //     cursorColor: MainTheme.mainColor, //<-- SEE HERE
-      //   ),
-      //   colorScheme: ColorScheme.fromSeed(seedColor: MainTheme.mainColor),
-      //   useMaterial3: true,
-      // ),
         theme: ThemeData(
           fontFamily: 'SUIT',
           primaryColor: MainTheme.mainColor,
