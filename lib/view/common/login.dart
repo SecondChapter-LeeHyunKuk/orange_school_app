@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:orange_school/style/main-theme.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
@@ -35,7 +36,7 @@ class _Login extends State<Login> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    getVersion();
     tryAutoLogin();
     permission();
   }
@@ -521,15 +522,18 @@ class _Login extends State<Login> {
     break;
     // 3-2. 오류가 발생한 경우
     case AuthorizationStatus.error:
-    print('애플 로그인 오류 : ${result.error!.localizedDescription}');
     break;
     // 3-3. 유저가 직접 취소한 경우
     case AuthorizationStatus.cancelled:
-    print("취소!!!");
     break;
     }
     } else {
-    print('애플 로그인을 지원하지 않는 기기입니다.');
+    }
+  }
+  Future<void> getVersion()async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    if(packageInfo.version != "1.1.0"){
+      MainTheme.toast("새로운 버전이 출시되었습니다.");
     }
   }
 
