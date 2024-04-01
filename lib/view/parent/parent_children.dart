@@ -94,8 +94,9 @@ class _ParentChildren extends State<ParentChildren> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(list[index]["email"], style: MainTheme.body5(MainTheme.gray5),),
-                                            Text("${list[index]["schoolName"]} ${list[index]["grade"]}학년 ${list[index]["schoolClass"]}반 ${list[index]["classNumber"]}번", style: MainTheme.body5(MainTheme.gray5),),
-
+                                            Text("${list[index]["schoolName"]} ${list[index]["grade"]}학년 ${list[index]["schoolClass"]}반 "
+                                               + ((list[index]["classNumber"]?? "") == "" ? "" : (list[index]["classNumber"] + "번"))
+                                              , style: MainTheme.body5(MainTheme.gray5),),
                                           ],
                                         )
 

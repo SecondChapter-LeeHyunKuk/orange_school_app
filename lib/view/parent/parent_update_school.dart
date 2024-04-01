@@ -213,10 +213,8 @@ class _ParentUpdateSchool extends State<ParentUpdateSchool> {
                           controller: te_class,
                           decoration: MainTheme.inputTextGray("반"),
                           style: MainTheme.body5(MainTheme.gray7),
-                          keyboardType:  TextInputType.numberWithOptions(signed: true, decimal: true),
                           inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly, //숫자만!
-                            LengthLimitingTextInputFormatter(2)
+                            LengthLimitingTextInputFormatter(10)
                           ],
                         ),
                       )
