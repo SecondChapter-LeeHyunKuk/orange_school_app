@@ -249,11 +249,38 @@ class _RegisterSchool extends State<RegisterSchool> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
-        child: ElevatedButton(
-            onPressed:formComplete ? (){register(); } : null ,
-            style: MainTheme.primaryButton(MainTheme.mainColor),
-            child: Text("저장하기", style: MainTheme.body4(Colors.white),)),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: MediaQuery.of(context).viewPadding.bottom + 10),
+          child:
+          SizedBox(
+            height: 49,
+            child:         Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children:[
+                  Expanded(child:
+                  Container(height: 49,
+                      child: ElevatedButton(
+                          onPressed:(){register(false);},
+                          style: MainTheme.hollowButton(MainTheme.gray3),
+                          child: Text("학교 등록 나중에 하기", style: MainTheme.body4(MainTheme.gray4),))
+                  )
+                  ),
+                  Container(
+                    width: 15,
+                  ),
+                  Expanded(child:
+                  Container(height: 49,
+                      child: ElevatedButton(
+                          onPressed:formComplete ? (){register(true); } : null ,
+                          style: MainTheme.primaryButton(MainTheme.mainColor),
+                          child: Text("등록하기", style: MainTheme.body4(Colors.white),))
+                  )
+                  ),
+                ]
+
+            ),
+          )
+
       ),
     );
   }
@@ -276,19 +303,21 @@ class _RegisterSchool extends State<RegisterSchool> {
     }
   }
 
-  Future<void> register() async {
+  Future<void> register(bool school) async {
     if(apiProcess){
       return;
     }else{
       apiProcess = true;
     }
 
+    if(school){
+      formMap!["schoolName"] = te_schoolName.text;
+      formMap!["grade"] = te_grade.text;
+      formMap!["schoolClass"] = te_class.text;
+      formMap!["classNumber"] = te_number.text;
+      formMap!["schoolCode"] = schoolCode;
+    }
 
-    formMap!["schoolName"] = te_schoolName.text;
-    formMap!["grade"] = te_grade.text;
-    formMap!["schoolClass"] = te_class.text;
-    formMap!["classNumber"] = te_number.text;
-    formMap!["schoolCode"] = schoolCode;
 
     var formData = FormData.fromMap(formMap!);
 

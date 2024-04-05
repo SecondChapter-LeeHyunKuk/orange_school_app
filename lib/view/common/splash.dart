@@ -19,7 +19,7 @@ class _Splash extends State<Splash> {
 
     new Future.delayed(
         const Duration(seconds: 1),
-            () => Navigator.of(context).pushReplacementNamed("/login"));
+            () => Navigator.of(context).pushReplacementNamed("/login", arguments: {'isFirst' : true}));
   }
 
   @override

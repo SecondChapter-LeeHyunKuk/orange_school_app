@@ -84,24 +84,31 @@ class _ParentChildren extends State<ParentChildren> {
                                 margin: EdgeInsets.only(bottom: 48),
                                 child: Stack(
                                   alignment: Alignment.topLeft,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(list[index]["name"], style: MainTheme.body5(MainTheme.gray7),),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(list[index]["email"], style: MainTheme.body5(MainTheme.gray5),),
-                                            Text("${list[index]["schoolName"]} ${list[index]["grade"]}학년 ${list[index]["schoolClass"]}반 "
-                                               + ((list[index]["classNumber"]?? "") == "" ? "" : (list[index]["classNumber"] + "번"))
-                                              , style: MainTheme.body5(MainTheme.gray5),),
-                                          ],
-                                        )
+                                  children: [Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(list[index]["name"], style: MainTheme.body5(MainTheme.gray7),),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(list[index]["email"], style: MainTheme.body5(MainTheme.gray5),),
 
-                                      ],
-                                    ),
+                                              ((list[index]["schoolCode"]??"") != "")?
+
+                                              Text("${list[index]["schoolName"]} ${list[index]["grade"]}학년 ${list[index]["schoolClass"]}반 "
+                                                  + ((list[index]["classNumber"]?? "") == "" ? "" : (list[index]["classNumber"] + "번"))
+                                                , style: MainTheme.body5(MainTheme.gray5),) :
+
+                                              Text(""
+                                                , style: MainTheme.body5(MainTheme.gray5),) ,
+                                            ],
+                                          )
+
+                                        ],
+                                      ),
+
+
                                     Positioned(
                                         right: 0,
                                         top: 0,

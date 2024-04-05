@@ -6,12 +6,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:orange_school/style/main-theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 import 'package:the_apple_sign_in/scope.dart' as apple;
+import 'package:url_launcher/url_launcher.dart';
 import '../../util/api.dart';
 
 String urlLogin = "${dotenv.env['BASE_URL']}common/login";
@@ -35,13 +37,10 @@ class _Login extends State<Login> {
   @override
   void initState() {
     // TODO: implement initState
-    try{
-      getVersion();
-    }catch(e){
-    }
 
+    getVersion();
     super.initState();
-    tryAutoLogin();
+
     permission();
   }
 
@@ -70,8 +69,7 @@ class _Login extends State<Login> {
                       SizedBox(
                         height: 98,
                       ),
-                      Text("로그인",
-                          style: MainTheme.heading1(MainTheme.gray7)),
+                      Text("로그인", style: MainTheme.heading1(MainTheme.gray7)),
                       Text("우리 아이와 함께하는 일상",
                           style: MainTheme.body8(MainTheme.gray6)),
                       SizedBox(
@@ -486,14 +484,6 @@ class _Login extends State<Login> {
   }
 
   Future<bool> permission() async {
-    // Map<Permission, PermissionStatus> status =
-    // await [Permission.location, Permission.notification].request(); // [] 권한배열에 권한을 작성
-    //
-    // if (await Permission.location.isGranted) {
-    //   return Future.value(true);
-    // } else {
-    //   return Future.value(false);
-    // }
     LocationPermission permission;
     permission = await Geolocator.requestPermission();
     return true;
@@ -614,25 +604,123 @@ class _Login extends State<Login> {
       }
     } else {}
   }
-  Future<void> getVersion() async{
+
+  Future<void> getVersion() async {
+    String todayStr = DateFormat("yyyy-MM-dd").format(DateTime.now());
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+
+
     var response = await apiRequestGet(context, urlBaseInfo, {});
-    var body =jsonDecode(utf8.decode(response.bodyBytes));
-    if(response.statusCode == 200){
-      //현재 버전정보 추출
+    var body = jsonDecode(utf8.decode(response.bodyBytes));
+
+    if (response.statusCode == 200) {
+
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      if(Platform.isIOS){
-        if((body["data"]["iosVersion"]??"") != ""){
-          if(packageInfo.version != body["data"]["iosVersion"]){
-            MainTheme.toast('새로운 버전이 출시되었습니다.');
+      bool? showDialog = false;
+
+
+      //현재 버전정보 추출
+      if (Platform.isIOS) {
+        if ((body["data"]["iosVersion"] ?? "") != "") {
+          if (packageInfo.version != body["data"]["iosVersion"]) {
+            showDialog = true;
           }
         }
-      }else{
-        if((body["data"]["androidVersion"]??"") != ""){
-          if(packageInfo.version != body["data"]["androidVersion"]){
-            MainTheme.toast('새로운 버전이 출시되었습니다.');
+      } else {
+        if ((body["data"]["androidVersion"] ?? "") != "") {
+          if (packageInfo.version != body["data"]["androidVersion"]) {
+            showDialog = true;
+          }
+        }
+      }
+      if (showDialog) {
+        //마지막 팝업조회일자를 조회
+        var updateViewDate = pref.getString("updateViewDate");
+
+        if ((updateViewDate ?? "12345") != todayStr) {
+          pref.setString("updateViewDate", todayStr);
+          bool? move = await updateDialog();
+          if (move != null) {
+            if (move) {
+              if (Platform.isIOS) {
+                launchUrl(
+                  Uri.parse("https://apps.apple.com/kr/app/id6475079694"),
+                );
+              } else {
+                launchUrl(
+                  Uri.parse(
+                      "https://play.google.com/store/apps/details?id=com.orangeschool.orange_school"),
+                );
+              }
+            }
           }
         }
       }
     }
+
+    tryAutoLogin();
+  }
+
+  Future<bool?> updateDialog() async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: true, //바깥 영역 터치시 닫을지 여부 결정
+      builder: ((context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(0),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          content: Container(
+            width: 320,
+            height: 204,
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Expanded(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "업데이트 안내",
+                      style: MainTheme.body2(MainTheme.gray7),
+                    ),
+                    Text(
+                      "새로운 버전이 출시되었습니다. 확인 버튼을 눌러 스토어로 이동합니다.",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontFamily: "SUIT",
+                          fontSize: 15,
+                          height: 1.486,
+                          color: MainTheme.gray5,
+                          letterSpacing: 0),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                )),
+                Container(
+                  width: double.infinity,
+                  height: 49,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text(
+                      "확인",
+                      style: MainTheme.body4(Colors.white),
+                    ),
+                    style: MainTheme.primaryButton(MainTheme.mainColor),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      }),
+    );
   }
 }

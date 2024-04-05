@@ -487,13 +487,12 @@ class _ParentPlan extends State<ParentPlan> {
                           alignment: Alignment.centerRight,
                           padding: EdgeInsets.only(right: 4),
                           child:
-                          widget.isParent && (selectedChildIndex == (children.length-1)) ? SizedBox.shrink():
+                          ((children[selectedChildIndex]["grade"]??"") == "") ? SizedBox.shrink():
 
                           GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: (){
                               setState(() async {
-                                print(children[selectedChildIndex]["schoolClass"]);
                                 if (!school && children[selectedChildIndex]["schoolClass"] == ""){
                                   MainTheme.toast("반을 입력해주세요");
                                 }else{
@@ -2125,7 +2124,7 @@ class _ParentPlan extends State<ParentPlan> {
       }
       weekList = temp;
 
-      if(school){
+      if(school &&((children[selectedChildIndex]["grade"]??"") != "")){
 
         if(children[selectedChildIndex]["schoolCode"] != null){
           String schoolCode = children[selectedChildIndex]["schoolCode"];
